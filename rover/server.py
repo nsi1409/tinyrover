@@ -22,7 +22,8 @@ def process_json():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
         json = request.json
-        print(json)
+        print(json["left"])
+        print(json["right"])
         return json
     else:
         return 'Content-Type not supported!'
