@@ -1,6 +1,6 @@
 import sys
-
 import pygame
+import wheelcommand
 
 from pygame.locals import *
 pygame.init()
@@ -56,8 +56,10 @@ while True:
             print(event)
             if event.axis < 2:
                 motion[event.axis] = event.value
-            if event.axis > 1 and event.axis < 4:
-                motion[event.axis] = event.value
+            if event.axis > 3 and event.axis < 5:
+                motion[event.axis-1] = event.value
+            print(motion)
+            wheelcommand.send2wheels(-1*motion[1], -1*motion[3])
         if event.type == JOYHATMOTION:
             print(event)
         if event.type == JOYDEVICEADDED:
