@@ -1,0 +1,10 @@
+Currently intending to do 1 byte OPCode
+Then each instruction can specify how many bytes its supposed to send2wheels
+Each of the wheel operations only need 1 byte as their values are currently intended to be 0-255
+Implementation actually works on basis of 0-180 where 90 is a halt
+
+OpCode Ideas:
+0 both sets of wheels
+1 left wheels
+2 right wheels
+
