@@ -78,7 +78,7 @@ void loop() {
           Serial.write(rightWheelBuffer, wheelCommandBufferSize); // Sends back to server to confirm correct received
 
 
-          uint8_t convertedLeftSpeed = leftWheelBuffer[0];
+          uint8_t convertedLeftSpeed = leftWheelBuffer[0]; //Temporary for testing
           uint8_t convertedRightSpeed = rightWheelBuffer[0];
           // uint8_t convertedLeftSpeed = convertSpeedToProperRange(leftWheelBuffer[0]);
           // uint8_t convertedRightSpeed = convertSpeedToProperRange(rightWheelBuffer[0]);
