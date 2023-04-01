@@ -40,10 +40,10 @@ def returnCord():
         # print(f'This is GPGGA')
         north = min2dec(parse_outp[0][2])
         west = min2dec(parse_outp[0][4])
-        print(f'North is {north}')
-        print(f'West is {west}')
+        # print(f'North is {north}')
+        # print(f'West is {west}')
         if(north =="No" or west =="No"):
-            print(f'Not yet')
+            print(f'Lost Cords')
             return
         print(f'North is {north}')
         print(f'West is {west}')
