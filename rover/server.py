@@ -1,6 +1,7 @@
 from flask import Flask, request
 import time
 from rover2arduino import Controller
+import socket
 
 app = Flask(__name__)
 
@@ -25,3 +26,6 @@ def process_json():
         return json
     else:
         return 'Content-Type not supported!'
+
+if __name__ == '__main__':
+	app.run(host=socket.gethostbyname(socket.gethostname()), port=5000, debug=True, threaded=False)
