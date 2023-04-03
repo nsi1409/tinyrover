@@ -10,7 +10,7 @@ import os
 # ser = serial.Serial('COM3', 9600, timeout=1) #Windows 
 ser = serial.Serial()
 ser.setDTR(False)
-ser.port = 'COM3'
+ser.port = 'COM4'
 ser.baudrate = 9600
 ser.timeout = 5
 ser.bytesize = serial.EIGHTBITS
@@ -72,15 +72,32 @@ def test_left_wheels():
 	print(result)
 	print(result == bytesToSend) # Verify received same thing as sent
 
+def test_left_wheels(speed):
+	# print(ser.is_open) #confirms port is open
+	data = [1,speed] # Values from 0 - 255 allowed in each entry
+	bytesToSend = bytes(data)
+	print(bytesToSend)
+	ser.write(bytesToSend)
+	result = ser.read(2)
+	print(result)
+	print(result == bytesToSend) # Verify received same thing as sent
+
+def test_right_wheels(speed):
+    # print(ser.is_open) #confirms port is open
+	data = [2,speed] # Values from 0 - 255 allowed in each entry
+	bytesToSend = bytes(data)
+	print(bytesToSend)
+	ser.write(bytesToSend)
+	result = ser.read(2)
+	print(result)
+	print(result == bytesToSend) # Verify received same thing as sent
 
 
 
 if __name__ == "__main__":
+	print("commented out :)")
 	# send2wheels(4, 7)
-	for i in range(10):
-		time.sleep(1)
-		test_both_wheels()
-		time.sleep(1)
-		test_left_wheels()
-		time.sleep(1)
-		test_right_wheels()
+	# for i in range(10):
+	# 	test_both_wheels()
+	# 	test_left_wheels()
+	# 	test_right_wheels()
