@@ -1,5 +1,5 @@
 from flask import Flask
-from turbo_flask import Turbo
+# from turbo_flask import Turbo
 import time
 import serial
 import csv
@@ -14,7 +14,7 @@ def parse():
     return parse_outp
 
 app = Flask(__name__)
-turbo = Turbo(app)
+# turbo = Turbo(app)
 # gps = serial.Serial("COM5", baudrate=4800, xonxoff=0,rtscts=0,bytesize=8,stopbits=1,parity=serial.PARITY_NONE)
 parse_outp = parse()
 
