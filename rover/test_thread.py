@@ -3,6 +3,8 @@ import csv
 import threading
 import serial
 
+# commit test
+
 def parse(): 
     gps = serial.Serial("COM8", 4800)
     inpt = gps.readline()
