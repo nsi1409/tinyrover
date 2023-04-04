@@ -1,7 +1,6 @@
 from flask import Flask, request
 import time
 from rover2arduino import Controller
-from gps import 
 
 app = Flask(__name__)
 
@@ -26,4 +25,3 @@ def process_json():
         return json
     else:
         return 'Content-Type not supported!'
-    
