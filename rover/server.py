@@ -1,6 +1,8 @@
 from flask import Flask, request
 import time
 from rover2arduino import Controller
+import socket
+import platform
 
 app = Flask(__name__)
 
@@ -21,7 +23,16 @@ def process_json():
         json = request.json
         print(json["left"])
         print(json["right"])
-		# use rover2arduino.send2wheels(args) to write to arduino
+        # use rover2arduino.send2wheels(args) to write to arduino
         return json
     else:
         return 'Content-Type not supported!'
+
+if __name__ == '__main__':
+	print(f'Running on: {platform.system()}')
+	if platform.system() == 'Linux':
+		app.run(host=socket.gethostbyname(socket.gethostname()+'.local'), port=5000, debug=True, threaded=False)
+	elif platform.system() == 'Darwin': # Darwin is MacOS
+		app.run(host=socket.gethostbyname(socket.gethostname()), port=5000, debug=True, threaded=False)
+	elif platform.system() == 'Windows':
+		print('TODO implement for windows') #TODO implement for windows
