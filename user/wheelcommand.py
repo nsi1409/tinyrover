@@ -1,7 +1,7 @@
 import requests
 
 def send2wheels(l, r):
-	r = requests.get('http://127.0.0.1:5000/wheel_command', json={
+	r = requests.get('http://rhitrover1-desktop:8080/wheel_command', json={
 		"left": l, "right": r
 	})
 

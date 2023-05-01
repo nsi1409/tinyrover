@@ -24,15 +24,9 @@ def process_json():
         print(json["left"])
         print(json["right"])
         # use rover2arduino.send2wheels(args) to write to arduino
-        return json
+        return str(json)
     else:
         return 'Content-Type not supported!'
 
 if __name__ == '__main__':
-	print(f'Running on: {platform.system()}')
-	if platform.system() == 'Linux':
-		app.run(host=socket.gethostbyname(socket.gethostname()+'.local'), port=5000, debug=True, threaded=False)
-	elif platform.system() == 'Darwin': # Darwin is MacOS
-		app.run(host=socket.gethostbyname(socket.gethostname()), port=5000, debug=True, threaded=False)
-	elif platform.system() == 'Windows':
-		print('TODO implement for windows') #TODO implement for windows
+	app.run(host='0.0.0.0', port=8080, debug=True, threaded=False)
