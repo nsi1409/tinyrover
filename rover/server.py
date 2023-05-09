@@ -1,9 +1,9 @@
 from flask import Flask, request
-import rover2arduino
+from rover2arduino import Controller
 import socket
 
 app = Flask(__name__)
-#setup_wheels()
+wheels = Controller()
 
 @app.route('/wheel_command', methods=['GET'])
 def process_json():
