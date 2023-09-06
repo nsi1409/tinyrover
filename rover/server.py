@@ -5,7 +5,7 @@ import socket
 app = Flask(__name__)
 wheels = Controller()
 
-@app.route('/wheel_command', methods=['GET'])
+@app.route('/wheel_command', methods=['GET', 'POST'])
 def process_json():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):

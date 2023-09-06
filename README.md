@@ -20,12 +20,21 @@ This year we should move away from launching code on rover/ through ssh and inst
 # Examples
 ### Wheels as an api
 #### Javascript fetch
-    line 1 of code
-    line 2 of code
-    line 3 of code
+	fetch('http://localhost:8080/wheel_command', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({'left': 0.5, 'right': 0.5})
+		})
 
 #### Python Requests
-todo
+	import requests
+
+	r = requests.get('http://localhost:8080/wheel_command', json={
+		"left": <left wheel speed>, "right": <right wheel speed>
+	})
 
 ### Wheels as a library
 #### Python
