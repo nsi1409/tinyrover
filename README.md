@@ -36,8 +36,11 @@ This year we should move away from launching code on rover/ through ssh and inst
 		"left": <left wheel speed>, "right": <right wheel speed>
 	})
 
+#### Curl
+	curl --header "Content-Type: application/json" \
+		--request POST --data '{"left": 0.5, "right": 0.5}' http://localhost:8080/wheel_command
+
+
 ### Wheels as a library
 #### Python
-    line 1 of code
-    line 2 of code
-    line 3 of code
+	todo
