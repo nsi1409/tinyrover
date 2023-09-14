@@ -7,15 +7,15 @@ The directory structure of the reposistory is desgined to reflect the fact that 
 
 # Main systems
 - user/: This directory contains software that will run on the base station. Including but not limited to sending human input from a controller to the rover and displaying the livestream from the rover.
-- rover/: This directory contains software that will run on the rover specifically the Jetson Nano. Including but not limited to receiving GPS data, networking with the base station and issueing commands to the arduino.
+- jetson/: This directory contains software that will run on the rover specifically the Jetson Nano. Including but not limited to receiving GPS data, networking with the base station and issueing commands to the arduino.
 - arduino/: This directory also contains software that will be run on the rover but on an Arduino instead of the Jetson Nano. Including but not limited to manipulating motor speed and direction control.
 
 # Communications between systems
-- user/ <-> rover/: tcp/udp (primarily Flask and ffmpeg livestreaming)
-- rover/ <-> arduino/: serial communications (see pyserial for an example)
+- user/ <-> jetson/: tcp/udp (primarily Flask and ffmpeg livestreaming)
+- jetson/ <-> arduino/: serial communications (see pyserial for an example)
 
 # Init System
-This year we should move away from launching code on rover/ through ssh and instead move to systemd services. This will make development more convenient and will help make services function more robustly in field.
+This year we should move away from launching code on jetson/ through ssh and instead move to systemd services. This will make development more convenient and will help make services function more robustly in field.
 
 # Examples
 ### Wheels as an api

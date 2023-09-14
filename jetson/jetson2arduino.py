@@ -2,7 +2,7 @@ import serial
 import atexit
 import platform
 
-class Controller():
+class Messenger():
 	def __init__(self):
 		self.ser = serial.Serial()
 		self.ser.setDTR(False)
@@ -25,7 +25,7 @@ class Controller():
 		self.ser.flush() #flushes and closes on exit
 		self.ser.close()
 
-	def test_both_wheels(self, data):
+	def send(self, data):
 		#print(ser.is_open) #confirms port is open
 		#data = [0,100,100] # Values from 0 - 255 allowed in each entry
 		bytesToSend = bytes(data)
@@ -36,4 +36,4 @@ class Controller():
 		print(result == bytesToSend) # Verify received same thing as sent
 
 if __name__ == "__main__":
-	Controller()
+	J2A()
