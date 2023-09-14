@@ -26,21 +26,24 @@ This year we should move away from launching code on jetson/ through ssh and ins
 			'Accept': 'application/json',
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({'left': 0.5, 'right': 0.5})
+		body: JSON.stringify({'left': 127, 'right': 127})
 		})
 
 #### Python Requests
 	import requests
 
 	r = requests.get('http://localhost:8080/wheel_command', json={
-		"left": <left wheel speed>, "right": <right wheel speed>
+		"left": 127, "right": 127
 	})
 
 #### Curl
 	curl --header "Content-Type: application/json" \
-		--request POST --data '{"left": 0.5, "right": 0.5}' http://localhost:8080/wheel_command
+		--request POST --data '{"left": 127, "right": 127}' http://localhost:8080/wheel_command
 
 
 ### Wheels as a library
 #### Python
-	todo
+	import jetson2arduino
+
+	j2a = jetson2arduino.Messenger()
+	j2a.send([0, 127, 127])
