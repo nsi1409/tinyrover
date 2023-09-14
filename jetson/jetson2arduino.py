@@ -9,7 +9,7 @@ class Messenger():
 		if platform.system() == 'Linux':
 			self.ser.port = '/dev/ttyACM0'
 		elif platform.system() == 'Darwin': # Darwin is MacOS
-			self.ser.port = '/dev/cu.usbmodem2101'
+			self.ser.port = '/dev/cu.usbmodem1301'
 		elif platform.system() == 'Windows':
 			self.ser.port = 'COM4'
 		self.ser.baudrate = 9600
@@ -20,20 +20,22 @@ class Messenger():
 		self.ser.close()
 		self.ser.open()
 		atexit.register(self.exit_handler_wheels)
+		assert self.ser.is_open
 
 	def exit_handler_wheels(self):
 		self.ser.flush() #flushes and closes on exit
 		self.ser.close()
 
 	def send(self, data):
-		#print(ser.is_open) #confirms port is open
 		#data = [0,100,100] # Values from 0 - 255 allowed in each entry
 		bytesToSend = bytes(data)
 		print(bytesToSend)
 		self.ser.write(bytesToSend)
-		result = self.ser.read(3)
-		print(result)
-		print(result == bytesToSend) # Verify received same thing as sent
+		#result = self.ser.read(3)
+		#print(result)
+		#print(result == bytesToSend) # Verify received same thing as sent
 
 if __name__ == "__main__":
-	J2A()
+	j2a = Messenger()
+	j2a.send([0, 100, 100])
+	j2a.send([0, 100, 100])
