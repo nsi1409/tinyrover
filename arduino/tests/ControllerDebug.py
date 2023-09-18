@@ -1,6 +1,5 @@
 import sys
 import pygame
-import wheelcommand
 import WheelCommandDebug as WCD
 
 from pygame.locals import *
@@ -15,7 +14,7 @@ for joystick in joysticks:
     print(joystick.get_name())
 
 # my_square = pygame.Rect(50, 50, 50, 50)
-# my_square_color = 0
+# my_square_color = 0 
 # colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
 motion = [0, 0, 0, 0]
 
@@ -35,10 +34,10 @@ while True:
     if abs(motion[3]) < 0.1:
         motion[3] = 0
 
-    leftSpeed = int(motion[1]*speedMultiplier*9+90)
-    rightSpeed = int(motion[3]*speedMultiplier*9+90)
-    WCD.test_left_wheels(leftSpeed)
-    WCD.test_right_wheels(rightSpeed)
+    # leftSpeed = int(motion[1]*speedMultiplier*9+90)
+    # rightSpeed = int(motion[3]*speedMultiplier*9+90)
+    # WCD.test_left_wheels(leftSpeed)
+    # WCD.test_right_wheels(rightSpeed)
 
     
 
@@ -71,12 +70,16 @@ while True:
             print(speedMultiplier)
             # print(motion)
             # wheelcommand.send2wheels(-1*motion[1], -1*motion[3])
-            leftSpeed = int(motion[1]*speedMultiplier*9+90)
+            leftSpeed = int(-motion[1]*speedMultiplier*9+90)
             rightSpeed = int(motion[3]*speedMultiplier*9+90)
             # print(leftSpeed)
             # print(rightSpeed)
-            WCD.test_left_wheels(leftSpeed)
-            WCD.test_right_wheels(rightSpeed)
+            if motion[1] != 0 and motion[3] != 0:
+                WCD.test_both_wheels(leftSpeed,rightSpeed)
+            elif motion[1] != 0:
+                WCD.test_left_wheels(leftSpeed)
+            elif motion[3] != 0:
+                WCD.test_right_wheels(rightSpeed)
 
         if event.type == JOYHATMOTION:
             print(event)

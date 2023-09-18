@@ -10,7 +10,7 @@ import os
 # ser = serial.Serial('COM3', 9600, timeout=1) #Windows 
 ser = serial.Serial()
 ser.setDTR(False)
-ser.port = 'COM4'
+ser.port = 'COM3'
 ser.baudrate = 9600
 ser.timeout = 5
 ser.bytesize = serial.EIGHTBITS
@@ -46,9 +46,9 @@ def test_both_wheels():
 	bytesToSend = bytes(data)
 	print(bytesToSend)
 	ser.write(bytesToSend)
-	result = ser.read(3)
-	print(result)
-	print(result == bytesToSend) # Verify received same thing as sent
+	# result = ser.read(3)
+	# print(result)
+	# print(result == bytesToSend) # Verify received same thing as sent
 
 def test_right_wheels():
     # print(ser.is_open) #confirms port is open
@@ -56,9 +56,9 @@ def test_right_wheels():
 	bytesToSend = bytes(data)
 	print(bytesToSend)
 	ser.write(bytesToSend)
-	result = ser.read(2)
-	print(result)
-	print(result == bytesToSend) # Verify received same thing as sent
+	# result = ser.read(2)
+	# print(result)
+	# print(result == bytesToSend) # Verify received same thing as sent
 
 def test_left_wheels():
 	# print(ser.is_open) #confirms port is open
@@ -66,36 +66,50 @@ def test_left_wheels():
 	bytesToSend = bytes(data)
 	print(bytesToSend)
 	ser.write(bytesToSend)
-	result = ser.read(2)
-	print(result)
-	print(result == bytesToSend) # Verify received same thing as sent
+	# result = ser.read(2)
+	# print(result)
+	# print(result == bytesToSend) # Verify received same thing as sent
 
 def test_left_wheels(speed):
 	# print(ser.is_open) #confirms port is open
+
 	data = [1,speed] # Values from 0 - 255 allowed in each entry
+	print("left speed ",speed)
 	bytesToSend = bytes(data)
-	print(bytesToSend)
+	print("As bytes: ")
+	# for i in bytesToSend:
+	# 	print(i)
 	ser.write(bytesToSend)
-	result = ser.read(2)
-	print(result)
-	print(result == bytesToSend) # Verify received same thing as sent
+	# result = ser.read(2)
+	# print(result)
+	# print(result == bytesToSend) # Verify received same thing as sent
 
 def test_right_wheels(speed):
     # print(ser.is_open) #confirms port is open
 	data = [2,speed] # Values from 0 - 255 allowed in each entry
+	print("right speed ",speed)
 	bytesToSend = bytes(data)
-	print(bytesToSend)
+	# print("As bytes: ")
+	# for i in bytesToSend:
+	# 	print("\t",i)
 	ser.write(bytesToSend)
-	result = ser.read(2)
-	print(result)
-	print(result == bytesToSend) # Verify received same thing as sent
+	# result = ser.read(2)
+	# print(result)
+	# print(result == bytesToSend) # Verify received same thing as sent
+
+def test_both_wheels(left_speed,right_speed):
+    # print(ser.is_open) #confirms port is open
+	data = [0,left_speed,right_speed] # Values from 0 - 255 allowed in each entry
+	print("left speed ",left_speed)
+	print("right speed ",right_speed)
+	bytesToSend = bytes(data)
+	ser.write(bytesToSend)
 
 
 
 if __name__ == "__main__":
-	print("commented out :)")
+	# print("commented out :)")
 	# send2wheels(4, 7)
-	# for i in range(10):
-	# 	test_both_wheels()
-	# 	test_left_wheels()
-	# 	test_right_wheels()
+	for i in range(100000):
+		test_left_wheels(150)
+		test_right_wheels(150)
