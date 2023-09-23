@@ -25,9 +25,10 @@ class Messenger():
 	def exit_handler_wheels(self):
 		self.ser.flush() #flushes and closes on exit
 		self.ser.close()
-
-	def send(self, data):
-		#data = [0,100,100] # Values from 0 - 255 allowed in each entry
+###
+	def send_right(self, speed):
+		data = [2, speed]
+		#data = [2,100,100] # Values from 0 - 255 allowed in each entry
 		bytesToSend = bytes(data)
 		print(bytesToSend)
 		self.ser.write(bytesToSend)
@@ -35,6 +36,26 @@ class Messenger():
 		#print(result)
 		#print(result == bytesToSend) # Verify received same thing as sent
 
+	def send_left(self, speed):
+		data = [1, speed]
+		#data = [1,100,100] # Values from 0 - 255 allowed in each entry
+		bytesToSend = bytes(data)
+		print(bytesToSend)
+		self.ser.write(bytesToSend)
+		#result = self.ser.read(3)
+		#print(result)
+		#print(result == bytesToSend) # Verify received same thing as sent
+
+	def send_both(self, left_speed, right_speed):
+		data = [0, left_speed, right_speed]
+		#data = [0,100,100] # Values from 0 - 255 allowed in each entry
+		bytesToSend = bytes(data)
+		print(bytesToSend)
+		self.ser.write(bytesToSend)
+		#result = self.ser.read(3)
+		#print(result)
+		#print(result == bytesToSend) # Verify received same thing as sent
+###
 if __name__ == "__main__":
 	j2a = Messenger()
 	j2a.send([0, 100, 100])
