@@ -19,8 +19,8 @@ class Messenger():
 		self.ser.parity = serial.PARITY_NONE
 		self.ser.close()
 		self.ser.open()
-		atexit.register(self.exit_handler_wheels)
-		assert self.ser.is_open
+		#atexit.register(self.exit_handler_wheels)
+		#assert self.ser.is_open
 
 	def exit_handler_wheels(self):
 		self.ser.flush() #flushes and closes on exit
@@ -57,6 +57,10 @@ class Messenger():
 		#print(result == bytesToSend) # Verify received same thing as sent
 ###
 if __name__ == "__main__":
-	j2a = Messenger()
-	j2a.send([0, 100, 100])
-	j2a.send([0, 100, 100])
+    j2a = Messenger()
+    #while(1):
+        #j2a.send([0, 90, 90])
+    for i in range(200): 
+        #j2a.send([0, 120, 120])
+        j2a.send([0, 90, 90])
+    #j2a.send([0, 100, 100])
