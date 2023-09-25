@@ -1,6 +1,12 @@
 import serial.tools.list_ports
 
 
+def list_all():
+	ports = serial.tools.list_ports.comports()
+	for port in ports:
+		print(port.manufacturer)
+
+
 def find(manufacturer):
 	ports = serial.tools.list_ports.comports()
 	for port in ports:
@@ -10,4 +16,5 @@ def find(manufacturer):
 
 
 if __name__ == '__main__':
-	find('')
+	list_all()
+	print(find('Prolific Technology Inc. '))
