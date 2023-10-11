@@ -2,23 +2,19 @@ import math
 import socket
 import time
 import serial
-import pywitmotion as wit
 import struct
-
 from port_grep import find, list_all
+from serial import *
 
 # port = find(list_all())
 # print(port)
-
-from serial import *
-usb = Serial('COM3', 9600)
 # usb = Serial(port)
+
+usb = Serial('COM3', 9600)
 usb.timeout = 1
 while True:
-    # s = usb.readline()
-    # print(usb.readline()) # you need to print what you are reading in the script
-    s = usb.read_until(b'U')
-    # print(s[0])
+    s = usb.readline()
+    # print(s) # you need to print what you are reading in the script
     try:
         if(s[0] == 83):
             (rollr, pitchr, yawr) = struct.unpack("<hhh", s[1:7])
