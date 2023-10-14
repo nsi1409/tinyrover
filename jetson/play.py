@@ -99,7 +99,7 @@ colorizer = rs.colorizer()
 
 
 def mouse_cb(event, x, y, flags, param):
-
+    
     if event == cv2.EVENT_LBUTTONDOWN:
         state.mouse_btns[0] = True
 
@@ -308,8 +308,8 @@ while True:
         # Pointcloud data to arrays
         v, t = points.get_vertices(), points.get_texture_coordinates()
         verts = np.asanyarray(v).view(np.float32).reshape(-1, 3)  # xyz
-        print(verts)
         texcoords = np.asanyarray(t).view(np.float32).reshape(-1, 2)  # uv
+        print(verts)
 
     # Render
     now = time.time()
