@@ -1,2 +1,9 @@
-flask==2.2.2
+clifford
+flask
+matplotlib
+numpy
+opencv-python
+pygame
+pyrealsense2
 pyserial
+requests
