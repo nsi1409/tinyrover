@@ -1,16 +1,20 @@
 from flask import Flask, request
 
 app = Flask(__name__)
-
-state = {'q': None}
+state = {}
 
 @app.route('/data', methods=['GET', 'PUT'])
 def data():
+	data = request.get_json()
 	if request.method == 'PUT':
-		state['q'] = 'set'
+		k = data['k']
+		v = data['v']
+		state[k] = v
 		return 'ok', 200
 	else:
-		return state, 200
+		k = data['k']
+		v = state[k]
+		return {'v': v}, 200
 
 if __name__ == '__main__':
 	app.run()
