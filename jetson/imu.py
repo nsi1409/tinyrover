@@ -5,11 +5,15 @@ import serial
 import struct
 from port_grep import find, list_all
 from serial import *
+import requests
 
 # usb = Serial('COM3', 9600, timeout=1)
 port = find(6790)
 print(port)
 usb = Serial(port, 9600, timeout=1)
+
+def send_kv(k, v):
+	r = requests.put('http://127.0.0.1:5000/data', json={'k': k, 'v': v})
 
 while True:
 	s = usb.read_until(b'U')
@@ -21,13 +25,16 @@ while True:
 				roll = (rollr / 32768) * 180
 				pitch = (pitchr / 32768) * 180
 				yaw = (yawr / 32768) * 180 + 180
+				send_kv('yaw', yaw)
 				print(yaw)
 			case 89: #quaternion
 				qr = struct.unpack("<hhhh", s[1:9])
 				q = tuple(el / 32768 for el in qr)
+				send_kv('quat', q)
 				print(q)
 			case _: #default case
 				pass
 				#print(f'uncaught {s[0]}: {s}')
-	except:
+	except Exception as e:
+		print(e)
 		print('reading loop fail, retrying')
