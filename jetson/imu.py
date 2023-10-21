@@ -1,15 +1,12 @@
 import math
-import socket
 import time
 import serial
 import struct
-from port_grep import find, list_all
+import port_grep
 from serial import *
 import requests
 
-# usb = Serial('COM3', 9600, timeout=1)
-port = find(6790)
-print(port)
+port = port_grep.find(6790)
 usb = Serial(port, 9600, timeout=1)
 
 def send_kv(k, v):
@@ -17,7 +14,6 @@ def send_kv(k, v):
 
 while True:
 	s = usb.read_until(b'U')
-	#print(s)
 	try:
 		match s[0]:
 			case 83: #euler angles
