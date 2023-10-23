@@ -1,0 +1,4 @@
+#add python dependencies here
+
+opencv-python==4.5.5.64
+
