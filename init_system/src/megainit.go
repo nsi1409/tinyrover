@@ -5,68 +5,71 @@ import (
 	"net/http"
 	"os/exec"
 	"io/ioutil"
-	"syscall"
 )
 
-var m = make(map[string]*exec.Cmd)
-
-func start(nm string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if m[nm] != nil {
-			fmt.Fprintln(w, "FAILED: attempting to run already running process | process name : " + nm)
-		} else {
-			m[nm] = exec.Command("scripts/"+nm)
-			m[nm].SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-			err := m[nm].Start()
-			if err != nil {
-				panic(err)
-			}
-			fmt.Fprintln(w, "exec done | process name : " + nm)
+type process struct{
+	args []string
+	proc *exec.Cmd
+	id string
+}
+func (p *process) start(x http.ResponseWriter, req *http.Request) {
+	if p.proc != nil {
+		fmt.Fprintln(x, "RESTART: attempting to restart already running process | process name : " + p.id)
+		err := p.proc.Process.Kill()
+		if err != nil {
+			panic(err)
 		}
+	}
+	p.proc = exec.Command(p.args[0], p.args[1:]...)
+	err := p.proc.Start()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintln(x, "exec done | process name : " + p.id)
+}
+
+func (p *process) kill(x http.ResponseWriter, req *http.Request) {
+	if p.proc == nil {
+		fmt.Fprintln(x, "ERROR: tried to kill non-running process | process name : " + p.id)
+	}
+	err := p.proc.Process.Kill()
+	p.proc = nil
+	if err != nil {
+		fmt.Fprintln(x, "ERROR: failed to kill | Internal error:" + "____" + " | process name : " + p.id) //TODO replace "____" with err.toString() equivalent
+		panic(err)
+	}
+	fmt.Fprintf(x, "\nkill done | process name : " + p.id + "\n")
+}
+
+func (p *process) status(x http.ResponseWriter, req *http.Request) {
+	if p.proc != nil {
+		fmt.Fprintln(x, "RUNNING | process name : " + p.id)
+	}
+	if p.proc == nil {
+		fmt.Fprintln(x, "NOT RUNNING | process name : " + p.id)
 	}
 }
 
-func kill(nm string) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-		cmd := m[nm]
-		if cmd == nil {
-			fmt.Fprintln(w, "ERROR: tried to kill non-running process | process name : " + nm)
-		} else {
-			pgid, err := syscall.Getpgid(cmd.Process.Pid)
-			if err == nil {
-				syscall.Kill(-pgid, 15)  // note the minus sign
-			}
-			cmd.Wait()
-			m[nm] = nil
-			fmt.Fprintf(w, "kill done | process name : " + nm + "\n")
-		}
-	}
-}
-
-func status(nm string) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-		if m[nm] != nil {
-			fmt.Fprintln(w, "RUNNING | process name : " + nm)
-		} else {
-			fmt.Fprintln(w, "NOT RUNNING | process name : " + nm)
-		}
-		//fmt.Printf("State %+v\n", m)
-	}
-}
-
-func setUp(p string){
-	http.HandleFunc("/r/"+p, start(p))
-	http.HandleFunc("/k/"+p, kill(p))
-	http.HandleFunc("/s/"+p, status(p))
+func (p *process) setUp(){
+	http.HandleFunc("/r/" + p.id, p.start)
+	http.HandleFunc("/k/" + p.id, p.kill)
+	http.HandleFunc("/s/" + p.id, p.status)
 }
 
 func main() {
+	var processArray []process
+
 	files, _ := ioutil.ReadDir("scripts")
+
 	for _, file := range files{
-		fd := file.Name()
-		m[fd] = nil
-		setUp(fd)
+		processArray = append(processArray, process{[]string{"scripts/"+file.Name()}, nil, file.Name()[:len(file.Name())-3]})
 	}
-	//fmt.Printf("%+v\n", m)
+
+	processArray = append(processArray , process{[]string{"feh", "dog.jpg"}, nil, "dog"})
+
+	for i := 0; i < len(processArray); i++ {
+		processArray[i].setUp()
+	}
+
 	http.ListenAndServe(":8090", nil)
 }

@@ -27,12 +27,8 @@ def get_quat():
 
 for i in range(10000):
 	X, Y, Z = [0, 0, 0]
-	try:
-		U, V, W = get_quat()
-		print('using imu data')
-	except:
-		U, V, W = get_brown()
-		print('using random data')
+	#U, V, W = get_brown()
+	U, V, W = get_quat()
 	if v:
 		v.remove()
 	v = ax.quiver(X, Y, Z, U, V, W)

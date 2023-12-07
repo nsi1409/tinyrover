@@ -1,3 +1,3 @@
 #!/bin/bash
 
-feh cat.jpg
+feh /home/roverpad/rhit-rover/init_system/src/cat.jpg
