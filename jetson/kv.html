@@ -1,0 +1,52 @@
+
+<p id="gps"></p>
+<p id="quat"></p>
+<p id="yaw"></p>
+<script>
+    const $ = document.querySelector.bind(document)
+    const $$ = document.querySelectorAll.bind(document)
+    fetch(`http://127.0.0.1:5000/data`, {
+            method: 'POST',
+           headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"k": "gps"})
+        }).then((response) => {
+            console.log(response);
+            return response.json();
+        }).then((data) => {
+            console.log(data);
+            $("#gps").innerHTML = data["v"];
+        })
+
+    fetch(`http://127.0.0.1:5000/data`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"k": "quat"})
+        }).then((response) => {
+            console.log(response);
+            return response.json();
+        }).then((data) => {
+            console.log(data);
+            $("#quat").innerHTML = data["v"];
+        })
+
+    fetch(`http://127.0.0.1:5000/data`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "k": "yaw" })
+        }).then((response) => {
+            console.log(response);
+            return response.json();
+        }).then((data) => {
+            console.log(data);
+            $("#yaw").innerHTML = data["v"];
+        })
+</script>

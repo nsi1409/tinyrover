@@ -1,11 +1,11 @@
 from flask import Flask
-# from turbo_flask import Turbo
 import time
 import serial
 import csv
 import sys
 import os
 import port_grep
+from kv import send_kv
 
 port = port_grep.find(1659)
 gps = serial.Serial(port, 4800, timeout=None)
@@ -15,6 +15,7 @@ def parse():
 		inpt = gps.readline()
 		# print(inpt)
 		str_inpt = inpt.decode('utf-8')
+		# print(str_inpt)
 		return str_inpt.split(",")
 	except Exception as exc:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -25,10 +26,6 @@ def parse():
 
 
 app = Flask(__name__)
-
-north = 0
-west = 0
-
 
 def min2dec(inpt):
 	if (inpt == ''):
@@ -51,6 +48,7 @@ def returnCord():
 			return
 		print(f'North is {north}')
 		print(f'West is {west}')
+		send_kv('gps', [north, west])
 
 
 while (1):
