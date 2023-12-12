@@ -53,20 +53,3 @@ def returnCord():
 
 while (1):
 	returnCord()
-
-
-@app.route('/gps', methods=['GET'])
-def trial():
-	# if(parse_outp[0][0] == "$GPGGA"):
-	#     print(f'This is GPGGA')
-	#     print(parse_outp)
-	#     north = min2dec(parse_outp[0][2])
-	#     west = min2dec(parse_outp[0][4])
-	#     print(f'North is {north}')
-	#     print(f'West is {west}')
-
-	return 'North is' + north + 'West is' + west
-
-
-# if __name__ == '__main__':
-# 	app.run()
