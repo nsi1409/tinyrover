@@ -1,7 +1,5 @@
-from flask import Flask
 import time
 import serial
-import csv
 import sys
 import os
 import port_grep
@@ -22,9 +20,6 @@ def parse():
 		print('reading loop fail, retrying')
 		return "Failed"
 
-
-app = Flask(__name__)
-
 def min2dec(inpt):
 	if (inpt == ''):
 		return "No"
@@ -33,8 +28,7 @@ def min2dec(inpt):
 		outp = (finpt // 100) + ((finpt % 100) / 60)
 		return outp
 
-
-def returnCord():
+while (1):
 	parse_outp = parse()
 	if (parse_outp == [[]]):
 		return
@@ -47,7 +41,3 @@ def returnCord():
 		print(f'North is {north}')
 		print(f'West is {west}')
 		send_kv('gps', [north, west])
-
-
-while (1):
-	returnCord()
