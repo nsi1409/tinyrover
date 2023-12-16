@@ -69,8 +69,6 @@
 
 
     <script src="https://threejs.org/build/three.js"></script>
-    <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://threejs.org/examples/js/controls/TransformControls.js"></script>
     <script>
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -79,6 +77,17 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
+        const quaternion = new THREE.Quaternion();
+        var brown;
+        fetch(`http://127.0.0.1:5000/brown`, {
+            }).then((response) => {
+                console.log(response);
+                return response.json();
+            }).then((data) => {
+                console.log(data);
+                brown = data;
+            })
+        quaternion.setFromAxisAngle(new THREE.Vector3(brown[0], brown[1], brown[2]), Math.PI / 2);
 
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -89,8 +98,7 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
+            cube.applyQuaternion(quaternion);
             renderer.render(scene, camera);
         }
 

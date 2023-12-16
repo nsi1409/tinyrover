@@ -13,9 +13,7 @@ gps = serial.Serial(port, 4800, timeout=None)
 def parse():
 	try:
 		inpt = gps.readline()
-		# print(inpt)
 		str_inpt = inpt.decode('utf-8')
-		# print(str_inpt)
 		return str_inpt.split(",")
 	except Exception as exc:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
