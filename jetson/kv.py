@@ -9,6 +9,14 @@ state = {}
 def send_kv(k, v):
 	r = requests.put('http://127.0.0.1:5000/data', json={'k': k, 'v': v})
 
+def grab_kv(k):
+	r = requests.get('http://127.0.0.1:5000/data', json={'k': k})
+	return r.json()
+
+def grab_brown():
+	r = requests.get('http://127.0.0.1:5000/brown')
+	return r.json()
+
 @app.route('/data', methods=['GET', 'POST', 'PUT'])
 def data():
 	data = request.get_json()
@@ -27,16 +35,18 @@ def data():
 			return ["no value"], 200
 
 rate = 0.2
-v = [1, 0, 0]
+v = [1, 0, 0, 0]
 @app.route('/brown')
 def brownian():
 	v[0] -= rate * np.random.randn()
 	v[1] -= rate * np.random.randn()
 	v[2] -= rate * np.random.randn()
-	magnitude = math.dist(v, [0, 0, 0])
+	v[3] -= rate * np.random.randn()
+	magnitude = math.dist(v, [0, 0, 0, 0])
 	v[0] /= magnitude
 	v[1] /= magnitude
 	v[2] /= magnitude
+	v[3] /= magnitude
 	return v
 
 @app.route('/')
