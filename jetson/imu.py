@@ -26,7 +26,7 @@ while True:
 				qr = struct.unpack("<hhhh", s[1:9])
 				q = tuple(el / 32768 for el in qr)
 				send_kv('quat', q)
-				# print(q)
+				print(q)
 			case 87: #latitude and longitude
 				(longu, longl, latu, latl) = struct.unpack("<hhhh", s[1:9])
 				# send_kv('lat long', l)

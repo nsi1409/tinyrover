@@ -2,6 +2,7 @@ from flask import Flask, request
 import numpy as np
 import math
 import requests
+import time
 
 app = Flask(__name__)
 state = {}
@@ -47,6 +48,20 @@ def brownian():
 	v[1] /= magnitude
 	v[2] /= magnitude
 	v[3] /= magnitude
+	return v
+
+@app.route('/brownsleep')
+def browniansleep():
+	v[0] -= rate * np.random.randn()
+	v[1] -= rate * np.random.randn()
+	v[2] -= rate * np.random.randn()
+	v[3] -= rate * np.random.randn()
+	magnitude = math.dist(v, [0, 0, 0, 0])
+	v[0] /= magnitude
+	v[1] /= magnitude
+	v[2] /= magnitude
+	v[3] /= magnitude
+	time.sleep(0.25)
 	return v
 
 @app.route('/')
