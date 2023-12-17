@@ -70,65 +70,47 @@
 
     <script src="https://threejs.org/build/three.js"></script>
     <script>
+		quaternion = new THREE.Quaternion(1, 0, 0, 0);
+		function fetchLoop() {
+			//fetch(`/data`, {
+        	fetch(`/brown`, {
+					method: 'POST',
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ "k": "quat" })
+				}).then((response) => {
+					console.log(response);
+					return response.json();
+				}).then((data) => {
+					console.log(data);
+					if(data.length == 4) {
+						quaternion = new THREE.Quaternion(data[0], data[1], data[2], data[3]);
+					}
+				})
+		}
+		setInterval(fetchLoop, 400);
+
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        fetch(`http://127.0.0.1:5000/data`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ "k": "quat" })
-            }).then((response) => {
-                console.log(response);
-                return response.json();
-            }).then((data) => {
-                console.log(data);
-                 quaternion = new THREE.Quaternion(data[0], data[1], data[2], data[3]);
-            })
-
-        // fetch(`http://127.0.0.1:5000/brownsleep`, {
-        //     }).then((response) => {
-        //         console.log(response);
-        //         return response.json();
-        //     }).then((data) => {
-        //         console.log(data);
-        //         quaternion = new THREE.Quaternion(data[0], data[1], data[2], data[3]);
-        //     })
-
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         const cube = new THREE.Mesh(geometry, material);
         scene.add(cube);
-
         camera.position.z = 5;
 
         function animate() {
             requestAnimationFrame(animate);
-            // await sleep(100);
-            // var response = await fetch(`http://127.0.0.1:5000/brown`);
-            // var res = await response.json();
-            // quaternion = new THREE.Quaternion(response[0], response[1], response[2], response[3]);
-            
+            //console.log(quaternion);
             cube.applyQuaternion(quaternion);
             renderer.render(scene, camera);
         }
 
-        // requestAnimationFrame(animate);
-        // cube.applyQuaternion(quaternion);
-        // renderer.render(scene, camera);
-        // while(1) {
-            animate();
-        // }
+        animate();
     
     </script>
     

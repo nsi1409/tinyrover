@@ -37,7 +37,7 @@ def data():
 
 rate = 0.2
 v = [1, 0, 0, 0]
-@app.route('/brown')
+@app.route('/brown', methods=['GET', 'PUT', 'POST'])
 def brownian():
 	v[0] -= rate * np.random.randn()
 	v[1] -= rate * np.random.randn()
@@ -50,7 +50,7 @@ def brownian():
 	v[3] /= magnitude
 	return v
 
-@app.route('/brownsleep')
+@app.route('/brownsleep', methods=['GET', 'PUT', 'POST'])
 def browniansleep():
 	v[0] -= rate * np.random.randn()
 	v[1] -= rate * np.random.randn()
