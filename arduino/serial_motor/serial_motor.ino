@@ -42,7 +42,11 @@ void setup() {
 
 	Serial.begin(9600);
 	Serial.setTimeout(100); // in milliseconds
-	rightFrontServo.attach(3, MIN_PULSE, MAX_PULSE);
+	// rightFrontServo.attach(3);
+	// leftFrontServo.attach(5);
+	// leftBackServo.attach(6);
+	// rightBackServo.attach(9);
+  	rightFrontServo.attach(3, MIN_PULSE, MAX_PULSE);
 	leftFrontServo.attach(5, MIN_PULSE, MAX_PULSE);
 	leftBackServo.attach(6, MIN_PULSE, MAX_PULSE);
 	rightBackServo.attach(9, MIN_PULSE, MAX_PULSE);
@@ -62,16 +66,23 @@ void setup() {
 void moveLeftWheel(int speed) {
 	leftFrontServo.writeMicroseconds(speed);
 	leftBackServo.writeMicroseconds(speed);
+  // leftFrontServo.write(speed);
+	// leftBackServo.write(speed);
 }
 
 int convertSpeedToProperRange(uint8_t speed) {
 	int converted = ((float)speed) / 180 * (MAX_PULSE - MIN_PULSE);
 	int result = converted + MIN_PULSE;
 	return result;
+
+  // return speed;
 }
 
 void moveRightWheel(int speed) {
-	rightFrontServo.writeMicroseconds(speed);
+	// rightFrontServo.write(speed);
+	// rightBackServo.write(speed);
+  
+  	rightFrontServo.writeMicroseconds(speed);
 	rightBackServo.writeMicroseconds(speed);
 }
 
