@@ -1,11 +1,25 @@
 from flask import Flask, request
 import numpy as np
 import math
+import requests
+import time
+from flask import send_from_directory
 
 app = Flask(__name__)
 state = {}
 
-@app.route('/data', methods=['GET', 'PUT'])
+def send_kv(k, v):
+	r = requests.put('http://127.0.0.1:5000/data', json={'k': k, 'v': v})
+
+def grab_kv(k):
+	r = requests.get('http://127.0.0.1:5000/data', json={'k': k})
+	return r.json()
+
+def grab_brown():
+	r = requests.get('http://127.0.0.1:5000/brown')
+	return r.json()
+
+@app.route('/data', methods=['GET', 'POST', 'PUT'])
 def data():
 	data = request.get_json()
 	if request.method == 'PUT':
@@ -15,21 +29,45 @@ def data():
 		return 'ok', 200
 	else:
 		k = data['k']
-		v = state[k]
-		return {'v': v}, 200
+		# v = state[k]
+		if k in state:
+			v = state[k]
+			return {'v': v}, 200
+		else:
+			return ["no value"], 200
 
 rate = 0.2
-v = [1, 0, 0]
-@app.route('/brown')
+v = [1, 0, 0, 0]
+@app.route('/brown', methods=['GET', 'PUT', 'POST'])
 def brownian():
 	v[0] -= rate * np.random.randn()
 	v[1] -= rate * np.random.randn()
 	v[2] -= rate * np.random.randn()
-	magnitude = math.dist(v, [0, 0, 0])
+	v[3] -= rate * np.random.randn()
+	magnitude = math.dist(v, [0, 0, 0, 0])
 	v[0] /= magnitude
 	v[1] /= magnitude
 	v[2] /= magnitude
+	v[3] /= magnitude
 	return v
+
+@app.route('/brownsleep', methods=['GET', 'PUT', 'POST'])
+def browniansleep():
+	v[0] -= rate * np.random.randn()
+	v[1] -= rate * np.random.randn()
+	v[2] -= rate * np.random.randn()
+	v[3] -= rate * np.random.randn()
+	magnitude = math.dist(v, [0, 0, 0, 0])
+	v[0] /= magnitude
+	v[1] /= magnitude
+	v[2] /= magnitude
+	v[3] /= magnitude
+	time.sleep(0.25)
+	return v
+
+@app.route('/frontend/<path>')
+def send_report(path):
+    return send_from_directory('frontend', path)
 
 if __name__ == '__main__':
 	app.run()

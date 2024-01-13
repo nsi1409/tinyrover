@@ -4,16 +4,15 @@ import serial
 import struct
 import port_grep
 from serial import *
-import requests
+from kv import send_kv
 
 port = port_grep.find(6790)
 usb = Serial(port, 9600, timeout=1)
 
-def send_kv(k, v):
-	r = requests.put('http://127.0.0.1:5000/data', json={'k': k, 'v': v})
-
 while True:
 	s = usb.read_until(b'U')
+	print(s)
+	print(s[0])
 	try:
 		match s[0]:
 			case 83: #euler angles
@@ -22,12 +21,20 @@ while True:
 				pitch = (pitchr / 32768) * 180
 				yaw = (yawr / 32768) * 180 + 180
 				send_kv('yaw', yaw)
-				print(yaw)
+				send_kv('roll', roll)
+				send_kv('pitch', pitch)
+				send_kv('euler', [roll, pitch, yaw])
+				# print(yaw)
 			case 89: #quaternion
 				qr = struct.unpack("<hhhh", s[1:9])
 				q = tuple(el / 32768 for el in qr)
 				send_kv('quat', q)
 				print(q)
+			case 87: #latitude and longitude
+				(longu, longl, latu, latl) = struct.unpack("<hhhh", s[1:9])
+				# send_kv('lat long', l)
+				print(latu)
+			# case ground speed for next time
 			case _: #default case
 				pass
 				#print(f'uncaught {s[0]}: {s}')
