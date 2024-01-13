@@ -3,6 +3,7 @@ import numpy as np
 import math
 import requests
 import time
+from flask import send_from_directory
 
 app = Flask(__name__)
 state = {}
@@ -64,11 +65,9 @@ def browniansleep():
 	time.sleep(0.25)
 	return v
 
-@app.route('/')
-def slash():
-	with open("kv.html") as f:
-		html = f.read()
-	return html, 200
+@app.route('/frontend/<path>')
+def send_report(path):
+    return send_from_directory('frontend', path)
 
 if __name__ == '__main__':
 	app.run()
