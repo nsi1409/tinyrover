@@ -7,7 +7,7 @@ import struct
 
 HOST = ''
 PORT = 8089
-cap=cv2.VideoCapture(0)
+cap=cv2.VideoCapture(2)
 
 while True:
     try:
