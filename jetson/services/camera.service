@@ -1,0 +1,12 @@
+[Unit]
+Description=Publish camera data
+After=network.target
+
+[Service]
+User=rhit-rover1
+WorkingDirectory=/home/rhit-rover1/tinyrover/jetson/
+ExecStart=/usr/bin/python3 /home/rhit-rover1/tinyrover/jetson/pub_stream.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
