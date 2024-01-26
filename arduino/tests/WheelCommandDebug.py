@@ -10,7 +10,7 @@ import os
 # ser = serial.Serial('COM3', 9600, timeout=1) #Windows 
 ser = serial.Serial()
 ser.setDTR(False)
-ser.port = 'COM3'
+ser.port = 'COM4'
 ser.baudrate = 9600
 ser.timeout = 5
 ser.bytesize = serial.EIGHTBITS
