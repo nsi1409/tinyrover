@@ -1,28 +1,24 @@
-from flask import Flask
-# from turbo_flask import Turbo
 import time
 import serial
-import csv
 import sys
+import os
+import port_grep
+from kv import send_kv
 
+port = port_grep.find(1659)
+gps = serial.Serial(port, 4800, timeout=None)
 
 def parse():
-	gps = serial.Serial("COM8", 4800)
-	inpt = gps.readline()
-	csv_inpt = inpt.decode('utf-8').splitlines()
-	csv_parse = csv.reader(csv_inpt)
-	parse_outp = list(csv_parse)
-	return parse_outp
-
-
-app = Flask(__name__)
-# turbo = Turbo(app)
-# gps = serial.Serial("COM5", baudrate=4800, xonxoff=0,rtscts=0,bytesize=8,stopbits=1,parity=serial.PARITY_NONE)
-parse_outp = parse()
-
-north = 0
-west = 0
-
+	try:
+		inpt = gps.readline()
+		str_inpt = inpt.decode('utf-8')
+		return str_inpt.split(",")
+	except Exception as exc:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print(exc_type, fname, exc_tb.tb_lineno)
+		print('reading loop fail, retrying')
+		return "Failed"
 
 def min2dec(inpt):
 	if (inpt == ''):
@@ -32,43 +28,16 @@ def min2dec(inpt):
 		outp = (finpt // 100) + ((finpt % 100) / 60)
 		return outp
 
-
-def returnCord():
-	# print(parse_outp)
-	# print(f'Stuff{parse_outp[0][0]}')
+while (1):
+	parse_outp = parse()
 	if (parse_outp == [[]]):
-		return
-	elif (parse_outp[0][0] == "$GPGGA"):
-		# print(f'This is GPGGA')
-		north = min2dec(parse_outp[0][2])
-		west = min2dec(parse_outp[0][4])
-		# print(f'North is {north}')
-		# print(f'West is {west}')
+		break
+	elif (parse_outp[0] == "$GPGGA"):
+		north = min2dec(parse_outp[2])
+		west = min2dec(parse_outp[4])
 		if (north == "No" or west == "No"):
 			print(f'Lost Cords')
-			return
+			break
 		print(f'North is {north}')
 		print(f'West is {west}')
-
-
-while (1):
-	returnCord()
-	parse_outp = parse()
-	# time.sleep(1)
-
-
-@app.route('/gps', methods=['GET'])
-def trial():
-	# if(parse_outp[0][0] == "$GPGGA"):
-	#     print(f'This is GPGGA')
-	#     print(parse_outp)
-	#     north = min2dec(parse_outp[0][2])
-	#     west = min2dec(parse_outp[0][4])
-	#     print(f'North is {north}')
-	#     print(f'West is {west}')
-
-	return 'North is' + north + 'West is' + west
-
-
-if __name__ == '__main__':
-	app.run()
+		send_kv('gps', [north, west])

@@ -3,10 +3,16 @@ import socket
 import struct
 import cv2
 
-s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-s.connect(('127.0.0.1', 8089))
-data = b''
-payload_size = struct.calcsize("L")
+while True:
+    try:
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.connect(('192.168.0.12', 8089))
+        #s.connect(('127.0.0.1', 8089))
+        data = b''
+        payload_size = struct.calcsize("L")
+        break
+    except:
+        print('failed to connect')
 
 while True:
     while len(data) < payload_size:
