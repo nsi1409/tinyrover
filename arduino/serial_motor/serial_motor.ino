@@ -152,9 +152,9 @@ void resetThrottleRangeForMotors(){
 
 void moveLeftWheel(int speed) {
   //Flip orientation as we consider the right wheels the dominant speed
-  // int difference_from_middle = speed - OFF_PULSE;
-  // int corrected_speed = speed - (2*difference_from_middle);
-  int corrected_speed=speed;
+  int difference_from_middle = speed - OFF_PULSE;
+  int corrected_speed = speed - (2*difference_from_middle);
+  // int corrected_speed=speed;
 
 
 	leftFrontServo.writeMicroseconds(corrected_speed);

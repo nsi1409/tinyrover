@@ -38,10 +38,10 @@ while True:
             #Increase or decrease speed multiplier if a shoulder button is hit
             if event.button == 4:
                 if speedMultiplier > 1:
-                    speedMultiplier -= 3
+                    speedMultiplier -= 2 # Was originally -3 but Andrew changed to -2 cuz motors zooming
             if event.button == 5:
                 if speedMultiplier < 10:
-                    speedMultiplier += 3
+                    speedMultiplier += 2 # Was originally 3 but Andrew changed to 2 cuz motors zooming
         if event.type == JOYBUTTONUP:
             print(event)
         if event.type == JOYAXISMOTION:
@@ -58,12 +58,12 @@ while True:
             rightSpeed = int(motion[3]*speedMultiplier*9+90)
             # print(leftSpeed)
             # print(rightSpeed)
-            if motion[1] != 0 and motion[3] != 0:
-                wc.send2wheels_both(leftSpeed,rightSpeed)
-            elif motion[1] != 0:
-                wc.send2wheels_left(leftSpeed)
-            elif motion[3] != 0:
-                wc.send2wheels_right(rightSpeed)
+            # if motion[1] != 0 and motion[3] != 0: # ANDREW TESTING ALWAYS SENDING THING, BELOW WAS INDENTED
+            wc.send2wheels_both(leftSpeed,rightSpeed)
+            # elif motion[1] != 0:
+                # wc.send2wheels_left(leftSpeed)
+            # elif motion[3] != 0:
+                # wc.send2wheels_right(rightSpeed)
 
         if event.type == JOYHATMOTION:
             print(event)
@@ -81,4 +81,4 @@ while True:
                 pygame.quit()
                 sys.exit()
 
-    # clock.tick(60)
+    clock.tick(10)

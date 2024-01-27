@@ -7,3 +7,5 @@ pygame
 pyrealsense2
 pyserial
 requests
+simple-pid
+opencv-contrib-python==4.6.0.66
