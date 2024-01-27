@@ -22,9 +22,17 @@ while(True):
 	distortion_matrix = np.array([[-1.161702, 1.332406, -0.043440, 0.095651, 0.0]])
 
 	marker_size = 100
-	rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, marker_size, camera_matrix, distortion_matrix)
+	# rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, marker_size, camera_matrix, distortion_matrix)
+	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_1000)
+	arucoParameters = aruco.DetectorParameters_create()
 
-	print(tvec)
+	corners, ids, rejectedImgPoints = aruco.detectMarkers(
+        gray, aruco_dict, parameters=arucoParameters)
+
+
+	# print(tvec)
+	print(corners)
 
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
