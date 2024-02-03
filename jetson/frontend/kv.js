@@ -1,6 +1,6 @@
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
-fetch(`http://127.0.0.1:5000/data`, {
+fetch(`/data`, {
     method: 'POST',
     headers: {
         'Accept': 'application/json',
@@ -15,7 +15,7 @@ fetch(`http://127.0.0.1:5000/data`, {
     $("#gps").innerHTML = "GPS: " + data["v"];
 })
 
-fetch(`http://127.0.0.1:5000/data`, {
+fetch(`/data`, {
     method: 'POST',
     headers: {
         'Accept': 'application/json',
@@ -30,7 +30,7 @@ fetch(`http://127.0.0.1:5000/data`, {
     $("#quat").innerHTML = "Quaternion: " + data["v"];
 })
 
-fetch(`http://127.0.0.1:5000/data`, {
+fetch(`/data`, {
     method: 'POST',
     headers: {
         'Accept': 'application/json',
