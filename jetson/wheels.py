@@ -74,15 +74,15 @@ except Exception as e:
 	err = e
 
 	@app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
-	def no_connect_call():
+	def no_connect_both():
 		return no_connect()
 
 	@app.route('/wheel_command_right', methods=['GET', 'POST', 'PUT'])
-	def no_connect_call():
+	def no_connect_right():
 		return no_connect()
 
 	@app.route('/wheel_command_left', methods=['GET', 'POST', 'PUT'])
-	def no_connect_call():
+	def no_connect_left():
 		return no_connect()
 
 
