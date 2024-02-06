@@ -54,4 +54,4 @@ function fetchLoop() {
 		changeCenter(lat, lon);
 	})
 }
-setInterval(fetchLoop, 400);
+//setInterval(fetchLoop, 400);
