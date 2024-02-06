@@ -16,6 +16,8 @@ while True:
         s.listen(10)
         conn, addr = s.accept()
         break
+    except KeyboardInterrupt:
+        exit()
     except:
         print('failed to connect')
 
