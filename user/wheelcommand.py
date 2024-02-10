@@ -17,7 +17,7 @@ def send2wheels_right(r):
 
 if __name__ == "__main__":
 	while True:
-		send2wheels_both(90, 90)
-		time.sleep(5)
 		send2wheels_both(150, 150)
 		time.sleep(5)
+		send2wheels_both(90, 90)
+		time.sleep(20)
