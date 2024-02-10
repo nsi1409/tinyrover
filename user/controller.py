@@ -3,6 +3,7 @@ import pygame
 import os
 import wheelcommand as wc
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1" #This allows the window to be unselected but still get controller input
+import requests
 
 from pygame.locals import *
 pygame.init()
@@ -54,19 +55,20 @@ while True:
                 motion[event.axis-1] = event.value
             # print(speedMultiplier)
             # print(motion)
-            leftSpeed = int(-motion[1]*speedMultiplier*9+90)
-            rightSpeed = int(motion[3]*speedMultiplier*9+90)
-            # print(leftSpeed)
-            # print(rightSpeed)
+            leftSpeed = int((-motion[1]*speedMultiplier*90)+90)
+            rightSpeed = int((-motion[3]*speedMultiplier*90)+90)
+            print(leftSpeed)
+            print(rightSpeed)
+            req = requests.get('http://192.168.0.12:8080/wheel_command_both', json={"left": leftSpeed, "right": rightSpeed})
             # if motion[1] != 0 and motion[3] != 0: # ANDREW TESTING ALWAYS SENDING THING, BELOW WAS INDENTED
-            wc.send2wheels_both(leftSpeed,rightSpeed)
+            # wc.send2wheels_both(leftSpeed,rightSpeed)
             # elif motion[1] != 0:
                 # wc.send2wheels_left(leftSpeed)
             # elif motion[3] != 0:
                 # wc.send2wheels_right(rightSpeed)
 
-        if event.type == JOYHATMOTION:
-            print(event)
+        # if event.type == JOYHATMOTION:
+            # print(event)
         if event.type == JOYDEVICEADDED:
             joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
             for joystick in joysticks:
