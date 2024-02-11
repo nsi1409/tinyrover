@@ -5,3 +5,8 @@
 #magnitude {
     appearance: slider-vertical;
 }
+#trim_div {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
