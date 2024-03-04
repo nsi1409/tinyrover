@@ -1,4 +1,5 @@
 import requests
+import time
 
 def send2wheels_both(l, r):
 	req = requests.get('http://192.168.0.12:8080/wheel_command_both', json={
@@ -15,4 +16,8 @@ def send2wheels_right(r):
 	
 
 if __name__ == "__main__":
-	send2wheels_both(4, 7)
+	while True:
+		send2wheels_both(150, 150)
+		time.sleep(5)
+		send2wheels_both(90, 90)
+		time.sleep(20)

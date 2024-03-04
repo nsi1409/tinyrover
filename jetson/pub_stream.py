@@ -7,7 +7,7 @@ import struct
 
 HOST = ''
 PORT = 8089
-cap=cv2.VideoCapture(0)
+cap=cv2.VideoCapture(2)
 
 while True:
     try:
@@ -16,6 +16,8 @@ while True:
         s.listen(10)
         conn, addr = s.accept()
         break
+    except KeyboardInterrupt:
+        exit()
     except:
         print('failed to connect')
 

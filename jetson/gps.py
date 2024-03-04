@@ -31,13 +31,13 @@ def min2dec(inpt):
 while (1):
 	parse_outp = parse()
 	if (parse_outp == [[]]):
-		return
+		break
 	elif (parse_outp[0] == "$GPGGA"):
 		north = min2dec(parse_outp[2])
 		west = min2dec(parse_outp[4])
 		if (north == "No" or west == "No"):
 			print(f'Lost Cords')
-			return
+			break
 		print(f'North is {north}')
 		print(f'West is {west}')
 		send_kv('gps', [north, west])

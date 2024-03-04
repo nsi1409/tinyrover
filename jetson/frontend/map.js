@@ -24,3 +24,34 @@ function changeCenter(lat, lon) {
 	})
 	map.setView(new_view)
 }
+
+function fetchLoop() {
+	//fetch(`/data`, {
+	fetch(`/data`, {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ "k": "gps" })
+	}).then((response) => {
+		console.log(response);
+		return response.json();
+	}).then((data) => {
+		console.log(data);
+		let lat = "";
+		let lon = "";
+		let i = 1;
+		while (data[i] != ",") {
+			lat += data[i];
+			i++;
+		}
+		i++;
+		while (data[i] != "]") {
+			lon += data[i];
+			i++;
+		}
+		changeCenter(lat, lon);
+	})
+}
+//setInterval(fetchLoop, 400);

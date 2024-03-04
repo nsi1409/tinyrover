@@ -21,6 +21,9 @@ while True:
 				pitch = (pitchr / 32768) * 180
 				yaw = (yawr / 32768) * 180 + 180
 				send_kv('yaw', yaw)
+				send_kv('roll', roll)
+				send_kv('pitch', pitch)
+				send_kv('euler', [roll, pitch, yaw])
 				# print(yaw)
 			case 89: #quaternion
 				qr = struct.unpack("<hhhh", s[1:9])

@@ -1,0 +1,12 @@
+#text {
+    margin: 10rem;
+    padding: 10rem;
+}
+#magnitude {
+    appearance: slider-vertical;
+}
+#trim_div {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}

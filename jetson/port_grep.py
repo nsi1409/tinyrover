@@ -4,10 +4,10 @@ import serial.tools.list_ports
 def list_all():
 	ports = serial.tools.list_ports.comports()
 	for port in ports:
-		#print(port)
-		#print(port.hwid)
+		print(port)
+		print(port.hwid)
 		print(port.vid)
-		#print(port.manufacturer)
+		print(port.manufacturer)
 
 def find(vid):
 	ports = serial.tools.list_ports.comports()
@@ -19,4 +19,3 @@ def find(vid):
 
 if __name__ == '__main__':
 	list_all()
-	print(find(6790))
