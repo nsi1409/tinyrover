@@ -8,10 +8,12 @@ from pygame.locals import *
 #Entering a number of milliseconds should affect th blinking rate of the teensy
 #Upload the corresponding Arduino code on the teensy befor launching this script.
 
+
 pygame.init()
 pygame.display.set_caption('game base')
 screen = pygame.display.set_mode((1, 1), pygame.NOFRAME)
 clock = pygame.time.Clock()
+joystick = pygame.joystick.Joystick(0)
 
 ser = serial.Serial()
 ser.setDTR(False)
@@ -37,33 +39,42 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == KEYDOWN:
-            value = "Not an arm key"
-            if event.key == K_1:
-                value  = write_read("11") #joint 1 forward
-            if event.key == K_q:
-                value  = write_read("10") #joint 1 backward
-            if event.key == K_2:
-                value  = write_read("21") #joint 2 forward
-            if event.key == K_w:
-                value  = write_read("20") #joint 2 backward
-            if event.key == K_3:
-                value  = write_read("31") #joint 3 forward
-            if event.key == K_e:
-                value  = write_read("30") #joint 3 backward
-            if event.key == K_4:
-                value  = write_read("41") #joint 4 forward
-            if event.key == K_r:
-                value  = write_read("40") #joint 4 backward
-            if event.key == K_5:
-                value  = write_read("51") #joint 5 forward
-            if event.key == K_t:
-                value  = write_read("50") #joint 5 backward
-            if event.key == K_6:
-                value  = write_read("61") #joint 6 forward
-            if event.key == K_y:
-                value  = write_read("60") #joint 6 backward
-            print(value)
-        if event.type == KEYUP:
-            value  = write_read("0")
-            print("UPPP")
+        # if event.type == KEYDOWN:
+        #     value = "Not an arm key"
+        #     if event.key == K_1:
+        #         value  = write_read("11") #joint 1 forward
+        #     if event.key == K_q:
+        #         value  = write_read("10") #joint 1 backward
+        #     if event.key == K_2:
+        #         value  = write_read("21") #joint 2 forward
+        #     if event.key == K_w:
+        #         value  = write_read("20") #joint 2 backward
+        #     if event.key == K_3:
+        #         value  = write_read("31") #joint 3 forward
+        #     if event.key == K_e:
+        #         value  = write_read("30") #joint 3 backward
+        #     if event.key == K_4:
+        #         value  = write_read("41") #joint 4 forward
+        #     if event.key == K_r:
+        #         value  = write_read("40") #joint 4 backward
+        #     if event.key == K_5:
+        #         value  = write_read("51") #joint 5 forward
+        #     if event.key == K_t:
+        #         value  = write_read("50") #joint 5 backward
+            
+        #     print(value)
+        # if event.type == KEYUP:
+        #     value  = write_read("0")
+        #     print("UPPP")
+        # else:
+        #     print(joystick.get_button(0))
+
+    # if joystick.get_instance_id()==None:
+    # print(joystick.get_instance_id())
+    
+        if joystick.get_button(0) == 1: #A button
+            value  = write_read("61") #joint 6 forward
+        if joystick.get_button(1) == 1: #B button
+            value  = write_read("60") #joint 6 backward
+        if joystick.get_button(2) == 1: #X button until we have a better solution
+            value  = write_read("0") #joint 6 backward
