@@ -11,6 +11,8 @@ while True:
         data = b''
         payload_size = struct.calcsize("L")
         break
+    except KeyboardInterrupt:
+        exit()
     except:
         print('failed to connect')
 

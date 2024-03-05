@@ -12,7 +12,7 @@ fetch(`/data`, {
     return response.json();
 }).then((data) => {
     console.log(data);
-    $("#gps").innerHTML = data["v"];
+    $("#gps").innerHTML = "GPS: " + data["v"];
 })
 
 fetch(`/data`, {
@@ -27,7 +27,7 @@ fetch(`/data`, {
     return response.json();
 }).then((data) => {
     console.log(data);
-    $("#quat").innerHTML = data["v"];
+    $("#quat").innerHTML = "Quaternion: " + data["v"];
 })
 
 fetch(`/data`, {
@@ -42,7 +42,7 @@ fetch(`/data`, {
     return response.json();
 }).then((data) => {
     console.log(data);
-    $("#yaw").innerHTML = data["v"];
+    $("#yaw").innerHTML = "Yaw: " + data["v"];
 })
 
 quaternion = new THREE.Quaternion(1, 0, 0, 0);
@@ -65,7 +65,7 @@ function fetchLoop() {
         }
     })
 }
-setInterval(fetchLoop, 400);
+//setInterval(fetchLoop, 400);
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
