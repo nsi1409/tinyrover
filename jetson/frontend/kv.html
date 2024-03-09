@@ -18,8 +18,8 @@
 		<h1 id="title">KV</h1>
 		<label for="location">Location:</label>
 		<select id="location">
-			<option value="http://127.0.0.1">Local</option>
-			<option value="http://192.168.0.12">Remote</option>
+			<option value="http://127.0.0.1:5001">Local</option>
+			<option value="http://192.168.0.12:5001">Remote</option>
 		</select>
 		<p id="gps"></p>
 		<p id="quat"></p>
@@ -45,7 +45,11 @@
 
     <script src="https://threejs.org/build/three.js"></script>
 
-    <div tabindex="700" id="map" class="map"></div>
+	<div id="wrapper">
+		<div tabindex="700" id="map" class="map"></div>
+		<img src="frontend/nyomi_yaw.png" id="nyomi">
+	</div>
+    
     <link rel="stylesheet" href="frontend/kv.css"> 
     <link rel="stylesheet" href="frontend/ol.css"> 
     <link rel="stylesheet" href="frontend/map.css">
