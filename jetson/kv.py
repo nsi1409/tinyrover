@@ -9,14 +9,14 @@ app = Flask(__name__)
 state = {}
 
 def send_kv(k, v):
-	r = requests.put('http://127.0.0.1:5000/data', json={'k': k, 'v': v})
+	r = requests.put('http://127.0.0.1:5001/data', json={'k': k, 'v': v})
 
 def grab_kv(k):
-	r = requests.get('http://127.0.0.1:5000/data', json={'k': k})
+	r = requests.get('http://127.0.0.1:5001/data', json={'k': k})
 	return r.json()
 
 def grab_brown():
-	r = requests.get('http://127.0.0.1:5000/brown')
+	r = requests.get('http://127.0.0.1:5001/brown')
 	return r.json()
 
 @app.route('/data', methods=['GET', 'POST', 'PUT'])
@@ -72,6 +72,10 @@ def send_report(path):
 @app.route('/')
 def slash():
     return send_from_directory('frontend', 'kv.html')
+
+@app.route('/everything', methods=['GET', 'PUT', 'POST'])
+def everything():
+	return state, 200
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=5001, debug=True, threaded=False)
