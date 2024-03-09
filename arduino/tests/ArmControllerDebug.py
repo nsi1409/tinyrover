@@ -2,6 +2,7 @@ import pygame
 import serial
 import time
 from pygame.locals import *
+from inputs import get_gamepad
 
 #This code was formed according to this tutorial: https://projecthub.arduino.cc/ansh2919/serial-communication-between-python-and-arduino-663756
 #The purpose of this script is to verify serial communication from the computer to the teensy
@@ -17,7 +18,7 @@ joystick = pygame.joystick.Joystick(0)
 
 ser = serial.Serial()
 ser.setDTR(False)
-ser.port = 'COM5' #change this COM to match the one specified in Arduino
+ser.port = 'COM3' #change this COM to match the one specified in Arduino
 ser.baudrate = 9600 #This number should match the one specified in arduino
 ser.timeout = 1
 ser.bytesize = serial.EIGHTBITS
@@ -35,10 +36,43 @@ def write_read(x):
 
 while True:
     # num = input("Enter a number: ")
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+    events = get_gamepad()
+    for event in events:
+        print(event.code, event.state)
+        if event.code == 'BTN_TR' and event.state != 0: #A button
+            value  = write_read("61") #joint 6 forward
+        elif event.code == 'BTN_TL' and event.state != 0:
+            value  = write_read("60")
+        elif event.code == 'BTN_WEST' and event.state != 0:
+            value  = write_read("50")
+        elif event.code == 'BTN_EAST' and event.state != 0:
+            value  = write_read("51")
+        elif event.code == 'BTN_NORTH' and event.state != 0:
+            value  = write_read("40")
+        elif event.code == 'BTN_SOUTH' and event.state != 0:
+            value  = write_read("41")
+        elif event.code == 'ABS_RY' and event.state > 0:
+            value  = write_read("31")
+        elif event.code == 'ABS_RY' and event.state < 0:
+            value  = write_read("30")
+        elif event.code == 'ABS_Y' and event.state > 0:
+            value  = write_read("21")
+        elif event.code == 'ABS_Y' and event.state < 0:
+            value  = write_read("20")
+        elif event.code == 'ABS_HAT0X' and event.state > 0:
+            value  = write_read("11")
+        elif event.code == 'ABS_HAT0X' and event.state < 0:
+            value  = write_read("10")
+        elif event.code != 'SYN_REPORT' and event.state == 0:
+            value  = "0"
+            write_read(value)
+            # print(event.ev_type, event.code, event.state)
+
+    # for event in pygame.event.get():
+        # print("under the event")
+        # if event.type == QUIT:
+        #     pygame.quit()
+        #     sys.exit()
         # if event.type == KEYDOWN:
         #     value = "Not an arm key"
         #     if event.key == K_1:
@@ -72,9 +106,9 @@ while True:
     # if joystick.get_instance_id()==None:
     # print(joystick.get_instance_id())
     
-        if joystick.get_button(0) == 1: #A button
-            value  = write_read("61") #joint 6 forward
-        if joystick.get_button(1) == 1: #B button
-            value  = write_read("60") #joint 6 backward
-        if joystick.get_button(2) == 1: #X button until we have a better solution
-            value  = write_read("0") #joint 6 backward
+        # if joystick.get_button(0) == 1: #A button
+        #     value  = write_read("61") #joint 6 forward
+        # if joystick.get_button(1) == 1: #B button
+        #     value  = write_read("60") #joint 6 backward
+        # if joystick.get_button(2) == 1: #X button until we have a better solution
+        #     value  = write_read("0") #joint 6 backward
