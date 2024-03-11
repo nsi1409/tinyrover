@@ -211,30 +211,6 @@ void updateMotors(){
 }
 
 void loop() {
-	// THIS IS HARDWARE DEPENDENT FOR THE SPEED CHANGE UNLESS A TIMER IS ADDED
-	// if (updateSpeedTimer > 1000) {
-	// 	if (leftCurrentSpeed != leftTargetSpeed) {
-	// 		if (leftCurrentSpeed < leftTargetSpeed) {
-	// 			leftCurrentSpeed = leftCurrentSpeed + 1;
-	// 		} else {
-	// 			leftCurrentSpeed = leftCurrentSpeed - 1;
-	// 		}
-	// 		moveLeftWheel(leftCurrentSpeed);
-	// 		//
-	// 	}
-
-	// 	if (rightCurrentSpeed != rightTargetSpeed) {
-	// 		if (rightCurrentSpeed < rightTargetSpeed) {
-	// 			rightCurrentSpeed = rightCurrentSpeed + 1;
-	// 		} else {
-	// 			rightCurrentSpeed = rightCurrentSpeed - 1;
-	// 		}
-	// 		moveRightWheel(rightCurrentSpeed);
-	// 	}
-	// 	updateSpeedTimer = 0;
-	// }
-	// updateSpeedTimer = updateSpeedTimer + 1;
-
 	if (Serial.available() > 0) {
 		uint8_t opBuffer[opCodeSize];
 		Serial.readBytes(
