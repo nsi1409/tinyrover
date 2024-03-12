@@ -26,8 +26,10 @@ while True:
 				send_kv('euler', [roll, pitch, yaw])
 				# print(yaw)
 			case 84:
-				(magx, magy, magz) = struct.unpack("<HHH", s[1:7])
-				scuffed_yaw = math.atan2(magy, magx)
+				(magx, magy, magz) = struct.unpack("<hhh", s[1:7])
+				rectifiedx = magx+5000
+				rectifiedy = magy
+				scuffed_yaw = math.atan2(rectifiedy, rectifiedx)
 				print(scuffed_yaw)
 				# print("magnetic: " + str(s))
 				# print(str(magx) + " " + str(magy) + " " + str(magz))
