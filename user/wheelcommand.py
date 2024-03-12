@@ -26,8 +26,10 @@ def set_active_ip(rover_ip):
 	active_ip = rover_ip
 
 if __name__ == "__main__":
+	set_active_ip(default_rovernet_ip)
 	while True:
-		send2wheels_both(150, 150)
-		time.sleep(5)
+		# send2wheels_both(120, 120)
+		# time.sleep(2)
+		# send2wheels_both(50, 50)
+		# time.sleep(2)
 		send2wheels_both(90, 90)
-		time.sleep(20)
