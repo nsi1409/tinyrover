@@ -6,9 +6,16 @@ import argparse
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1" #This allows the window to be unselected but still get controller input
 import requests
 
+import threading
 
 default_antenna_ip = "192.168.1.10" # This may change over time
 default_rovernet_ip = "192.168.0.12" # This may change over time
+
+# def printit():
+#   threading.Timer(5.0, printit).start()
+#   print "Hello, World!"
+
+# printit()
 
 from pygame.locals import *
 pygame.init()
@@ -25,6 +32,16 @@ motion = [0, 0, 0, 0]
 
 speedMultiplier = 1
 
+leftSpeed = 90
+rightSpeed = 90
+
+def updateWheels():
+    global leftSpeed
+    global rightSpeed
+    wc.send2wheels_both(leftSpeed, rightSpeed)
+    threading.Timer(0.1, updateWheels).start()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument("--indoor",action='store_true')
@@ -35,6 +52,8 @@ if __name__ == "__main__":
     else:
         wc.set_active_ip(default_antenna_ip)
         print("Outdoor mode")
+
+    updateWheels()
 
     while True:
         #This prevents minimal/unintended input from moving the rover
@@ -70,21 +89,11 @@ if __name__ == "__main__":
                     motion[event.axis-1] = event.value
                 # print(speedMultiplier)
                 # print(motion)
-                leftSpeed = int((-motion[1]*speedMultiplier*90)+90)
-                rightSpeed = int((-motion[3]*speedMultiplier*90)+90)
+                leftSpeed = int((-motion[1]*speedMultiplier*9)+90)
+                rightSpeed = int((-motion[3]*speedMultiplier*9)+90)
                 print(leftSpeed)
                 print(rightSpeed)
-                # req = requests.get('http://192.168.0.12:8080/wheel_command_both', json={"left": leftSpeed, "right": rightSpeed})
-                wc.send2wheels_both(leftSpeed, rightSpeed)
-                # if motion[1] != 0 and motion[3] != 0: # ANDREW TESTING ALWAYS SENDING THING, BELOW WAS INDENTED
-                # wc.send2wheels_both(leftSpeed,rightSpeed)
-                # elif motion[1] != 0:
-                    # wc.send2wheels_left(leftSpeed)
-                # elif motion[3] != 0:
-                    # wc.send2wheels_right(rightSpeed)
 
-            # if event.type == JOYHATMOTION:
-                # print(event)
             if event.type == JOYDEVICEADDED:
                 joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
                 for joystick in joysticks:
@@ -99,4 +108,4 @@ if __name__ == "__main__":
                     pygame.quit()
                     sys.exit()
 
-        clock.tick(10)
+        # clock.tick(10)
