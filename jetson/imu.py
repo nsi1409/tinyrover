@@ -9,6 +9,16 @@ from kv import send_kv
 port = port_grep.find(6790)
 usb = Serial(port, 9600, timeout=1)
 
+with open('calibration/imu_cal.json', 'r') as file:
+	cal_info = eval(file.read())
+	rangeX = cal_info["maxX"] - cal_info["minX"]
+	rangeY = cal_info["maxY"] - cal_info["minY"]
+	scaleX = 10000/rangeX
+	scaleY = 10000/rangeY
+	avgX = (cal_info["maxX"] + cal_info["minX"])/2
+	avgY = (cal_info["maxY"] + cal_info["minY"])/2
+	print(cal_info)
+
 while True:
 	s = usb.read_until(b'U')
 	# print(s)
@@ -27,10 +37,13 @@ while True:
 				# print(yaw)
 			case 84:
 				(magx, magy, magz) = struct.unpack("<hhh", s[1:7])
-				rectifiedx = magx+5000
-				rectifiedy = magy
+				rectifiedx = scaleX * (magx - avgX)
+				rectifiedy = scaleY * (magy - avgY)
+				# rectifiedx = magx+5000
+				# rectifiedy = magy
 				scuffed_yaw = math.atan2(rectifiedy, rectifiedx)
 				print(scuffed_yaw)
+				send_kv('scuffed_yaw', scuffed_yaw)
 				# print("magnetic: " + str(s))
 				# print(str(magx) + " " + str(magy) + " " + str(magz))
 			case 89: #quaternion

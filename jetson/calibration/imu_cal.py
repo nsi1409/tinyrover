@@ -9,6 +9,7 @@ import port_grep
 from serial import *
 from kv import send_kv
 import signal
+import json
 
 port = port_grep.find(6790)
 usb = Serial(port, 9600, timeout=1)
@@ -20,9 +21,9 @@ maxY = -math.inf
 
 def signal_handler(sig, frame):
 	print("Final output: min x: " + str(minX) + ", max x: " + str(maxX) + ", min y: " + str(minY) + ", max y: " + str(maxY))
-	result = [maxX, maxY, minX, minY]
+	result = {"maxX": maxX, "maxY": maxY, "minX": minX, "minY": minY}
 	with open('imu_cal.json', 'w') as file:
-		file.write(str(result))
+		file.write(json.dumps(result))
 	sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)

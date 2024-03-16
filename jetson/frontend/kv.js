@@ -62,7 +62,7 @@ function fetchLoop() {
         }
         $("#gps").innerHTML = "GPS: " + data["gps"];
         $("#quat").innerHTML = "Quaternion: " + data["quat"];
-        yaw = data["yaw"]
+        yaw = data["scuffed_yaw"]
         $("#yaw").innerHTML = "Yaw: " + yaw;
         gpsData(state);
         $('#nyomi').style.transform = "rotate(" + (360 - yaw) + "deg)";
