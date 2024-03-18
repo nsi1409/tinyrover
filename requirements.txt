@@ -13,3 +13,4 @@ flask-cors
 laspy
 laspy[laszip]
 laspy[lazrs]
+numpy-stl
