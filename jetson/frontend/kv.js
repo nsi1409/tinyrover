@@ -64,8 +64,13 @@ function fetchLoop() {
         $("#quat").innerHTML = "Quaternion: " + data["quat"];
         yaw = data["scuffed_yaw"]
         $("#yaw").innerHTML = "Yaw: " + yaw;
-        gpsData(state);
-        $('#nyomi').style.transform = "rotate(" + (360 - yaw) + "deg)";
+        try {
+            gpsData(state);
+        }
+        catch {
+
+        }
+        $('#nyomi').style.transform = "rotate(" + (yaw * (180 / Math.PI)) + "deg)"; //west = 0, increases as it turns clockwise, north = 90
     }).catch(error => {
         console.log(error);
     })
