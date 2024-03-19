@@ -70,7 +70,7 @@ function fetchLoop() {
         catch {
 
         }
-        $('#nyomi').style.transform = "rotate(" + (yaw * (180 / Math.PI)) + "deg)"; //west = 0, increases as it turns clockwise, north = 90
+        $('#nyomi').style.transform = "rotate(" + ((yaw * (180 / Math.PI)) + 90) + "deg)"; //west = 0, increases as it turns clockwise, north = 90
     }).catch(error => {
         console.log(error);
     })
