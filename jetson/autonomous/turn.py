@@ -1,9 +1,11 @@
-from kv import grab_kv, grab_brown
 import time
 import random
 import math
+import sys
+sys.path.append("..")
+from kv import grab_kv, grab_brown
 
-def turn_rover(location, target):
+def turn(location, target):
 	left = 0
 	right = 0
 	while(True):
@@ -25,4 +27,4 @@ def turn_rover(location, target):
 if __name__ == '__main__':
 	location = [random.uniform(0, 60), random.uniform(0, 60)]
 	target = [random.uniform(0, 60), random.uniform(0, 60)]
-	turn_rover(location, target)
+	turn(location, target)
