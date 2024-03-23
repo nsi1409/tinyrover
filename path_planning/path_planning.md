@@ -10,4 +10,4 @@ Current factors affecting the edges include:
 - Distance
 - Terrain
 
-Weights will be manually set based on these factors
+Weights will be manually set based on these factors. The overarching goal is to create a weighted graph for Dijkstra's Algorithm
