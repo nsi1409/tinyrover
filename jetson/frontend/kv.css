@@ -1,6 +1,25 @@
-html,
-body, 
 #text {
     margin: 10rem;
     padding: 10rem;
+}
+#magnitude {
+    appearance: slider-vertical;
+}
+#trim_div {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+#wrapper {
+    position: relative;
+    width: 800px;
+    height: 800px;
+}
+#nyomi {
+    position: absolute;
+    top: 45%;
+    bottom: 50%;
+    left: 45%;
+    width: 80px;
+    height: 60px;
 }

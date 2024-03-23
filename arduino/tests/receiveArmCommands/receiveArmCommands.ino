@@ -3,23 +3,22 @@
 //with the same name.
 int interval;
 String User_Data;
-unsigned long previousMillis = 0;
-int ledState = LOW;
+int motorSpeed = 80;
 
-#define MotorSpeed6 41
-#define MotorDirection6 40
-#define MotorSpeed5 39
-#define MotorDirection5 38
+#define MotorSpeed6 A0
+#define MotorDirection6 13
+#define MotorSpeed5 A1
+#define MotorDirection5 16
 
-#define MotorSpeed4 0
-#define MotorDirection4 1
+#define MotorSpeed4 A11
+#define MotorDirection4 27
 #define MotorSpeed3 2
 #define MotorDirection3 3
 
 #define MotorSpeed2 23
 #define MotorDirection2 22
-#define MotorSpeed1 21
-#define MotorDirection1 20
+#define MotorSpeed1 A5
+#define MotorDirection1 18
 
 
 void setup() {
@@ -28,7 +27,6 @@ void setup() {
   pinMode(MotorSpeed6, OUTPUT);
   pinMode(MotorDirection5, OUTPUT);
   pinMode(MotorSpeed5, OUTPUT);
-  // 4 IS BROKEN FOR THE MOMENT
   pinMode(MotorDirection4, OUTPUT);
   pinMode(MotorSpeed4, OUTPUT);
   pinMode(MotorDirection3, OUTPUT);
@@ -53,54 +51,63 @@ void loop() {
   //For LED Blinking
   if(interval==11){//joint 1 forward
     digitalWrite(MotorDirection1, HIGH);
-    digitalWrite(MotorSpeed1, HIGH);
+    analogWrite(MotorSpeed1, motorSpeed);
   }else if(interval==10){//joint 1 backward
-    digitalWrite(MotorDirection1, HIGH);
-    digitalWrite(MotorSpeed1, LOW);
+    digitalWrite(MotorDirection1, LOW);
+    analogWrite(MotorSpeed1, motorSpeed);
   }else if(interval==21){//joint 2 forward
     digitalWrite(MotorDirection2, HIGH);
-    digitalWrite(MotorSpeed2, HIGH);
+    analogWrite(MotorSpeed2, motorSpeed);
 
   }else if(interval==20){//joint 2 backward
     digitalWrite(MotorDirection2, LOW);
-    digitalWrite(MotorSpeed2, HIGH);
+    analogWrite(MotorSpeed2, motorSpeed);
 
   }else if(interval==31){//joint 3 forward
     digitalWrite(MotorDirection3, HIGH);
-    digitalWrite(MotorSpeed3, HIGH);
+    analogWrite(MotorSpeed3, motorSpeed);
 
   }else if(interval==30){//joint 3 backward
     digitalWrite(MotorDirection3, LOW);
-    // digitalWrite(MotorSpeed3, HIGH);
+    analogWrite(MotorSpeed3, motorSpeed);
 
   }else if(interval==41){//joint 4 forward
     digitalWrite(MotorDirection4, HIGH);
-    digitalWrite(MotorSpeed4, HIGH);
+    analogWrite(MotorSpeed4, motorSpeed);
 
   }else if(interval==40){//joint 4 backward
-    digitalWrite(MotorDirection4, HIGH);
-    digitalWrite(MotorSpeed4, LOW);
+    digitalWrite(MotorDirection4, LOW);
+    analogWrite(MotorSpeed4, motorSpeed);
 
   }else if(interval==51){//joint 5 forward
     digitalWrite(MotorDirection5, HIGH);
-    digitalWrite(MotorSpeed5, HIGH);
+    analogWrite(MotorSpeed5, motorSpeed);
 
   }else if(interval==50){//joint 5 backward
-    digitalWrite(MotorDirection5, HIGH);
-    digitalWrite(MotorSpeed5, LOW);
+    digitalWrite(MotorDirection5, LOW);
+    analogWrite(MotorSpeed5, motorSpeed);
 
-  }else if(interval==61){//joint 6 forward
+  if(interval==61){//joint 6 forward
     digitalWrite(MotorDirection6, HIGH);
-    digitalWrite(MotorSpeed6, HIGH);
+    analogWrite(MotorSpeed6, motorSpeed);
 
   }else if(interval==60){//joint 6 backward
     digitalWrite(MotorDirection6, LOW);
-    digitalWrite(MotorSpeed6, HIGH);
-  }else{
-    digitalWrite(MotorSpeed1, LOW);
-    digitalWrite(MotorSpeed4, LOW);
-    digitalWrite(MotorSpeed5, LOW);
-    digitalWrite(MotorSpeed6, LOW);
+    analogWrite(MotorSpeed6, motorSpeed);
+    
+  }else if(interval==61){//joint 6 forward
+    digitalWrite(MotorDirection6, HIGH);
+    analogWrite(MotorSpeed6, motorSpeed);
+
+  }else if(interval==60){//joint 6 backward
+    digitalWrite(MotorDirection6, LOW);
+    analogWrite(MotorSpeed6, motorSpeed);
+    
+  }else if(interval==0){
+    analogWrite(MotorSpeed1, 0);
+    analogWrite(MotorSpeed4, 0);
+    analogWrite(MotorSpeed5, 0);
+    analogWrite(MotorSpeed6, 0);
   }
   // else{
   //   // digitalWrite(MotorDirection6, LOW);
@@ -123,6 +130,6 @@ void loop() {
   //   //set LED with ledstate of the variable
   //   digitalWrite(LED_BUILTIN, ledState);
 
-  // }
+  
 
 }
