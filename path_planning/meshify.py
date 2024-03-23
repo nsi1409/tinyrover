@@ -20,7 +20,7 @@ def grid_subsampling(points, voxel_size):
 
   return grid_candidate_center
 
-lidar_file = "path_planning\mars_lidar.laz"
+lidar_file = "path_planning\Point_Cloud_USGS_LPC_UT_Southern_QL1_2018_LAS_2019_ground.laz"
 point_cloud = lp.read(lidar_file)
 
 # store coordinates
@@ -45,4 +45,4 @@ m.x[:] = x_all[tris.triangles]
 m.y[:] = y_all[tris.triangles]
 m.z[:] = z_all[tris.triangles]
 
-m.save('mars_lidar_mesh.stl')
+m.save('mars_lidar_mesh_ground.stl')
