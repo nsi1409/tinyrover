@@ -10,9 +10,14 @@ def turn(location, target):
 	right = 0
 	while(True):
 		target_heading = math.atan2(target[0]-location[0], target[1]-location[1])
-		heading, _, _, _ = grab_brown()
+		try:
+			heading = grab_kv('scuffed_yaw')['v']
+			print(heading)
+		except:
+			heading, _, _, _ = grab_brown()
+			print('not found simulating heading')
 		difference = target_heading - heading
-		if difference < 0.1 and difference > 0.1:
+		if abs(difference) < (math.pi/6):
 			break
 		elif difference > 0:
 			left = 1
