@@ -3,7 +3,7 @@
 //with the same name.
 int interval;
 String User_Data;
-int motorSpeed = 80;
+int motorSpeed = 50;
 
 #define MotorSpeed6 A0
 #define MotorDirection6 13
@@ -43,72 +43,71 @@ void setup() {
 
 void loop() {
 
-  if(Serial.available()>0){//read when we have something new coming through the serial
-    User_Data = Serial.readString();
-    interval = User_Data.toInt();
+  if(Serial.available()>0){;//read when we have something new coming through the serial
+    interval = Serial.parseInt();
+    // interval = User_Data.toInt();
     Serial.println(interval);
   }
-  //For LED Blinking
-  if(interval==11){//joint 1 forward
-    digitalWrite(MotorDirection1, HIGH);
-    analogWrite(MotorSpeed1, motorSpeed);
-  }else if(interval==10){//joint 1 backward
-    digitalWrite(MotorDirection1, LOW);
-    analogWrite(MotorSpeed1, motorSpeed);
-  }else if(interval==21){//joint 2 forward
-    digitalWrite(MotorDirection2, HIGH);
-    analogWrite(MotorSpeed2, motorSpeed);
-
-  }else if(interval==20){//joint 2 backward
-    digitalWrite(MotorDirection2, LOW);
-    analogWrite(MotorSpeed2, motorSpeed);
-
-  }else if(interval==31){//joint 3 forward
-    digitalWrite(MotorDirection3, HIGH);
-    analogWrite(MotorSpeed3, motorSpeed);
-
-  }else if(interval==30){//joint 3 backward
-    digitalWrite(MotorDirection3, LOW);
-    analogWrite(MotorSpeed3, motorSpeed);
-
-  }else if(interval==41){//joint 4 forward
-    digitalWrite(MotorDirection4, HIGH);
-    analogWrite(MotorSpeed4, motorSpeed);
-
-  }else if(interval==40){//joint 4 backward
-    digitalWrite(MotorDirection4, LOW);
-    analogWrite(MotorSpeed4, motorSpeed);
-
-  }else if(interval==51){//joint 5 forward
-    digitalWrite(MotorDirection5, HIGH);
-    analogWrite(MotorSpeed5, motorSpeed);
-
-  }else if(interval==50){//joint 5 backward
-    digitalWrite(MotorDirection5, LOW);
-    analogWrite(MotorSpeed5, motorSpeed);
-
-  if(interval==61){//joint 6 forward
-    digitalWrite(MotorDirection6, HIGH);
-    analogWrite(MotorSpeed6, motorSpeed);
-
-  }else if(interval==60){//joint 6 backward
-    digitalWrite(MotorDirection6, LOW);
-    analogWrite(MotorSpeed6, motorSpeed);
-    
-  }else if(interval==61){//joint 6 forward
-    digitalWrite(MotorDirection6, HIGH);
-    analogWrite(MotorSpeed6, motorSpeed);
-
-  }else if(interval==60){//joint 6 backward
-    digitalWrite(MotorDirection6, LOW);
-    analogWrite(MotorSpeed6, motorSpeed);
-    
-  }else if(interval==0){
-    analogWrite(MotorSpeed1, 0);
-    analogWrite(MotorSpeed4, 0);
-    analogWrite(MotorSpeed5, 0);
-    analogWrite(MotorSpeed6, 0);
+  switch(interval){
+    case 11:
+      digitalWrite(MotorDirection1, HIGH);
+      analogWrite(MotorSpeed1, motorSpeed);
+      break;
+    case 10:
+      digitalWrite(MotorDirection1, LOW);
+      analogWrite(MotorSpeed1, motorSpeed);
+      break;
+    case 21:
+      digitalWrite(MotorDirection2, HIGH);
+      analogWrite(MotorSpeed2, 3*motorSpeed);
+      break;
+    case 20:
+      digitalWrite(MotorDirection2, LOW);
+      analogWrite(MotorSpeed2, 3*motorSpeed);
+      break;
+    case 31:
+      digitalWrite(MotorDirection3, HIGH);
+      analogWrite(MotorSpeed3, 3*motorSpeed);
+      break;
+    case 30:
+      digitalWrite(MotorDirection3, LOW);
+      analogWrite(MotorSpeed3, 3*motorSpeed);
+      break;
+    case 41:
+      digitalWrite(MotorDirection4, HIGH);
+      analogWrite(MotorSpeed4, motorSpeed);
+      break;
+    case 40:
+      digitalWrite(MotorDirection4, LOW);
+      analogWrite(MotorSpeed4, motorSpeed);
+      break;
+    case 51:
+      digitalWrite(MotorDirection5, HIGH);
+      analogWrite(MotorSpeed5, 1.5*motorSpeed);
+      break;
+    case 50:
+      digitalWrite(MotorDirection5, LOW);
+      analogWrite(MotorSpeed5, 1.5*motorSpeed);
+      break;
+    case 61:
+      digitalWrite(MotorDirection6, HIGH);
+      analogWrite(MotorSpeed6, motorSpeed);
+      break;
+    case 60:
+      digitalWrite(MotorDirection6, LOW);
+      analogWrite(MotorSpeed6, motorSpeed);
+      break;
+    case 0:
+      analogWrite(MotorSpeed1, 0);
+      analogWrite(MotorSpeed2, 0);
+      analogWrite(MotorSpeed3, 0);
+      analogWrite(MotorSpeed4, 0);
+      analogWrite(MotorSpeed5, 0);
+      analogWrite(MotorSpeed6, 0);
+      break;
   }
+  //For LED Blinking
+ 
   // else{
   //   // digitalWrite(MotorDirection6, LOW);
   //   // digitalWrite(MotorDirection6, LOW);

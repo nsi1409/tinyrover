@@ -18,7 +18,7 @@ joystick = pygame.joystick.Joystick(0)
 
 ser = serial.Serial()
 ser.setDTR(False)
-ser.port = 'COM3' #change this COM to match the one specified in Arduino
+ser.port = 'COM5' #change this COM to match the one specified in Arduino
 ser.baudrate = 9600 #This number should match the one specified in arduino
 ser.timeout = 1
 ser.bytesize = serial.EIGHTBITS
@@ -38,7 +38,7 @@ while True:
     # num = input("Enter a number: ")
     events = get_gamepad()
     for event in events:
-        print(event.code, event.state)
+        # print(event.code, event.state)
         if event.code == 'BTN_TR' and event.state != 0: #A button
             value  = write_read("61") #joint 6 forward
         elif event.code == 'BTN_TL' and event.state != 0:
