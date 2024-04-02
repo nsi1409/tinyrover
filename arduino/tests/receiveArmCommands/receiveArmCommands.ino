@@ -20,6 +20,26 @@ int motorSpeed = 50;
 #define MotorSpeed1 A5
 #define MotorDirection1 18
 
+//from rover_arm_encoder_limits
+// values were found through manual testing
+#define joint1_lower_limit 200; // actual: 130
+#define joint1_upper_limit 650; // actual: 660
+#define joint2_lower_limit 150; // actual: 145
+#define joint2_upper_limit 310; // actual: 320
+#define joint3_lower_limit 635; // actual: 630
+#define joint3_upper_limit 850; // actual: 871
+#define joint4_lower_limit 50; // actual: 0
+#define joint4_upper_limit 490; // actual: 500
+#define joint5_lower_limit 375; // actual: 350
+#define joint5_upper_limit 930; // actual: 950
+// #define joint6_lower_limit 850; // actual:
+// #define joint6_upper_limit 850; // actual:
+
+#define j1_encoder 1;
+#define j2_encoder 2;
+#define j3_encoder 3;
+#define j4_encoder 4;
+#define j5_encoder 5;
 
 void setup() {
 
@@ -36,6 +56,12 @@ void setup() {
   pinMode(MotorDirection1, OUTPUT);
   pinMode(MotorSpeed1, OUTPUT);
 
+  pinMode(j1_encoder, INPUT);
+  pinMode(j2_encoder, INPUT);
+  pinMode(j3_encoder, INPUT);
+  pinMode(j4_encoder, INPUT);
+  pinMode(j5_encoder, INPUT);
+
   Serial.begin(9600);
 
 }
@@ -51,7 +77,12 @@ void loop() {
   switch(interval){
     case 11:
       digitalWrite(MotorDirection1, HIGH);
-      analogWrite(MotorSpeed1, motorSpeed);
+      if () {
+        analogWrite(MotorSpeed1, motorSpeed);
+      }
+      else {
+        analogWrite(MotorSpeed1, 0);
+      }
       break;
     case 10:
       digitalWrite(MotorDirection1, LOW);
