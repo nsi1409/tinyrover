@@ -75,6 +75,17 @@ def wheel_left():
 		return 'Content-Type not supported!'
 
 
+def arm_joint_move():
+	content_type = request.headers.get('Content-Type')
+	if (content_type == 'application/json'):
+		json = request.json
+		joint = json['joint']
+		direction = json['direction']
+		j2a.move_joint(joint,direction)
+		return str(json)
+	else:
+		return 'Content-Type not supported!'
+
 def wheel_right():
 	content_type = request.headers.get('Content-Type')
 	if (content_type == 'application/json'):

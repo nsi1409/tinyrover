@@ -13,6 +13,7 @@ class Messenger():
 			self.ser.port = '/dev/cu.usbmodem1301'
 		elif platform.system() == 'Windows':
 			self.ser.port = 'COM4'
+		
 		self.ser.baudrate = 9600
 		self.ser.timeout = 5
 		self.ser.bytesize = serial.EIGHTBITS
@@ -26,7 +27,6 @@ class Messenger():
 	def exit_handler_wheels(self):
 		self.ser.flush()  #flushes and closes on exit
 		self.ser.close()
-###
 
 	def send_right(self, speed):
 		data = [2, speed]
