@@ -1,4 +1,4 @@
-int abs_pin = 11;
+int abs_pin = 38;
 
 // values were found through manual testing
 int joint1_lower_limit = 200; // actual: 130
@@ -14,14 +14,27 @@ int joint5_upper_limit = 930; // actual: 950
 // int joint6_lower_limit = 850; // actual:
 // int joint6_upper_limit = 850; // actual:
 
+// int pin = 7;
+unsigned long duration;
+
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   pinMode(abs_pin, INPUT);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // int val = digitalRead(abs_pin);
-  Serial.println(pulseIn(abs_pin, HIGH));
+  duration = pulseIn(abs_pin, HIGH);
+  Serial.println(duration);
 }
+
+// void setup() {
+//   // put your setup code here, to run once:
+//   Serial.begin(9600);
+//   pinMode(abs_pin, INPUT);
+// }
+
+// void loop() {
+//   // put your main code here, to run repeatedly:
+//   int val = digitalRead(abs_pin);
+//   Serial.println(val);
+// }
