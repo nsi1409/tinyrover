@@ -5,7 +5,7 @@ import sys
 sys.path.append("..")
 from kv import grab_kv, grab_brown
 
-def turn(location, target):
+def turn(location, target): #assumes all angles to be in the range 0, 2*pi (or tau), with numbers assending going clockwise
 	left = 0
 	right = 0
 	while(True):
@@ -15,14 +15,18 @@ def turn(location, target):
 			print(heading)
 		except:
 			heading, _, _, _ = grab_brown()
+			heading %= 2*math.pi
 			print('not found simulating heading')
-		difference = target_heading - heading
-		if abs(difference) < (math.pi/6):
+		if target_heading < heading:
+			target_heading += 2*math.pi
+		angle_right = target_heading - heading
+		difference = abs(angle_right)
+		if difference < (math.pi/6):
 			break
-		elif difference > 0:
+		elif angle_right < math.pi:
 			left = 1
 			right = 0
-		elif difference < 0:
+		else:
 			left = 0
 			right = 1
 		print(f'left: {left}, right: {right}, target_heading: {target_heading}, heading: {heading}, difference: {difference}, location: {location}, target: {target}')
