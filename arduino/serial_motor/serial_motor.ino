@@ -28,13 +28,14 @@ size_t wheelCommandBufferSize = 1;
 size_t opCodeSize = 1;
 
 //Unit cicle orientation starting at front right
-int ipn[6] = {9, 6, 5, 4, 7, 3};
-// pin 6 front left
-// pin 9 front right
-// pin 5 middle left
-// pin 3 middle right
-// pin 4 back left
-// pin 7 back right
+// int ipn[6] = {9, 6, 5, 4, 7, 3}; // Old mega pin setup
+int ipn[6] = {3,20,21,22,1,2};
+// pin 20 front left
+// pin 3 front right
+// pin 21 middle left
+// pin 2 middle right
+// pin 22 back left
+// pin 1 back right
 
 void setup() {
 	for (int i = 0; i < 4; i++) {
