@@ -5,7 +5,7 @@ The main design philosophy that has driven development decisions is, that most o
 
 The directory structure of the reposistory is desgined to reflect the fact that building a robot that is capable of remote operation is a distributed systems problem. The directories within the repository are each contain code that runs on a specific system with the exception of hardware/ which is used to store hardware designs primarily contributed to by the electrical engineering sub team.
 
-![ALT TEXT](https://github.com/nsi1409/tinyrover/blob/main/tiny_rover_diagram.png)
+![ALT TEXT](https://github.com/nsi1409/tinyrover/blob/main/tinyrover_diagram.png)
 https://excalidraw.com/#json=H9JIUVqzBfcfd-clJ-9Gx,HHX184AWa6tc4qti70-mOA
 
 # Main systems
