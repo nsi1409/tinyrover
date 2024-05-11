@@ -5,6 +5,9 @@ The main design philosophy that has driven development decisions is, that most o
 
 The directory structure of the reposistory is desgined to reflect the fact that building a robot that is capable of remote operation is a distributed systems problem. The directories within the repository are each contain code that runs on a specific system with the exception of hardware/ which is used to store hardware designs primarily contributed to by the electrical engineering sub team.
 
+![ALT TEXT](https://github.com/nsi1409/tinyrover/blob/main/tinyrover_diagram.png)
+https://excalidraw.com/#json=9ia5LWbWXRCnQ1O1GE4IU,IEyxQl1JJFcjVjI3ThGk0Q
+
 # Main systems
 - user/: This directory contains software that will run on the base station. Including but not limited to sending human input from a controller to the rover and displaying the livestream from the rover.
 - jetson/: This directory contains software that will run on the rover specifically the Jetson Nano. Including but not limited to receiving GPS data, networking with the base station and issueing commands to the arduino.
