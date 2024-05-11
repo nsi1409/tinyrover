@@ -54,17 +54,17 @@ void setup() {
 
 	Serial.begin(9600);
 	Serial.setTimeout(100); // in milliseconds
-	leftFrontServo.attach(6, MIN_PULSE, MAX_PULSE);
-  rightFrontServo.attach(9, MIN_PULSE, MAX_PULSE);
-	leftMiddleServo.attach(5, MIN_PULSE, MAX_PULSE);
-	rightMiddleServo.attach(3, MIN_PULSE, MAX_PULSE);
-	leftBackServo.attach(4, MIN_PULSE, MAX_PULSE);
-	rightBackServo.attach(7, MIN_PULSE, MAX_PULSE);
+	leftFrontServo.attach(ipn[1], MIN_PULSE, MAX_PULSE);
+  rightFrontServo.attach(ipn[0], MIN_PULSE, MAX_PULSE);
+	leftMiddleServo.attach(ipn[2], MIN_PULSE, MAX_PULSE);
+	rightMiddleServo.attach(ipn[5], MIN_PULSE, MAX_PULSE);
+	leftBackServo.attach(ipn[3], MIN_PULSE, MAX_PULSE);
+	rightBackServo.attach(ipn[4], MIN_PULSE, MAX_PULSE);
 
   //ONLY UNCOMMENT ONE OF THESE SETUP FUNCTIONS AT A TIME
 
   //Set throttle range
-  // resetThrottleRangeForMotors();
+  resetThrottleRangeForMotors();
 
   // Change motor to drive forwards and backwards
   // setMotorsToForwardsAndBackwards();
