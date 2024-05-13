@@ -28,13 +28,15 @@ size_t wheelCommandBufferSize = 1;
 size_t opCodeSize = 1;
 
 //Unit cicle orientation starting at front right
-int ipn[6] = {9, 6, 5, 4, 7, 3};
-// pin 6 front left
-// pin 9 front right
-// pin 5 middle left
-// pin 3 middle right
-// pin 4 back left
-// pin 7 back right
+// int ipn[6] = {9, 6, 5, 4, 7, 3}; // Old mega pin setup
+// int ipn[6] = {3,20,21,22,1,2}; //Teensy
+int ipn[6] = {6,11,10,9,3,5}; //new mega
+// pin 20 front left
+// pin 3 front right
+// pin 21 middle left
+// pin 2 middle right
+// pin 22 back left
+// pin 1 back right
 
 void setup() {
 	for (int i = 0; i < 4; i++) {
@@ -52,23 +54,23 @@ void setup() {
 
 	Serial.begin(9600);
 	Serial.setTimeout(100); // in milliseconds
-	leftFrontServo.attach(6, MIN_PULSE, MAX_PULSE);
-  rightFrontServo.attach(9, MIN_PULSE, MAX_PULSE);
-	leftMiddleServo.attach(5, MIN_PULSE, MAX_PULSE);
-	rightMiddleServo.attach(3, MIN_PULSE, MAX_PULSE);
-	leftBackServo.attach(4, MIN_PULSE, MAX_PULSE);
-	rightBackServo.attach(7, MIN_PULSE, MAX_PULSE);
+	leftFrontServo.attach(ipn[1], MIN_PULSE, MAX_PULSE);
+  rightFrontServo.attach(ipn[0], MIN_PULSE, MAX_PULSE);
+	leftMiddleServo.attach(ipn[2], MIN_PULSE, MAX_PULSE);
+	rightMiddleServo.attach(ipn[5], MIN_PULSE, MAX_PULSE);
+	leftBackServo.attach(ipn[3], MIN_PULSE, MAX_PULSE);
+	rightBackServo.attach(ipn[4], MIN_PULSE, MAX_PULSE);
 
   //ONLY UNCOMMENT ONE OF THESE SETUP FUNCTIONS AT A TIME
 
   //Set throttle range
-  // resetThrottleRangeForMotors();
+  resetThrottleRangeForMotors();
 
   // Change motor to drive forwards and backwards
   // setMotorsToForwardsAndBackwards();
 
   //Already setup, normal working mode
-  normalWorkingMode();
+  // normalWorkingMode();
 
 
 
@@ -211,30 +213,6 @@ void updateMotors(){
 }
 
 void loop() {
-	// THIS IS HARDWARE DEPENDENT FOR THE SPEED CHANGE UNLESS A TIMER IS ADDED
-	// if (updateSpeedTimer > 1000) {
-	// 	if (leftCurrentSpeed != leftTargetSpeed) {
-	// 		if (leftCurrentSpeed < leftTargetSpeed) {
-	// 			leftCurrentSpeed = leftCurrentSpeed + 1;
-	// 		} else {
-	// 			leftCurrentSpeed = leftCurrentSpeed - 1;
-	// 		}
-	// 		moveLeftWheel(leftCurrentSpeed);
-	// 		//
-	// 	}
-
-	// 	if (rightCurrentSpeed != rightTargetSpeed) {
-	// 		if (rightCurrentSpeed < rightTargetSpeed) {
-	// 			rightCurrentSpeed = rightCurrentSpeed + 1;
-	// 		} else {
-	// 			rightCurrentSpeed = rightCurrentSpeed - 1;
-	// 		}
-	// 		moveRightWheel(rightCurrentSpeed);
-	// 	}
-	// 	updateSpeedTimer = 0;
-	// }
-	// updateSpeedTimer = updateSpeedTimer + 1;
-
 	if (Serial.available() > 0) {
 		uint8_t opBuffer[opCodeSize];
 		Serial.readBytes(
