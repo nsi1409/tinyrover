@@ -4,26 +4,22 @@ import math
 import requests
 import time
 from flask import send_from_directory
-from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 state = {}
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 def send_kv(k, v):
-	r = requests.put('http://127.0.0.1:5001/data', json={'k': k, 'v': v})
+	r = requests.put('http://127.0.0.1:5000/data', json={'k': k, 'v': v})
 
 def grab_kv(k):
-	r = requests.get('http://127.0.0.1:5001/data', json={'k': k})
+	r = requests.get('http://127.0.0.1:5000/data', json={'k': k})
 	return r.json()
 
 def grab_brown():
-	r = requests.get('http://127.0.0.1:5001/brown')
+	r = requests.get('http://127.0.0.1:5000/brown')
 	return r.json()
 
 @app.route('/data', methods=['GET', 'POST', 'PUT'])
-@cross_origin()
 def data():
 	data = request.get_json()
 	if request.method == 'PUT':
@@ -43,7 +39,6 @@ def data():
 rate = 0.2
 v = [1, 0, 0, 0]
 @app.route('/brown', methods=['GET', 'PUT', 'POST'])
-@cross_origin()
 def brownian():
 	v[0] -= rate * np.random.randn()
 	v[1] -= rate * np.random.randn()
@@ -57,7 +52,6 @@ def brownian():
 	return v
 
 @app.route('/brownsleep', methods=['GET', 'PUT', 'POST'])
-@cross_origin()
 def browniansleep():
 	v[0] -= rate * np.random.randn()
 	v[1] -= rate * np.random.randn()
@@ -72,19 +66,12 @@ def browniansleep():
 	return v
 
 @app.route('/frontend/<path>')
-@cross_origin()
 def send_report(path):
     return send_from_directory('frontend', path)
 
 @app.route('/')
-@cross_origin()
 def slash():
     return send_from_directory('frontend', 'kv.html')
-
-@app.route('/everything', methods=['GET', 'PUT', 'POST'])
-@cross_origin()
-def everything():
-	return state, 200
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=5001, debug=True, threaded=False)

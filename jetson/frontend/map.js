@@ -25,40 +25,33 @@ function changeCenter(lat, lon) {
 	map.setView(new_view)
 }
 
-function gpsData(state) {
-	gps = state["gps"]
-	console.log("gps: " + gps + " yaw: " + state["yaw"]);
-	changeCenter(gps[0], -1 *gps[1]);
+function fetchLoop() {
+	//fetch(`/data`, {
+	fetch(`/data`, {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ "k": "gps" })
+	}).then((response) => {
+		console.log(response);
+		return response.json();
+	}).then((data) => {
+		console.log(data);
+		let lat = "";
+		let lon = "";
+		let i = 1;
+		while (data[i] != ",") {
+			lat += data[i];
+			i++;
+		}
+		i++;
+		while (data[i] != "]") {
+			lon += data[i];
+			i++;
+		}
+		changeCenter(lat, lon);
+	})
 }
-
-
-// function fetchLoop() {
-// 	//fetch(`/data`, {
-// 	fetch(`/data`, {
-// 		method: 'POST',
-// 		headers: {
-// 			'Accept': 'application/json',
-// 			'Content-Type': 'application/json'
-// 		},
-// 		body: JSON.stringify({ "k": "gps" })
-// 	}).then((response) => {
-// 		console.log(response);
-// 		return response.json();
-// 	}).then((data) => {
-// 		console.log(data);
-// 		let lat = "";
-// 		let lon = "";
-// 		let i = 1;
-// 		while (data[i] != ",") {
-// 			lat += data[i];
-// 			i++;
-// 		}
-// 		i++;
-// 		while (data[i] != "]") {
-// 			lon += data[i];
-// 			i++;
-// 		}
-// 		changeCenter(lat, lon);
-// 	})
-// }
 //setInterval(fetchLoop, 400);

@@ -37,7 +37,7 @@ while (1):
 		west = min2dec(parse_outp[4])
 		if (north == "No" or west == "No"):
 			print(f'Lost Cords')
-			continue
+			break
 		print(f'North is {north}')
 		print(f'West is {west}')
 		send_kv('gps', [north, west])

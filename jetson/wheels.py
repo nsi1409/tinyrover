@@ -3,7 +3,6 @@ import jetson2arduino
 import socket
 import argparse
 import time
-from flask_cors import CORS, cross_origin
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--emulate', action='store_true')
@@ -11,12 +10,9 @@ options = parser.parse_args()
 
 app = Flask(__name__)
 err = None
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 @app.route('/ping', methods=['GET', 'POST', 'PUT'])
-@cross_origin()
 def pingpong():
 	return 'pong\n', 200
 
@@ -75,17 +71,6 @@ def wheel_left():
 		return 'Content-Type not supported!'
 
 
-def arm_joint_move():
-	content_type = request.headers.get('Content-Type')
-	if (content_type == 'application/json'):
-		json = request.json
-		joint = json['joint']
-		direction = json['direction']
-		j2a.move_joint(joint,direction)
-		return str(json)
-	else:
-		return 'Content-Type not supported!'
-
 def wheel_right():
 	content_type = request.headers.get('Content-Type')
 	if (content_type == 'application/json'):
@@ -102,27 +87,22 @@ while(1):
 		j2a = jetson2arduino.Messenger()
 
 		@app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def wheel_call_both():
 			return wheel_both()
 
 		@app.route('/wheel_command_left', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def wheel_call_left():
 			return wheel_left()
 
 		@app.route('/wheel_command_right', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def wheel_call_right():
 			return wheel_right()
 
 		@app.route('/wheel_command_stop', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def wheel_call_stop():
 			return wheel_stop()
 
 		@app.route('/wheel_command_trim', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def wheel_call_trim():
 			return wheel_trim()
 
@@ -134,27 +114,22 @@ while(1):
 			continue
 
 		@app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def no_connect_both():
 			return no_connect()
 
 		@app.route('/wheel_command_right', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def no_connect_right():
 			return no_connect()
 
 		@app.route('/wheel_command_left', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def no_connect_left():
 			return no_connect()
 
 		@app.route('/wheel_command_stop', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def no_connect_stop():
 			return no_connect()
 
 		@app.route('/wheel_command_trim', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
 		def no_connect_trim():
 			return no_connect()
 
