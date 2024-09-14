@@ -4,8 +4,9 @@ matplotlib
 numpy
 opencv-python
 pygame
-pyrealsense2
+# pyrealsense2
 pyserial
 requests
 simple-pid
 opencv-contrib-python==4.6.0.66
+atexit
