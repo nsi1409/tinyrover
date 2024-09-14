@@ -7,6 +7,7 @@ from flask import send_from_directory
 
 app = Flask(__name__)
 state = {}
+last_beat = 235467890763
 
 def send_kv(k, v):
 	r = requests.put('http://127.0.0.1:5000/data', json={'k': k, 'v': v})
