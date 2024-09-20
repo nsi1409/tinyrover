@@ -4,10 +4,11 @@ import math
 import requests
 import time
 from flask import send_from_directory
+from wheels import wheel_command_stop
 
 app = Flask(__name__)
 state = {}
-last_beat = 235467890763
+last_beat = None
 
 def send_kv(k, v):
 	r = requests.put('http://127.0.0.1:5000/data', json={'k': k, 'v': v})
@@ -19,6 +20,15 @@ def grab_kv(k):
 def grab_brown():
 	r = requests.get('http://127.0.0.1:5000/brown')
 	return r.json()
+
+def heartbeat_listen():
+	last_beat = int((time.time() * 1000))
+	if((time.time() - last_beat) > 4000):
+		return wheel_command_stop()
+
+@app.route('/heartbeat_listen', methods=['GET', 'POST', 'PUT'])
+def call_heartbeat_listen():
+	return heartbeat_listen()
 
 @app.route('/data', methods=['GET', 'POST', 'PUT'])
 def data():
