@@ -40,40 +40,40 @@ def get_euclid(corners):
 send2wheels_both(0, 0)
 
 while(True):
-    ret, frame = cap.read()
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    #print(np.shape(gray))
-    corners, ids, _ = aruco.detectMarkers(gray, aruco_dict, parameters=arucoParameters)
-    if(corners):
-        dist = get_euclid(corners)
-        if dist < 600:
-            count += 1
-            if count > 120:
-                send2wheels_both(90, 90)
-                exit()
-        else:
-            count -= 1
-            if count < 0:
-                count = 0
-        total = 0
-        for corner in corners[0][0]:
-            total = corner[0]
-        avgx = total/4
-        #print(avgx)
+	ret, frame = cap.read()
+	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	#print(np.shape(gray))
+	corners, ids, _ = aruco.detectMarkers(gray, aruco_dict, parameters=arucoParameters)
+	if(corners):
+		dist = get_euclid(corners)
+		if dist < 600:
+			count += 1
+			if count > 120:
+				send2wheels_both(90, 90)
+				exit()
+		else:
+			count -= 1
+			if count < 0:
+				count = 0
+		total = 0
+		for corner in corners[0][0]:
+			total = corner[0]
+		avgx = total/4
+		#print(avgx)
 
-        normal_avg_x = (avgx - center)/center
-        control = pid(normal_avg_x)
-        #print(control)
-        if(control > 0):
-            right = 1
-            left = 1 - control
-            direction = "left"
-        else:
-            left = 1
-            right = 1 - ((-1) * control)
-            direction = "right"
+		normal_avg_x = (avgx - center)/center
+		control = pid(normal_avg_x)
+		#print(control)
+		if(control > 0):
+			right = 1
+			left = 1 - control
+			direction = "left"
+		else:
+			left = 1
+			right = 1 - ((-1) * control)
+			direction = "right"
 
-        left = int((left * 60) + 90)
-        right = int((right * 60) + 90)
-        send2wheels_both(left, right)
-        print(f"normal x: {normal_avg_x}, direction: {direction}, left: {left}, right: {right}, dist: {dist}")
+		left = int((left * 60) + 90)
+		right = int((right * 60) + 90)
+		send2wheels_both(left, right)
+		print(f"normal x: {normal_avg_x}, direction: {direction}, left: {left}, right: {right}, dist: {dist}")
