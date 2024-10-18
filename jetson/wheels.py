@@ -105,6 +105,8 @@ while(1):
 		def wheel_call_trim():
 			return wheel_trim()
 
+		break
+
 	except Exception as e:
 		print(e)
 		err = e
