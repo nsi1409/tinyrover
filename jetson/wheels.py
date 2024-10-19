@@ -3,6 +3,8 @@ import jetson2arduino
 import socket
 import argparse
 import time
+import requests
+import threading
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--emulate', action='store_true')
@@ -136,5 +138,17 @@ while(1):
 
 		break
 
+def stop_on_start():
+	while(True):
+		r = requests.get('http://localhost:8080/wheel_command', json={
+			"left": 90, "right": 90
+		})
+		if(r.ok):
+			break
+		time.sleep(0.05)
+
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', port=8080, debug=True, threaded=False)
+	t1 = threading.Thread(app.run, kwargs = {"host" : '0.0.0.0', "port" : 8080, "debug" : True, "threaded" : False})
+	t2 = threading.Thread(stop_on_start)
+	t1.start()
+	t2.start()
