@@ -12,8 +12,8 @@ usb = Serial(port, 9600, timeout=1)
 while True:
 	s = usb.read_until(b'U')
 	print(s)
-	print(s[0])
 	try:
+		#print(s[0])
 		match s[0]:
 			case 83: #euler angles
 				(rollr, pitchr, yawr) = struct.unpack("<hhh", s[1:7])
