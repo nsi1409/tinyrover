@@ -10,10 +10,14 @@ app = Flask(__name__)
 state = {}
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-default_value = ['no value']
+default_value = {'v': 'no value'}
 
-def send_kv(k, v):
-	r = requests.put('http://127.0.0.1:5001/data', json={'k': k, 'v': v})
+def send_kv(k, v, location='local'):
+    if location == 'local':
+        r = requests.put('http://127.0.0.1:5001/data', json={'k': k, 'v': v})
+    else:
+      	r = requests.put('http://127.0.0.12:5001/data', json={'k': k, 'v': v})
+      
 
 def grab_kv(k):
 	r = requests.get('http://127.0.0.1:5001/data', json={'k': k})
