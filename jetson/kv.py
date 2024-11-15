@@ -12,12 +12,14 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 default_value = {'v': 'no value'}
 
+#TODO: set local, server, and port to be variables here
+
 def send_kv(k, v, location='local'):
-    if location == 'local':
-        r = requests.put('http://127.0.0.1:5001/data', json={'k': k, 'v': v})
-    else:
-      	r = requests.put('http://127.0.0.12:5001/data', json={'k': k, 'v': v})
-      
+	if location == 'local':
+		r = requests.put('http://127.0.0.1:5001/data', json={'k': k, 'v': v})
+	else:
+	  	r = requests.put('http://192.168.0.12:5001/data', json={'k': k, 'v': v})
+	  
 
 def grab_kv(k):
 	r = requests.get('http://127.0.0.1:5001/data', json={'k': k})
@@ -79,7 +81,7 @@ def browniansleep():
 @app.route('/frontend/<path>')
 @cross_origin()
 def send_report(path):
-    return send_from_directory('frontend', path)
+	return send_from_directory('frontend', path)
 
 @app.route('/')
 @cross_origin()
