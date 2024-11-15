@@ -96,6 +96,13 @@ def wheel_right():
 	else:
 		return 'Content-Type not supported!'
 
+def heartbeat_listen():
+	last_beat = int((time.time() * 1000))
+	return 'Current time: ' + str(last_beat)
+
+def heartbeat_listen():
+	if((time.time() - last_beat) > 4000):
+		return wheel_command_stop()
 
 while(1):
 	try:
@@ -125,6 +132,14 @@ while(1):
 		@cross_origin()
 		def wheel_call_trim():
 			return wheel_trim()
+
+		@app.route('/heartbeat_listen', methods=['GET', 'POST', 'PUT'])
+		def call_heartbeat_listen():
+			return heartbeat_listen()
+
+		@app.route('/deadman_call', methods=['GET', 'POST', 'PUT'])
+		def call_deadman():
+			return deadman_call()
 
 	except Exception as e:
 		print(e)

@@ -10,6 +10,7 @@ app = Flask(__name__)
 state = {}
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+last_beat = 235467890763
 
 def send_kv(k, v):
 	r = requests.put('http://127.0.0.1:5001/data', json={'k': k, 'v': v})
