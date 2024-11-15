@@ -1,35 +1,64 @@
 import requests
 import time
+import atexit
+import argparse
 
-default_antenna_ip = "192.168.1.10" # This may change over time, here for reference
-default_rovernet_ip = "192.168.0.12" # This may change over time, here for reference
+parser = argparse.ArgumentParser()
+parser.add_argument('-forward', action='store_true')
+parser.add_argument('-left', action='store_true')
+parser.add_argument('-right', action='store_true')
+parser.add_argument('-backward', action='store_true')
 
-active_ip = default_antenna_ip
+# data coming in is in options
+options = parser.parse_args()
+
 
 def send2wheels_both(l, r):
-	req = requests.get('http://' + active_ip + ':8080/wheel_command_both', json={
+	req = requests.get('http://192.168.0.12:8080/wheel_command_both', timeout=3, json={
 		"left": l, "right": r
 	})
 def send2wheels_left(l):
-	req = requests.get('http://' + active_ip + ':8080/wheel_command_left', json={
+	req = requests.get('http://192.168.0.12:8080/wheel_command_left', timeout=3, json={
 		"left": l
 	})
 def send2wheels_right(r):
-	req = requests.get('http://' + active_ip + ':8080/wheel_command_right', json={
+	req = requests.get('http://192.168.0.12:8080/wheel_command_right', timeout=3, json={
 		"right": r
 	})
-	
+def forward():
+	print('going forward')
+	send2wheels_both(110, 110)
+	time.sleep(60)
+def left():
+	print('going left')
+	send2wheels_both(90-20, 90+20)
+	time.sleep(60)
+def right():
+	print('going right')
+	send2wheels_both(90+20, 90-20)
+	time.sleep(60)
+def backward():
+	print('going backwards')
+	send2wheels_both(70, 70)
+	time.sleep(60)
 
-#Set rover ip, typically an internal address, see default parameters 
-def set_active_ip(rover_ip):
-	global active_ip
-	active_ip = rover_ip
+def stop_wheels():
+	print('program exited, stopping wheels')
+	send2wheels_both(90,90)
+atexit.register(stop_wheels)
 
 if __name__ == "__main__":
-	set_active_ip(default_rovernet_ip)
-	while True:
-		# send2wheels_both(120, 120)
-		# time.sleep(2)
-		# send2wheels_both(50, 50)
-		# time.sleep(2)
-		send2wheels_both(90, 90)
+	if options.left:
+		left()
+	elif options.right:
+		right()
+	elif options.forward:
+		forward()
+	elif options.backward:
+		backward()
+	else:
+		while True:
+			send2wheels_both(150, 150)
+			time.sleep(5)
+			send2wheels_both(90, 90)
+			time.sleep(20)

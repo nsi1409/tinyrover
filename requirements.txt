@@ -4,13 +4,9 @@ matplotlib
 numpy
 opencv-python
 pygame
-pyrealsense2
+# pyrealsense2
 pyserial
 requests
 simple-pid
 opencv-contrib-python==4.6.0.66
-flask-cors
-laspy
-laspy[laszip]
-laspy[lazrs]
-numpy-stl
+atexit
