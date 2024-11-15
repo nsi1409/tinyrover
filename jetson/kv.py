@@ -10,6 +10,7 @@ app = Flask(__name__)
 state = {}
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+default_value = ['no value']
 
 def send_kv(k, v):
 	r = requests.put('http://127.0.0.1:5001/data', json={'k': k, 'v': v})
@@ -38,7 +39,7 @@ def data():
 			v = state[k]
 			return {'v': v}, 200
 		else:
-			return ["no value"], 200
+			return default_value, 200
 
 rate = 0.2
 v = [1, 0, 0, 0]
