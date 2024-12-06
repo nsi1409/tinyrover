@@ -8,6 +8,8 @@ from kv import send_kv
 port = port_grep.find(1659)
 gps = serial.Serial(port, 4800, timeout=None)
 
+seconds_between_checks = 0.1
+
 def parse():
 	try:
 		inpt = gps.readline()
@@ -29,15 +31,23 @@ def min2dec(inpt):
 		return outp
 
 while (1):
-	parse_outp = parse()
-	if (parse_outp == [[]]):
-		break
-	elif (parse_outp[0] == "$GPGGA"):
-		north = min2dec(parse_outp[2])
-		west = min2dec(parse_outp[4])
-		if (north == "No" or west == "No"):
-			print(f'Lost Cords')
+	try:
+		parse_outp = parse()
+		#print('Parsed GPS data: ' + str(parse_outp) + '\n')
+		if (parse_outp == [[]]):
+			print('GPS data was empty. Retrying...')
+			time.sleep(seconds_between_checks)
 			continue
-		print(f'North is {north}')
-		print(f'West is {west}')
-		send_kv('gps', [north, west])
+		elif (parse_outp[0] == "$GPGGA"):
+			north = min2dec(parse_outp[2])
+			west = min2dec(parse_outp[4])
+			if (north == "No" or west == "No"):
+				print('Lost Cords')
+				time.sleep(seconds_between_checks)
+				continue
+			print(f'North is {north}')
+			print(f'West is {west}')
+			send_kv('gps', [north, west])
+	except Exception as e:
+		print('Error occurred in GPS reading loop: ' + str(e))
+	time.sleep(seconds_between_checks)
