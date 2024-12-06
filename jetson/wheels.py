@@ -1,6 +1,5 @@
 from flask import Flask, request
 import jetson2arduino
-import socket
 import argparse
 import time
 from flask_cors import CORS, cross_origin
@@ -43,12 +42,14 @@ def wheel_both():
 	else:
 		return 'Content-Type not supported!'
 
+#TODO: test and finish implementing this function
 def wheel_stop():
 	left = 90
 	right = 90
 	j2a.send_both(left, right)
 	return str(json)
 
+#TODO: test and finish implementing this function
 def wheel_trim():
 	content_type = request.headers.get('Content-Type')
 	if (content_type == 'application/json'):

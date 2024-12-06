@@ -4,7 +4,6 @@ import os
 import wheelcommand as wc
 import argparse
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1" #This allows the window to be unselected but still get controller input
-import requests
 
 import threading
 
@@ -40,7 +39,6 @@ def updateWheels():
 	global rightSpeed
 	wc.send2wheels_both(leftSpeed, rightSpeed)
 	threading.Timer(0.1, updateWheels).start()
-
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Process some integers.')
