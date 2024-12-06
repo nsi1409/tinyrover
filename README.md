@@ -43,6 +43,11 @@ This year we should move away from launching code on jetson/ through ssh and ins
 	curl --header "Content-Type: application/json" \
 		--request POST --data '{"left": 127, "right": 127}' http://localhost:8080/wheel_command
 
+#### Wheelcommand script
+	$ cd tinyrover
+	$ cd user
+	$ python3 wheelcommand.py -forward
+
 
 ### Wheels as a library
 #### Python
@@ -50,3 +55,10 @@ This year we should move away from launching code on jetson/ through ssh and ins
 
 	j2a = jetson2arduino.Messenger()
 	j2a.send([0, 127, 127])
+
+
+### Starting the Wheels Server
+	ssh rover
+	$ cd tinyrover
+	$ cd jetson
+	$ sudo python3 wheels.py
