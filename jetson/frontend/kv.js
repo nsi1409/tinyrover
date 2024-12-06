@@ -44,6 +44,21 @@ const $$ = document.querySelectorAll.bind(document)
 //     console.log(data);
 //     $("#yaw").innerHTML = "Yaw: " + data["v"];
 // })
+function fetchLoop(){
+    fetch(`/data`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "k": "gps" })
+    }).then((response) => {
+        //console.log(response);
+        return response.json();
+    }).then((data) => {
+        //console.log(data);
+        $("#gps").innerHTML = "GPS: " + data["v"];
+    })
 
     fetch(`/data`, {
         method: 'POST',
