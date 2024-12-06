@@ -45,14 +45,51 @@ const $$ = document.querySelectorAll.bind(document)
 //     $("#yaw").innerHTML = "Yaw: " + data["v"];
 // })
 
+    fetch(`/data`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        body: JSON.stringify({ "k": "quat" })
+    }).then((response) => {
+        //console.log(response);
+        return response.json();
+    }).then((data) => {
+        //console.log(data);
+        $("#quat").innerHTML = "Quaternion: " + data["v"];
+    })
 
 let state = {};
+    fetch(`/data`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "k": "yaw" })
+    }).then((response) => {
+        //console.log(response);
+        return response.json();
+    }).then((data) => {
+        //console.log(data);
+        $("#yaw").innerHTML = "Yaw: " + data["v"];
+    })
+}
+setInterval(fetchLoop, 400);
 
-// quaternion = new THREE.Quaternion(1, 0, 0, 0);
-function fetchLoop() {
+quaternion = new THREE.Quaternion(1, 0, 0, 0);
+function fetchFor3dVisualizerLoop() {
     //fetch(`/data`, {
-    fetch($("#location").value + `/everything`).then((response) => {
-        // console.log(response.json());
+    fetch(`/brown`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "k": "quat" })
+    }).then((response) => {
+        console.log(response);
         return response.json();
     }).then((data) => {
         console.log(data);
@@ -75,7 +112,7 @@ function fetchLoop() {
         console.log(error);
     })
 }
-setInterval(fetchLoop, 400);
+//setInterval(fetchFor3dVisualizerLoop, 400);
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
