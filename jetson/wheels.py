@@ -102,6 +102,7 @@ while(1):
 	try:
 		j2a = jetson2arduino.Messenger()
 
+		@app.route('/wheel_command', methods=['GET', 'POST', 'PUT'])
 		@app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
 		@cross_origin()
 		def wheel_call_both():
@@ -136,6 +137,7 @@ while(1):
 			time.sleep(0.5)
 			continue
 
+		@app.route('/wheel_command', methods=['GET', 'POST', 'PUT'])
 		@app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
 		@cross_origin()
 		def no_connect_both():
@@ -165,15 +167,16 @@ while(1):
 
 def stop_on_start():
 	while(True):
-		r = requests.get('http://localhost:8080/wheel_command', json={
-			"left": 90, "right": 90
-		})
-		if(r.ok):
-			break
-		time.sleep(0.05)
+		try:
+			r = requests.get('http://localhost:8080/wheel_command', timeout=10, json={
+				"left": 90, "right": 90
+			})
+			if(r.ok):
+				break
+		except:
+			print("timeout")
+		time.sleep(0.1)
 
 if __name__ == '__main__':
-	t1 = threading.Thread(app.run, kwargs = {"host" : '0.0.0.0', "port" : 8080, "debug" : True, "threaded" : False})
-	t2 = threading.Thread(stop_on_start)
-	t1.start()
-	t2.start()
+	threading.Thread(target = lambda: app.run(host = '0.0.0.0', port = 8080, debug = True, threaded = False, use_reloader = False)).start()
+	threading.Thread(target = stop_on_start).start()
