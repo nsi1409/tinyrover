@@ -75,7 +75,6 @@ function fetchLoop(){
         $("#quat").innerHTML = "Quaternion: " + data["v"];
     })
 
-let state = {};
     fetch(`/data`, {
         method: 'POST',
         headers: {
@@ -89,6 +88,9 @@ let state = {};
     }).then((data) => {
         //console.log(data);
         $("#yaw").innerHTML = "Yaw: " + data["v"];
+        //TODO: can Number(yaw.innerHTML.substring(5)) be replaced with data["v"] (or maybe Number(data["v"]))?
+        //TODO: Nyomi seems to rotate in the opposite direction of the imu. Fix this
+        $('#nyomi').style.transform = "rotate(" + Number(yaw.innerHTML.substring(5)) + "deg)";
     })
 }
 setInterval(fetchLoop, 400);
