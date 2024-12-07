@@ -88,10 +88,25 @@ function fetchLoop(){
     }).then((data) => {
         //console.log(data);
         $("#yaw").innerHTML = "Yaw: " + data["v"];
-        //TODO: can Number(yaw.innerHTML.substring(5)) be replaced with data["v"] (or maybe Number(data["v"]))?
-        //TODO: Nyomi seems to rotate in the opposite direction of the imu. Fix this
-        $('#nyomi').style.transform = "rotate(" + Number(yaw.innerHTML.substring(5)) + "deg)";
+        $('#nyomi').style.transform = "rotate(" + data["v"] + "deg)";
     })
+
+    // fetch(`/data`, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({ "k": "scuffed_yaw" })
+    // }).then((response) => {
+    //     //console.log(response);
+    //     return response.json();
+    // }).then((data) => {
+    //     //console.log(data);
+    //     yaw = ((data["v"] / Math.PI) * 180) + 180
+    //     $("#yaw").innerHTML = "Yaw: " + yaw;
+    //     $('#nyomi').style.transform = "rotate(" + yaw + "deg)";
+    // })
 }
 setInterval(fetchLoop, 400);
 
