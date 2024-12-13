@@ -31,7 +31,14 @@ def no_connect():
 	return f'error: {err} | sent values: ({left}, {right})', 500
 
 
+@app.route('/wheel_command', methods=['GET', 'POST', 'PUT'])
+@app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
+@cross_origin()
 def wheel_both():
+	try:
+		j2a = jetson2arduino.Messenger()
+	except Exception as e:
+		return no_connect()
 	content_type = request.headers.get('Content-Type')
 	if (content_type == 'application/json'):
 		json = request.json
@@ -42,32 +49,49 @@ def wheel_both():
 	else:
 		return 'Content-Type not supported!'
 
-#TODO: test and finish implementing this function
+@app.route('/wheel_command_stop', methods=['GET', 'POST', 'PUT'])
+@cross_origin()
 def wheel_stop():
+	try:
+		j2a = jetson2arduino.Messenger()
+	except Exception as e:
+		return no_connect()
 	left = 90
 	right = 90
-	j2a.send_both(left, right)
-	return str(json)
-
-#TODO: test and finish implementing this function
-def wheel_trim():
-	content_type = request.headers.get('Content-Type')
-	if (content_type == 'application/json'):
-		json = request.json
-		trim = json["trim"]
-		magnitude = json["magnitude"]
-		if(trim > 0):
-			right = magnitude
-			left = magnitude * (1 - control)
-		else:
-			left = magnitude
-			right = magnitude * (1 - ((-1) * control))
+	try:
 		j2a.send_both(left, right)
-		return str(json)
-	else:
-		return 'Content-Type not supported!'
+		return 'success', 200
+	except:
+		return 'failed', 500
 
+@app.route('/wheel_command_trim', methods=['GET', 'POST', 'PUT'])
+@cross_origin()
+def wheel_trim():
+	json = request.json
+	trim = json["trim"]
+	magnitude = json["magnitude"]
+	if(trim > 0):
+		right = magnitude
+		left = magnitude * (1 - trim)
+	else:
+		left = magnitude
+		right = magnitude * (1 - ((-1) * trim))
+	msg = f'trim drive left: {left}, right: {right}'
+	print(msg)
+	try:
+		j2a = jetson2arduino.Messenger()
+		j2a.send_both(left, right)
+		return 'success: ' + msg, 200
+	except:
+		return 'failure: ' + msg, 500
+
+@app.route('/wheel_command_left', methods=['GET', 'POST', 'PUT'])
+@cross_origin()
 def wheel_left():
+	try:
+		j2a = jetson2arduino.Messenger()
+	except Exception as e:
+		return no_connect()
 	content_type = request.headers.get('Content-Type')
 	if (content_type == 'application/json'):
 		json = request.json
@@ -77,6 +101,21 @@ def wheel_left():
 	else:
 		return 'Content-Type not supported!'
 
+@app.route('/wheel_command_right', methods=['GET', 'POST', 'PUT'])
+@cross_origin()
+def wheel_right():
+	try:
+		j2a = jetson2arduino.Messenger()
+	except Exception as e:
+		return no_connect()
+	content_type = request.headers.get('Content-Type')
+	if (content_type == 'application/json'):
+		json = request.json
+		right = json["right"]
+		j2a.send_right(right)
+		return str(json)
+	else:
+		return 'Content-Type not supported!'
 
 def arm_joint_move():
 	content_type = request.headers.get('Content-Type')
@@ -89,83 +128,6 @@ def arm_joint_move():
 	else:
 		return 'Content-Type not supported!'
 
-def wheel_right():
-	content_type = request.headers.get('Content-Type')
-	if (content_type == 'application/json'):
-		json = request.json
-		right = json["right"]
-		j2a.send_right(right)
-		return str(json)
-	else:
-		return 'Content-Type not supported!'
-
-while(1):
-	try:
-		j2a = jetson2arduino.Messenger()
-
-		@app.route('/wheel_command', methods=['GET', 'POST', 'PUT'])
-		@app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def wheel_call_both():
-			return wheel_both()
-
-		@app.route('/wheel_command_left', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def wheel_call_left():
-			return wheel_left()
-
-		@app.route('/wheel_command_right', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def wheel_call_right():
-			return wheel_right()
-
-		@app.route('/wheel_command_stop', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def wheel_call_stop():
-			return wheel_stop()
-
-		@app.route('/wheel_command_trim', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def wheel_call_trim():
-			return wheel_trim()
-
-		break
-
-	except Exception as e:
-		print(e)
-		err = e
-		if not options.emulate:
-			time.sleep(0.5)
-			continue
-
-		@app.route('/wheel_command', methods=['GET', 'POST', 'PUT'])
-		@app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def no_connect_both():
-			return no_connect()
-
-		@app.route('/wheel_command_right', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def no_connect_right():
-			return no_connect()
-
-		@app.route('/wheel_command_left', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def no_connect_left():
-			return no_connect()
-
-		@app.route('/wheel_command_stop', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def no_connect_stop():
-			return no_connect()
-
-		@app.route('/wheel_command_trim', methods=['GET', 'POST', 'PUT'])
-		@cross_origin()
-		def no_connect_trim():
-			return no_connect()
-
-		break
-
 def stop_on_start():
 	while(True):
 		try:
@@ -177,6 +139,7 @@ def stop_on_start():
 		except:
 			print("timeout")
 		time.sleep(0.1)
+
 
 if __name__ == '__main__':
 	threading.Thread(target = lambda: app.run(host = '0.0.0.0', port = 8080, debug = True, threaded = False, use_reloader = False)).start()

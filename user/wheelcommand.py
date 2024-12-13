@@ -41,6 +41,17 @@ def backward():
 	print('going backwards')
 	send2wheels_both(70, 70)
 	time.sleep(60)
+def trim(magnitude, trim, remote=True):
+	print('trimming')
+	if remote:
+		uri = 'http://192.168.0.12:8080/wheel_command_trim'
+	else:
+		uri = 'http://localhost:8080/wheel_command_trim'
+	req = requests.get(uri, timeout=3, json={
+		"magnitude": magnitude, 
+		"trim": trim 
+	})
+	time.sleep(60)
 
 def stop_wheels():
 	print('program exited, stopping wheels')
@@ -56,9 +67,13 @@ if __name__ == "__main__":
 		forward()
 	elif options.backward:
 		backward()
+	#elif options.trim:
+	#	trim()
 	else:
 		while True:
-			send2wheels_both(150, 150)
+			#send2wheels_both(150, 150)
+			trim(1, 0, remote=False)
 			time.sleep(5)
-			send2wheels_both(90, 90)
+			#send2wheels_both(90, 90)
+			trim(1, 0, remote=False)
 			time.sleep(20)
