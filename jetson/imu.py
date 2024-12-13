@@ -1,19 +1,25 @@
 import math
-import time
-import serial
 import struct
 import port_grep
+import json
 from serial import *
 from kv import send_kv
 
 port = port_grep.find(6790)
 usb = Serial(port, 9600, timeout=1)
 
+calibration_data_file = open('calibration/imu_cal.json')
+calibration_data = json.load(calibration_data_file)
+max_x = calibration_data['maxX']
+min_x = calibration_data['minX']
+max_y = calibration_data['maxY']
+min_y = calibration_data['minY']
+
+print('imu.py is running!')
+
 while True:
-	s = usb.read_until(b'U')
-	#print(s)
 	try:
-		#print(s[0])
+		s = usb.read_until(b'U')
 		match s[0]:
 			case 83: #euler angles
 				(rollr, pitchr, yawr) = struct.unpack("<hhh", s[1:7])
@@ -24,25 +30,24 @@ while True:
 				send_kv('roll', roll)
 				send_kv('pitch', pitch)
 				send_kv('euler', [roll, pitch, yaw])
-				# print(yaw)
-			case 84:
+			case 84: #magnetic field
 				(magx, magy, magz) = struct.unpack("<hhh", s[1:7])
-    
-				scuffed_yaw = math.atan2(magy, magx)
+				x_range = max_x - min_x
+				y_range = max_y - min_y
+				adjusted_x = (2 * ((magx - min_x) / x_range)) - 1
+				adjusted_x = adjusted_x * -1
+				adjusted_y = (2 * ((magy - min_y) / y_range)) - 1
+				scuffed_yaw = math.atan2(adjusted_x, adjusted_y)
 				send_kv('scuffed_yaw', scuffed_yaw)
 			case 89: #quaternion
 				qr = struct.unpack("<hhhh", s[1:9])
 				q = tuple(el / 32768 for el in qr)
 				send_kv('quat', q)
-				#print(q)
 			case 87: #latitude and longitude
 				(longu, longl, latu, latl) = struct.unpack("<hhhh", s[1:9])
 				# send_kv('lat long', l)
-				print(latu)
-			# case ground speed for next time
 			case _: #default case
 				pass
-				#print(f'uncaught {s[0]}: {s}')
 	except Exception as e:
 		print(e)
 		print('reading loop fail, retrying')

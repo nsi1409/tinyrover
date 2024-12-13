@@ -1,49 +1,6 @@
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
-// fetch(`/data`, {
-//     method: 'POST',
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({ "k": "gps" })
-// }).then((response) => {
-//     console.log(response);
-//     return response.json();
-// }).then((data) => {
-//     console.log(data);
-//     $("#gps").innerHTML = "GPS: " + data["v"];
-// })
 
-// fetch(`/data`, {
-//     method: 'POST',
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({ "k": "quat" })
-// }).then((response) => {
-//     console.log(response);
-//     return response.json();
-// }).then((data) => {
-//     console.log(data);
-//     $("#quat").innerHTML = "Quaternion: " + data["v"];
-// })
-
-// fetch(`/data`, {
-//     method: 'POST',
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({ "k": "yaw" })
-// }).then((response) => {
-//     console.log(response);
-//     return response.json();
-// }).then((data) => {
-//     console.log(data);
-//     $("#yaw").innerHTML = "Yaw: " + data["v"];
-// })
 function fetchLoop(){
     fetch(`/data`, {
         method: 'POST',
@@ -75,38 +32,40 @@ function fetchLoop(){
         $("#quat").innerHTML = "Quaternion: " + data["v"];
     })
 
-    fetch(`/data`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ "k": "yaw" })
-    }).then((response) => {
-        //console.log(response);
-        return response.json();
-    }).then((data) => {
-        //console.log(data);
-        $("#yaw").innerHTML = "Yaw: " + data["v"];
-        $('#nyomi').style.transform = "rotate(" + data["v"] + "deg)";
-    })
-
+    //REGULAR YAW
     // fetch(`/data`, {
     //     method: 'POST',
     //     headers: {
     //         'Accept': 'application/json',
     //         'Content-Type': 'application/json'
     //     },
-    //     body: JSON.stringify({ "k": "scuffed_yaw" })
+    //     body: JSON.stringify({ "k": "yaw" })
     // }).then((response) => {
     //     //console.log(response);
     //     return response.json();
     // }).then((data) => {
     //     //console.log(data);
-    //     yaw = ((data["v"] / Math.PI) * 180) + 180
-    //     $("#yaw").innerHTML = "Yaw: " + yaw;
-    //     $('#nyomi').style.transform = "rotate(" + yaw + "deg)";
+    //     $("#yaw").innerHTML = "Yaw: " + data["v"];
+    //     $('#nyomi').style.transform = "rotate(" + data["v"] + "deg)";
     // })
+
+    //SCUFFED YAW
+    fetch(`/data`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "k": "scuffed_yaw" })
+    }).then((response) => {
+        //console.log(response);
+        return response.json();
+    }).then((data) => {
+        //console.log(data);
+        yaw = ((data["v"] / Math.PI) * 180) + 180
+        $("#yaw").innerHTML = "Yaw: " + yaw;
+        $('#nyomi').style.transform = "rotate(" + yaw + "deg)";
+    })
 }
 setInterval(fetchLoop, 400);
 
