@@ -1,7 +1,10 @@
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
-function fetchLoop(){
+setInterval(fetchLoop, 400);
+//setInterval(fetchFor3dVisualizerLoop, 400);
+
+function fetchLoop() {
     fetch(`/data`, {
         method: 'POST',
         headers: {
@@ -10,10 +13,8 @@ function fetchLoop(){
         },
         body: JSON.stringify({ "k": "gps" })
     }).then((response) => {
-        //console.log(response);
         return response.json();
     }).then((data) => {
-        //console.log(data);
         $("#gps").innerHTML = "GPS: " + data["v"];
     })
 
@@ -22,13 +23,11 @@ function fetchLoop(){
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-            },
+        },
         body: JSON.stringify({ "k": "quat" })
     }).then((response) => {
-        //console.log(response);
         return response.json();
     }).then((data) => {
-        //console.log(data);
         $("#quat").innerHTML = "Quaternion: " + data["v"];
     })
 
@@ -58,20 +57,20 @@ function fetchLoop(){
         },
         body: JSON.stringify({ "k": "scuffed_yaw" })
     }).then((response) => {
-        //console.log(response);
         return response.json();
     }).then((data) => {
-        //console.log(data);
-        yaw = ((data["v"] / Math.PI) * 180) + 180
-        $("#yaw").innerHTML = "Yaw: " + yaw;
-        $('#nyomi').style.transform = "rotate(" + yaw + "deg)";
+        if (data["v"] == "no value") {
+            $("#yaw").innerHTML = "Yaw: no value";
+        } else {
+            yaw = ((data["v"] / Math.PI) * 180) + 180
+            $("#yaw").innerHTML = "Yaw: " + yaw;
+            $('#nyomi').style.transform = "rotate(" + yaw + "deg)";
+        }
     })
 }
-setInterval(fetchLoop, 400);
 
 quaternion = new THREE.Quaternion(1, 0, 0, 0);
 function fetchFor3dVisualizerLoop() {
-    //fetch(`/data`, {
     fetch(`/brown`, {
         method: 'POST',
         headers: {
@@ -103,12 +102,11 @@ function fetchFor3dVisualizerLoop() {
         console.log(error);
     })
 }
-//setInterval(fetchFor3dVisualizerLoop, 400);
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth/2, window.innerHeight / 2);
+renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
 document.body.appendChild(renderer.domElement);
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });

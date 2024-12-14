@@ -15,8 +15,6 @@ min_x = calibration_data['minX']
 max_y = calibration_data['maxY']
 min_y = calibration_data['minY']
 
-print('imu.py is running!')
-
 while True:
 	try:
 		s = usb.read_until(b'U')
@@ -48,6 +46,7 @@ while True:
 				# send_kv('lat long', l)
 			case _: #default case
 				pass
+		print('imu.py is running...')
 	except Exception as e:
 		print(e)
 		print('reading loop fail, retrying')

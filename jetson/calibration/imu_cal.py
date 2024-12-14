@@ -2,12 +2,9 @@ import sys
 sys.path.append("..")
 
 import math
-import time
-import serial
 import struct
 import port_grep
 from serial import *
-from kv import send_kv
 import signal
 import json
 
@@ -28,20 +25,16 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 print('')
-# signal.pause()
 
 while True:
 	s = usb.read_until(b'U')
-	# print(s)
-	# print(s[0])
 	try:
 		match s[0]:
 			case 84:
 				(magx, magy, magz) = struct.unpack("<hhh", s[1:7])
-				rectifiedx = magx+5000
+				rectifiedx = magx
 				rectifiedy = magy
 				scuffed_yaw = math.atan2(rectifiedy, rectifiedx)
-				# print(scuffed_yaw)
 				if (magx < minX):
 					minX = magx
 				if (magx > maxX):
@@ -50,8 +43,6 @@ while True:
 					minY = magy
 				if (magy > maxY):
 					maxY = magy
-				# print("magnetic: " + str(s))
-				# print(str(magx) + " " + str(magy) + " " + str(magz))
 				print("min x: " + str(minX) + ", max x: " + str(maxX) + ", min y: " + str(minY) + ", max y: " + str(maxY))
 	except Exception as e:
 		print(e)
