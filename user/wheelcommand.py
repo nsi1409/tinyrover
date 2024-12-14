@@ -67,9 +67,7 @@ if __name__ == "__main__":
 		forward()
 	elif options.backward:
 		backward()
-	#elif options.trim:
-	#	trim()
-	else:
+	elif options.trim:
 		while True:
 			#send2wheels_both(150, 150)
 			trim(1, 0, remote=False)
