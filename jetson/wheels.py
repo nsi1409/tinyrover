@@ -16,53 +16,40 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
+try:
+	j2a = jetson2arduino.Messenger()
+	print('successful connect to arduino')
+except Exception as e:
+	print('failed to connect to arduino')
+
+
 @app.route('/ping', methods=['GET', 'POST', 'PUT'])
 @cross_origin()
 def pingpong():
 	return 'pong\n', 200
 
 
-def no_connect():
-	left = None
-	right = None
-	if request.data:
-		left = request.json['left']
-		right = request.json['right']
-	return f'error: {err} | sent values: ({left}, {right})', 500
-
-
 @app.route('/wheel_command', methods=['GET', 'POST', 'PUT'])
 @app.route('/wheel_command_both', methods=['GET', 'POST', 'PUT'])
 @cross_origin()
 def wheel_both():
-	try:
-		j2a = jetson2arduino.Messenger()
-	except Exception as e:
-		return no_connect()
-	content_type = request.headers.get('Content-Type')
-	if (content_type == 'application/json'):
-		json = request.json
-		left = json["left"]
-		right = json["right"]
-		j2a.send_both(left, right)
-		return str(json)
-	else:
-		return 'Content-Type not supported!'
+	json = request.json
+	left = json["left"]
+	right = json["right"]
+	msg = f'left: {left}, right: {right}'
+	print(msg)
+	j2a.send_both(left, right)
+	return 'ok', 200
 
 @app.route('/wheel_command_stop', methods=['GET', 'POST', 'PUT'])
 @cross_origin()
 def wheel_stop():
-	try:
-		j2a = jetson2arduino.Messenger()
-	except Exception as e:
-		return no_connect()
 	left = 90
 	right = 90
-	try:
-		j2a.send_both(left, right)
-		return 'success', 200
-	except:
-		return 'failed', 500
+	msg = f'left: {left}, right: {right}'
+	print(msg)
+	j2a.send_both(left, right)
+	return 'ok', 200
 
 @app.route('/wheel_command_trim', methods=['GET', 'POST', 'PUT'])
 @cross_origin()
@@ -78,44 +65,24 @@ def wheel_trim():
 		right = magnitude * (1 - ((-1) * trim))
 	msg = f'trim drive left: {left}, right: {right}'
 	print(msg)
-	try:
-		j2a = jetson2arduino.Messenger()
-		j2a.send_both(left, right)
-		return 'success: ' + msg, 200
-	except:
-		return 'failure: ' + msg, 500
+	j2a.send_both(left, right)
+	return 'ok', 200
 
 @app.route('/wheel_command_left', methods=['GET', 'POST', 'PUT'])
 @cross_origin()
 def wheel_left():
-	try:
-		j2a = jetson2arduino.Messenger()
-	except Exception as e:
-		return no_connect()
-	content_type = request.headers.get('Content-Type')
-	if (content_type == 'application/json'):
-		json = request.json
-		left = json["left"]
-		j2a.send_left(left)
-		return str(json)
-	else:
-		return 'Content-Type not supported!'
+	json = request.json
+	left = json["left"]
+	j2a.send_left(left)
+	return 'ok', 200
 
 @app.route('/wheel_command_right', methods=['GET', 'POST', 'PUT'])
 @cross_origin()
 def wheel_right():
-	try:
-		j2a = jetson2arduino.Messenger()
-	except Exception as e:
-		return no_connect()
-	content_type = request.headers.get('Content-Type')
-	if (content_type == 'application/json'):
-		json = request.json
-		right = json["right"]
-		j2a.send_right(right)
-		return str(json)
-	else:
-		return 'Content-Type not supported!'
+	json = request.json
+	right = json["right"]
+	j2a.send_right(right)
+	return 'ok', 200
 
 def arm_joint_move():
 	content_type = request.headers.get('Content-Type')
