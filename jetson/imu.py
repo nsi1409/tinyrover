@@ -1,3 +1,4 @@
+import sys
 import math
 import struct
 import port_grep
@@ -5,8 +6,15 @@ import json
 from serial import *
 from kv import send_kv
 
-port = port_grep.find(6790)
-usb = Serial(port, 9600, timeout=1)
+connected = False
+
+try:
+	port = port_grep.find(6790)
+	usb = Serial(port, 9600, timeout=1)
+	connected = True
+except Exception as e:
+    print('failed to start imu.py: ' + str(e))
+    sys.exit()
 
 calibration_data_file = open('calibration/imu_cal.json')
 calibration_data = json.load(calibration_data_file)
@@ -17,6 +25,10 @@ min_y = calibration_data['minY']
 
 while True:
 	try:
+		if(not connected):
+			port = port_grep.find(6790)
+			usb = Serial(port, 9600, timeout=1)
+			connected = True
 		s = usb.read_until(b'U')
 		match s[0]:
 			case 83: #euler angles
@@ -47,6 +59,12 @@ while True:
 			case _: #default case
 				pass
 		print('imu.py is running...')
+	except SerialException as se:
+		print('imu disconnected, retrying')
+		connected = False
 	except Exception as e:
-		print(e)
-		print('reading loop fail, retrying')
+		if (not connected):
+			print('failed to reconnect to the imu, retrying')
+		else:
+			print(e)
+			print('reading loop fail, retrying')

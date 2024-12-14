@@ -1,6 +1,5 @@
 import serial.tools.list_ports
 
-
 def list_all():
 	ports = serial.tools.list_ports.comports()
 	for port in ports:
@@ -15,7 +14,6 @@ def find(vid):
 		if port.vid == vid:
 			return port.device
 	raise Exception("device not detected")
-
 
 if __name__ == '__main__':
 	list_all()
