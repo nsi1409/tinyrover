@@ -8,6 +8,8 @@ parser.add_argument('-forward', action='store_true')
 parser.add_argument('-left', action='store_true')
 parser.add_argument('-right', action='store_true')
 parser.add_argument('-backward', action='store_true')
+parser.add_argument('-trim', action='store_true')
+parser.add_argument('-stop', action='store_true')
 
 # data coming in is in options
 options = parser.parse_args()
@@ -68,10 +70,9 @@ if __name__ == "__main__":
 	elif options.backward:
 		backward()
 	elif options.trim:
-		while True:
-			#send2wheels_both(150, 150)
-			trim(1, 0, remote=False)
-			time.sleep(5)
-			#send2wheels_both(90, 90)
-			trim(1, 0, remote=False)
-			time.sleep(20)
+		trim(1, 0.5, remote=True)
+		time.sleep(10)
+		trim(1, -0.5, remote=True)
+		time.sleep(20)
+	elif options.stop:
+		req = requests.get('http://192.168.0.12:8080/wheel_command_stop', timeout=3)
