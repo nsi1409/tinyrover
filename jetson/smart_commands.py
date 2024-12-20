@@ -37,11 +37,11 @@ def wheel_turn_both():
         target = request.json['target']
     target = float(target)
 
-    pid = PID(1, 1, 1, setpoint=0)
+    pid = PID(1, 1, 1, setpoint=target)
     step = 0
 
     while True:
-        r = requests.get('http://127.0.0.1:5001/brownsleep', timeout=5)
+        r = requests.get('http://127.0.0.1:5001/data', json={'k': 'scuffed_yaw'})
         yaw = r.json()[0]
         yaw = (180 * yaw) + 180
         distance_right = (yaw - target) % 360
@@ -51,11 +51,17 @@ def wheel_turn_both():
         else:
             distance = -1 * distance_right
 
-        if abs(distance) < 2:
+        if abs(distance) < 5:
             return [yaw, target, distance, step]
 
         control = pid(distance)
-        #r = requests.get('wheels server url', json={control values})
+        if distance_right > distance_left:
+            left = ((360 - control) / 360) * 90 - 90
+            right = (control / 360) * 90 + 90
+        else:
+            left = (control / 360) * 90 + 90
+            right = ((360 - control) / 360) * 90 - 90
+        r = requests.get('http://127.0.0.1:8080/wheel_command_both', json={'left': left, 'right': right})
         step += 1
 
 @app.route('/drivestraight', methods=['GET', 'POST', 'PUT'])
