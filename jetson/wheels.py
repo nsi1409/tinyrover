@@ -57,12 +57,16 @@ def wheel_trim():
 	json = request.json
 	trim = json["trim"]
 	magnitude = json["magnitude"]
+	assert magnitude >= -1
+	assert magnitude <= 1
 	if(trim > 0):
-		right = magnitude
-		left = magnitude * (1 - trim)
+		right = (90 * magnitude) + 90
+		left = (90 * (magnitude * (1 - trim))) + 90
 	else:
-		left = magnitude
-		right = magnitude * (1 - ((-1) * trim))
+		left = (90 * magnitude) + 90
+		right = (90 * (magnitude * (1 - ((-1) * trim)))) + 90
+	left = int(left)
+	right = int(right)
 	msg = f'trim drive left: {left}, right: {right}'
 	print(msg)
 	j2a.send_both(left, right)
@@ -109,5 +113,6 @@ def stop_on_start():
 
 
 if __name__ == '__main__':
-	threading.Thread(target = lambda: app.run(host = '0.0.0.0', port = 8080, debug = True, threaded = False, use_reloader = False)).start()
-	threading.Thread(target = stop_on_start).start()
+	#threading.Thread(target = lambda: app.run(host = '0.0.0.0', port = 8080, debug = True, threaded = False, use_reloader = False)).start()
+	#threading.Thread(target = stop_on_start).start()
+	app.run(host = '0.0.0.0', port = 8080, debug = True, threaded = False, use_reloader = False)
