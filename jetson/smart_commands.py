@@ -38,6 +38,7 @@ def wheel_turn_both():
     target = float(target)
 
     pid = PID(1, 1, 1, setpoint=target)
+    pid.output_limits = (45, 135)
     step = 0
 
     while True:
@@ -62,10 +63,10 @@ def wheel_turn_both():
             left = (control / 360) * 90 + 90
             right = ((360 - control) / 360) * 90 - 90
 
-        left = min(left, 180)
-        left = max(left, 0)
-        right = min(right, 180)
-        right = max(right, 0)
+        left = min(left, 135)
+        left = max(left, 45)
+        right = min(right, 135)
+        right = max(right, 45)
         r = requests.get('http://127.0.0.1:8080/wheel_command_both', json={'left': int(left), 'right': int(right)})
         step += 1
 
