@@ -4,7 +4,7 @@ import argparse
 import requests
 from simple_pid import PID
 
-from jetson.wheels import wheel_both, wheel_stop
+from wheels import wheel_both, wheel_stop
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--emulate', action='store_true')
@@ -42,7 +42,7 @@ def wheel_turn_both():
 
     while True:
         r = requests.get('http://127.0.0.1:5001/data', json={'k': 'scuffed_yaw'})
-        yaw = r.json()[0]
+        yaw = r.json()['v']
         yaw = (180 * yaw) + 180
         distance_right = (yaw - target) % 360
         distance_left = (target - yaw) % 360
