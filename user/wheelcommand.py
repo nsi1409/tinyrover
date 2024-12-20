@@ -8,7 +8,8 @@ parser.add_argument('-forward', action='store_true')
 parser.add_argument('-left', action='store_true')
 parser.add_argument('-right', action='store_true')
 parser.add_argument('-backward', action='store_true')
-parser.add_argument('-trim', action='store_true')
+parser.add_argument('-left_trim', action='store_true')
+parser.add_argument('-right_trim', action='store_true')
 parser.add_argument('-stop', action='store_true')
 parser.add_argument('-smart_turn', action='store_true')
 parser.add_argument('-heading', type=float)
@@ -71,11 +72,10 @@ if __name__ == "__main__":
 		forward()
 	elif options.backward:
 		backward()
-	elif options.trim:
-		trim(1, 0.5, remote=True)
-		time.sleep(10)
-		trim(1, -0.5, remote=True)
-		time.sleep(20)
+	elif options.left_trim:
+		trim(0.2, 0.8, remote=True)
+	elif options.right_trim:
+		trim(0.2, -0.8, remote=True)
 	elif options.stop:
 		req = requests.get('http://192.168.0.12:8080/wheel_command_stop', timeout=3)
 	elif options.smart_turn:
