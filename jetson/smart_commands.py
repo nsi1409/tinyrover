@@ -61,7 +61,12 @@ def wheel_turn_both():
         else:
             left = (control / 360) * 90 + 90
             right = ((360 - control) / 360) * 90 - 90
-        r = requests.get('http://127.0.0.1:8080/wheel_command_both', json={'left': left, 'right': right})
+
+        left = min(left, 180)
+        left = max(left, 0)
+        right = min(right, 180)
+        right = max(right, 0)
+        r = requests.get('http://127.0.0.1:8080/wheel_command_both', json={'left': int(left), 'right': int(right)})
         step += 1
 
 @app.route('/drivestraight', methods=['GET', 'POST', 'PUT'])
