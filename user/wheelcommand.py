@@ -13,6 +13,9 @@ parser.add_argument('-right_trim', action='store_true')
 parser.add_argument('-stop', action='store_true')
 parser.add_argument('-smart_turn', action='store_true')
 parser.add_argument('-heading', type=float)
+parser.add_argument('-smart_forward', action='store_true')
+parser.add_argument('-duration', type=float)
+parser.add_argument('-speed', type=float)
 
 # data coming in is in options
 options = parser.parse_args()
@@ -79,8 +82,10 @@ if __name__ == "__main__":
 	elif options.stop:
 		req = requests.get('http://192.168.0.12:8080/wheel_command_stop', timeout=3)
 	elif options.smart_turn:
-		print("flag")
 		req = requests.get('http://192.168.0.12:8081/turn', timeout=3, json={
 			"target": options.heading
 		})
+		time.sleep(10)
+	elif options.smart_forward:
+		req = requests.get('http://192.168.0.12:8081/drivestraight', timeout=3, json={"time": options.duration, "velocity": options.speed})
 		time.sleep(10)
