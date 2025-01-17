@@ -41,6 +41,16 @@ $("#send_wheels_mag_trim").onclick = (event) => {
 }
 
 $("#send_wheels_stop").onclick = (event) => {
+    send_wheel_stop();
+}
+
+document.addEventListener("keydown", (event) => {
+    if(event.code == "Enter"){
+        send_wheel_stop();
+    }
+});
+
+function send_wheel_stop(){
     fetch('http://localhost:8080/wheel_command_stop', {
         method: 'POST',
         headers: {
