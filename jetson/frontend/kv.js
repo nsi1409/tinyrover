@@ -4,7 +4,7 @@ const $$ = document.querySelectorAll.bind(document)
 setInterval(fetchLoop, 400);
 //setInterval(fetchFor3dVisualizerLoop, 400);
 
-$("#send_wheels").onclick = (event) => {
+$("#send_wheels_left_right").onclick = (event) => {
     leftMag = $("#left").value;
     rightMag = $("#right").value;
     if (rightMag < 0) {
@@ -87,7 +87,7 @@ function fetchLoop() {
     //     },
     //     body: JSON.stringify({ "k": "yaw" })
     // }).then((response) => {
-    //     //console.log(response);
+    //     //`console`.log(response);
     //     return response.json();
     // }).then((data) => {
     //     //console.log(data);
