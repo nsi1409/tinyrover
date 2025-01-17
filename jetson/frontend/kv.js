@@ -4,6 +4,13 @@ const $$ = document.querySelectorAll.bind(document)
 setInterval(fetchLoop, 400);
 //setInterval(fetchFor3dVisualizerLoop, 400);
 
+if (document.url == "http://192.168.0.12:5001/") {
+    endpoint = "192.168.0.12";
+} else {
+    endpoint = "localhost";
+}
+console.log("endpoint is " + endpoint);
+
 $("#send_wheels_left_right").onclick = (event) => {
     leftMag = $("#left").value;
     rightMag = $("#right").value;
@@ -17,7 +24,7 @@ $("#send_wheels_left_right").onclick = (event) => {
     } else if (leftMag > 180) {
         leftMag = 180;
     }
-    fetch('http://localhost:8080/wheel_command_both', {
+    fetch(`http://${endpoint}:8080/wheel_command_both`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -30,7 +37,7 @@ $("#send_wheels_left_right").onclick = (event) => {
 $("#send_wheels_mag_trim").onclick = (event) => {
     mag = $("#magnitude").value;
     trim = $("#trim").value;
-    fetch('http://localhost:8080/wheel_command_trim', {
+    fetch(`http://${endpoint}:8080/wheel_command_trim`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -45,13 +52,13 @@ $("#send_wheels_stop").onclick = (event) => {
 }
 
 document.addEventListener("keydown", (event) => {
-    if(event.code == "Enter"){
+    if (event.code == "Enter") {
         send_wheel_stop();
     }
 });
 
-function send_wheel_stop(){
-    fetch('http://localhost:8080/wheel_command_stop', {
+function send_wheel_stop() {
+    fetch(`http://${endpoint}:8080/wheel_command_stop`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
