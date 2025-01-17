@@ -4,6 +4,53 @@ const $$ = document.querySelectorAll.bind(document)
 setInterval(fetchLoop, 400);
 //setInterval(fetchFor3dVisualizerLoop, 400);
 
+$("#send_wheels").onclick = (event) => {
+    leftMag = $("#left").value;
+    rightMag = $("#right").value;
+    if (rightMag < 0) {
+        rightMag = 0;
+    } else if (rightMag > 180) {
+        rightMag = 180;
+    }
+    if (leftMag < 0) {
+        leftMag = 0;
+    } else if (leftMag > 180) {
+        leftMag = 180;
+    }
+    fetch('http://localhost:8080/wheel_command_both', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'left': leftMag, 'right': rightMag })
+    })
+};
+
+$("#send_wheels_mag_trim").onclick = (event) => {
+    mag = $("#magnitude").value;
+    trim = $("#trim").value;
+    fetch('http://localhost:8080/wheel_command_trim', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'magnitude': mag, 'trim': trim })
+    })
+}
+
+$("#send_wheels_stop").onclick = (event) => {
+    fetch('http://localhost:8080/wheel_command_stop', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
+}
+
 function fetchLoop() {
     fetch(`/data`, {
         method: 'POST',
@@ -62,7 +109,7 @@ function fetchLoop() {
         if (data["v"] == "no value") {
             $("#yaw").innerHTML = "Yaw: no value";
         } else {
-            yaw = ((data["v"] / Math.PI) * 180) + 180
+            yaw = ((data["v"] / Math.PI) * 180) + 180;
             $("#yaw").innerHTML = "Yaw: " + yaw;
             $('#nyomi').style.transform = "rotate(" + yaw + "deg)";
         }
