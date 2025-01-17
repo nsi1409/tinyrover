@@ -49,13 +49,14 @@ def wheel_turn_both():
     Let Ki be 0, increase Kp until just slightly overshooting,
     increase Kd until perfect
     """
-    pid = PID(.0001, 0, 0, setpoint=target)
+    pid = PID(10, .00000001, 0, setpoint=target)
     pid.output_limits = (0, 180)
     step = 0
 
     while True:
         r = requests.get('http://127.0.0.1:5001/data', timeout=3, json={'k': 'scuffed_yaw'})
-        yaw = r.json()['v']
+        yaw = float(r.json()['v'])
+        yaw *= (180.0 / 3.14159265)
         distance_right = (yaw - target) % 360
         distance_left = (target - yaw) % 360
         if distance_right > distance_left:
@@ -64,22 +65,22 @@ def wheel_turn_both():
             distance = -1 * distance_right
 
         if abs(distance) < 5:
+            print("flag")
             r = requests.get('http://127.0.0.1:8080/wheel_command_stop', timeout=3)
-            return [yaw, target, distance, step]
+            return str((yaw, target, distance, step))
 
         control = pid(distance)
 
         if distance >= 0:
-            left = 135 - (.5 * control)
-            right = 135
+            left = 90 - (.25 * control)
+            right = 90 + (.25 * control)
         else:
-            left = 135
-            right =  135 - (.5 * control)
+            left = 90 + (.25 * control)
+            right =  90 - (.25 * control)
 
         #These lines are redundant but included just to be safe
-        left = min(135, max(45, left))
-        right = min(135, max(45, right))
-
+        left = min(100, max(80, left))
+        right = min(100, max(80, right))
         r = requests.get('http://127.0.0.1:8080/wheel_command_both', timeout=3, json={'left': int(left), 'right': int(right)})
         step += 1
 
@@ -119,6 +120,7 @@ def wheel_straight_both():
         r = requests.get('http://127.0.0.1:8080/wheel_command_both', timeout=3, json={'left': int(control), 'right': int(control)})
         
     r = requests.get('http://127.0.0.1:8080/wheel_command_stop', timeout=3)
+    return "ok"
 
         
 
