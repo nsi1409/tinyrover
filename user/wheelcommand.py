@@ -16,6 +16,9 @@ parser.add_argument('-heading', type=float)
 parser.add_argument('-smart_forward', action='store_true')
 parser.add_argument('-duration', type=float)
 parser.add_argument('-speed', type=float)
+parser.add_argument('-smart_direct', action='store_true')
+parser.add_argument('-position', action='extend', nargs=2, type=float)
+parser.add_argument('-smart_path', action='store_true')
 
 # data coming in is in options
 options = parser.parse_args()
@@ -89,3 +92,10 @@ if __name__ == "__main__":
 	elif options.smart_forward:
 		req = requests.get('http://192.168.0.12:8081/drivestraight', timeout=3, json={"time": options.duration, "velocity": options.speed})
 		time.sleep(10)
+	elif options.smart_direct:
+		req = requests.get('http://192.168.0.12:8081/directpath', timeout=3, json={"target": options.position[0:2]})
+		time.sleep(10)
+	elif options.smart_path:
+		req = requests.get('http://192.168.0.12:8081/path', timeout=3, json={"path": [[options.position[i:i + 2] for i in range(0, len(options.position), 2)]]})
+		time.sleep(10)
+
