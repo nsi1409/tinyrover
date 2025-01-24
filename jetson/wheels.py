@@ -5,6 +5,7 @@ import time
 from flask_cors import CORS, cross_origin
 import requests
 import threading
+import atexit
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--emulate', action='store_true')
@@ -49,6 +50,7 @@ def wheel_stop():
 	msg = f'left: {left}, right: {right}'
 	print(msg)
 	j2a.send_both(left, right)
+	exit()
 	return 'ok', 200
 
 @app.route('/wheel_command_trim', methods=['GET', 'POST', 'PUT'])
@@ -110,6 +112,12 @@ def stop_on_start():
 		except:
 			print("timeout")
 		time.sleep(0.1)
+
+def exit_handler():
+	j2a.send_both(90, 90)
+	time.sleep(0.2)
+	j2a.send_both(90, 90)
+atexit.register(exit_handler)
 
 
 if __name__ == '__main__':
