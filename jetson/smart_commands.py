@@ -2,6 +2,7 @@ import time
 from flask import Flask, request
 import argparse
 import requests
+from math import sqrt, atan2
 from simple_pid import PID
 
 parser = argparse.ArgumentParser()
@@ -122,7 +123,43 @@ def wheel_straight_both():
     r = requests.get('http://127.0.0.1:8080/wheel_command_stop', timeout=3)
     return "ok"
 
-        
+@app.route('/directpath', methods=['GET', 'POST', 'PUT'])
+def wheel_direct_both():
+    target = [0, 0]
+    if request.args:
+        target[0] = request.args['lat']
+        target[1] = request.args['long']
+    if request.is_json:
+        target[0] = request.json['lat']
+        target[1] = request.json['long']
+
+    r = requests.get('http://127.0.0.1:5001/data', timeout=3, json={'k': 'gps'})
+    location = r.json()['v']
+
+    distance = sqrt((target[0] - location[0]) ** 2 + (target[1] - location[1]) ** 2)
+
+    while distance > 1:
+        r = requests.get('http://127.0.0.1:5001/data', timeout=3, json={'k': 'gps'})
+        location = r.json()['v']
+        distance = sqrt((target[0] - location[0]) ** 2 + (target[1] - location[1]) ** 2)
+        angle = atan2(target[0] - location[0], target[1] - location[1])
+        r = requests.get('http://192.168.0.12:8081/turn', timeout=3, json={"target": angle})
+        r = requests.get('http://127.0.0.1:8080/wheel_command_both', timeout=3, json={'left': 135, 'right': 135})
+        time.sleep(distance / 200) #scale this better
+        r = requests.get('http://127.0.0.1:8080/wheel_command_stop', timeout=3)
+
+    return "ok"
+
+@app.route('/path', methods=['GET', 'POST', 'PUT'])
+def wheel_path_both():
+    path = []
+    if requests.args:
+        path = requests.args['path']
+    if request.is_json:
+        path = requests.json['path']
+
+    for pos in path:
+        r = requests.get('http://192.168.0.12:8081/directpath', timeout=3, json={"lat":pos[0], "long":pos[1]})
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 8081, debug = True, threaded = False, use_reloader = False)
