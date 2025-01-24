@@ -18,8 +18,8 @@
 		<h1 id="title">KV</h1>
 		<label for="location">Location:</label>
 		<select id="location">
-			<option value="http://127.0.0.1:5001">Local</option>
-			<option value="http://192.168.0.12:5001">Remote</option>
+			<option value="local">Local</option>
+			<option value="remote">Remote</option>
 		</select>
 		<p id="gps"></p>
 		<p id="quat"></p>
@@ -39,9 +39,10 @@
 		<input type="range" id="trim" value=0>
 		<button id="send_wheels_mag_trim">send</button>
 	</div>
-	<div>
-		<label for="stop">Stop:</label>
+	<div style="display: flex;">
+		<label for="stop">Stop:&nbsp;</label>
 		<button id="send_wheels_stop">Stop</button>
+		<div>&nbsp;(or press Enter)</div>
 	</div>
 
     <script src="https://threejs.org/build/three.js"></script>

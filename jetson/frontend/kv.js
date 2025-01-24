@@ -4,12 +4,27 @@ const $$ = document.querySelectorAll.bind(document)
 setInterval(fetchLoop, 400);
 //setInterval(fetchFor3dVisualizerLoop, 400);
 
+localEndpoint = "localhost";
+remoteEndpoint = "192.168.0.12";
+
 if (document.url == "http://192.168.0.12:5001/") {
-    endpoint = "192.168.0.12";
+    endpoint = remoteEndpoint;
+    $("#location").value = "remote";
 } else {
-    endpoint = "localhost";
+    endpoint = localEndpoint;
+    $("#location").value = "local";
 }
 console.log("endpoint is " + endpoint);
+
+$("#location").addEventListener('change', function () {
+    newLocation = $("#location").value;
+    if (newLocation == "remote") {
+        endpoint = remoteEndpoint;
+    } else {
+        endpoint = localEndpoint;
+    }
+    console.log("endpoint is " + endpoint);
+});
 
 $("#send_wheels_left_right").onclick = (event) => {
     leftMag = $("#left").value;
