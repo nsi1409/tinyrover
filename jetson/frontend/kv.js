@@ -83,6 +83,20 @@ function send_wheel_stop() {
     })
 }
 
+
+$("#send_smart_turn").onclick = (event) => {
+    heading = $("#smart_turn_heading").value;
+
+    fetch(`http://${endpoint}:8080/turn`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'target': heading })
+    })
+}
+
 function fetchLoop() {
     fetch(`/data`, {
         method: 'POST',

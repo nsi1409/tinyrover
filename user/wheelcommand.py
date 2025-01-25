@@ -7,17 +7,23 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-forward', action='store_true')
 parser.add_argument('-left', action='store_true')
 parser.add_argument('-right', action='store_true')
+
 parser.add_argument('-backward', action='store_true')
 parser.add_argument('-left_trim', action='store_true')
 parser.add_argument('-right_trim', action='store_true')
+
 parser.add_argument('-stop', action='store_true')
+
 parser.add_argument('-smart_turn', action='store_true')
 parser.add_argument('-heading', type=float)
+
 parser.add_argument('-smart_forward', action='store_true')
 parser.add_argument('-duration', type=float)
 parser.add_argument('-speed', type=float)
+
 parser.add_argument('-smart_direct', action='store_true')
 parser.add_argument('-position', action='extend', nargs=2, type=float)
+
 parser.add_argument('-smart_path', action='store_true')
 
 # data coming in is in options
