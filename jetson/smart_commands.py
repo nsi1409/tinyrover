@@ -90,10 +90,10 @@ def wheel_straight_both():
     target_time = 0
     velocity = 0
     if request.args:
-        target_time = request.args['time']
+        target_time = request.args['duration']
         velocity = request.args['velocity']
     if request.is_json:
-        target_time = request.json['time']
+        target_time = request.json['duration']
         velocity = request.json['velocity']
     target_time = float(target_time)
     start_time = time.time()
