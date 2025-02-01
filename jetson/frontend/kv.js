@@ -97,6 +97,34 @@ $("#send_smart_turn").onclick = (event) => {
     })
 }
 
+$("#send_smart_straight").onclick = (event) => {
+    duration = $("#smart_straight_duration").value;
+    velocity = $("#smart_straight_velocity").value;
+
+    fetch(`http://${endpoint}:8080/drivestraight`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'duration': duration, 'velocity': velocity })
+    })
+}
+
+$("#send_smart_direct").onclick = (event) => {
+    lat = $("#smart_direct_latitude").value;
+    long = $("#smart_direct_longitude").value;
+
+    fetch(`http://${endpoint}:8080/directpath`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'lat': lat, 'long': long })
+    })
+}
+
 function fetchLoop() {
     fetch(`/data`, {
         method: 'POST',
