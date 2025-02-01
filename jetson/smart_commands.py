@@ -2,7 +2,7 @@ import time
 from flask import Flask, request
 import argparse
 import requests
-from math import sqrt, atan2
+from math import sqrt, atan2, exp
 from simple_pid import PID
 
 parser = argparse.ArgumentParser()
@@ -34,7 +34,7 @@ def wheel_turn_both():
         target = request.args['target']
     if request.is_json:
         target = request.json['target']
-    target = float(target)
+    target = float(target) % 360
 
     """
     Notes for PID outputs:
@@ -80,8 +80,8 @@ def wheel_turn_both():
             right =  90 - (.25 * control)
 
         #These lines are redundant but included just to be safe
-        left = min(100, max(80, left))
-        right = min(100, max(80, right))
+        left = min(100.0, max(80.0, left))
+        right = min(100.0, max(80.0, right))
         r = requests.get('http://127.0.0.1:8080/wheel_command_both', timeout=3, json={'left': int(left), 'right': int(right)})
         step += 1
 
@@ -90,12 +90,13 @@ def wheel_straight_both():
     target_time = 0
     velocity = 0
     if request.args:
-        target_time = request.args['time']
+        target_time = request.args['duration']
         velocity = request.args['velocity']
     if request.is_json:
-        target_time = request.json['time']
+        target_time = request.json['duration']
         velocity = request.json['velocity']
-    target_time = float(target_time)
+    target_time = max(0.0, float(target_time))
+    velocity = max(-100.0, min(100.0, float(velocity)))
     start_time = time.time()
     elapsed_time = 0
 
@@ -117,7 +118,7 @@ def wheel_straight_both():
             target_time += (time.time() - elapsed_time)
         
         elapsed_time = time.time() - start_time
-        control = max(45, min(135, (velocity * 90) + 90))
+        control = max(45.0, min(135.0, (velocity * 90) + 90))
         r = requests.get('http://127.0.0.1:8080/wheel_command_both', timeout=3, json={'left': int(control), 'right': int(control)})
         
     r = requests.get('http://127.0.0.1:8080/wheel_command_stop', timeout=3)
@@ -132,6 +133,9 @@ def wheel_direct_both():
     if request.is_json:
         target[0] = request.json['lat']
         target[1] = request.json['long']
+
+    target[0] = min(90.0, max(-90.0, float(target[0])))
+    target[1] = min(180.0, max(-180.0, float(target[1])))
 
     r = requests.get('http://127.0.0.1:5001/data', timeout=3, json={'k': 'gps'})
     location = r.json()['v']
