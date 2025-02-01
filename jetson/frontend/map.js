@@ -1,4 +1,7 @@
-var myTileServer = new ol.layer.Tile({
+const $ = document.querySelector.bind(document)
+const $$ = document.querySelectorAll.bind(document)
+
+const myTileServer = new ol.layer.Tile({
 	source: new ol.source.OSM({
 		crossOrigin: null,
 		//url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -8,8 +11,39 @@ var myTileServer = new ol.layer.Tile({
 
 init_lonlat = [-87.3267108, 39.4833491]
 
+const vectorSource = new ol.source.Vector({ wrapX: false });
+const vectorLayer = new ol.layer.Vector({
+	source: vectorSource,
+});
+
+let draw;
+let currentLineString;
+function enableDrawingOnMap() {
+	currentLineString = null;
+	vectorSource.clear();
+	draw = new ol.interaction.Draw({
+		source: vectorSource,
+		type: 'LineString',
+	});
+	map.addInteraction(draw);
+	draw.on('drawend', function (e) {
+		onLineDrawn(e.feature);
+		map.removeInteraction(draw);
+	});
+}
+
+function onLineDrawn(lineString){
+	currentLineString = lineString;
+	console.log(lineString);
+	console.log(lineString.getGeometry().getCoordinates());
+}
+
+$("#record_path").onclick = (event) => {
+	enableDrawingOnMap();
+};
+
 var map = new ol.Map({
-	layers: [ myTileServer ],
+	layers: [myTileServer, vectorLayer],
 	target: 'map',
 	view: new ol.View({
 		center: ol.proj.fromLonLat(init_lonlat),
@@ -28,37 +62,5 @@ function changeCenter(lat, lon) {
 function gpsData(state) {
 	gps = state["gps"]
 	console.log("gps: " + gps + " yaw: " + state["yaw"]);
-	changeCenter(gps[0], -1 *gps[1]);
+	changeCenter(gps[0], -1 * gps[1]);
 }
-
-
-// function fetchLoop() {
-// 	//fetch(`/data`, {
-// 	fetch(`/data`, {
-// 		method: 'POST',
-// 		headers: {
-// 			'Accept': 'application/json',
-// 			'Content-Type': 'application/json'
-// 		},
-// 		body: JSON.stringify({ "k": "gps" })
-// 	}).then((response) => {
-// 		console.log(response);
-// 		return response.json();
-// 	}).then((data) => {
-// 		console.log(data);
-// 		let lat = "";
-// 		let lon = "";
-// 		let i = 1;
-// 		while (data[i] != ",") {
-// 			lat += data[i];
-// 			i++;
-// 		}
-// 		i++;
-// 		while (data[i] != "]") {
-// 			lon += data[i];
-// 			i++;
-// 		}
-// 		changeCenter(lat, lon);
-// 	})
-// }
-//setInterval(fetchLoop, 400);

@@ -152,24 +152,6 @@ function fetchLoop() {
         $("#quat").innerHTML = "Quaternion: " + data["v"];
     })
 
-    //REGULAR YAW
-    // fetch(`/data`, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Accept': 'application/json',
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({ "k": "yaw" })
-    // }).then((response) => {
-    //     //`console`.log(response);
-    //     return response.json();
-    // }).then((data) => {
-    //     //console.log(data);
-    //     $("#yaw").innerHTML = "Yaw: " + data["v"];
-    //     $('#nyomi').style.transform = "rotate(" + data["v"] + "deg)";
-    // })
-
-    //SCUFFED YAW
     fetch(`/data`, {
         method: 'POST',
         headers: {
