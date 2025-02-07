@@ -1,6 +1,3 @@
-const $ = document.querySelector.bind(document)
-const $$ = document.querySelectorAll.bind(document)
-
 setInterval(fetchLoop, 400);
 //setInterval(fetchFor3dVisualizerLoop, 400);
 
@@ -14,7 +11,6 @@ if (document.url == "http://192.168.0.12:5001/") {
     endpoint = localEndpoint;
     $("#location").value = "local";
 }
-console.log("endpoint is " + endpoint);
 
 $("#location").addEventListener('change', function () {
     newLocation = $("#location").value;
@@ -124,6 +120,29 @@ $("#send_smart_direct").onclick = (event) => {
         body: JSON.stringify({ 'lat': lat, 'long': long })
     })
 }
+
+$("#send_path").onclick = (event) => {
+    if (currentLineString == null) {
+        console.log("cannot send path: none was drawn");
+    } else {
+        lineStringCoords = currentLineString.getGeometry().getCoordinates();
+        convertedCoordinates = [];
+        for (i = 0; i < lineStringCoords.length; i++) {
+            coord = lineStringCoords[i];
+            coordLonLat = ol.proj.toLonLat(coord, ol.proj.Projection(WEB_MERCATOR_PROJ));
+            convertedCoordinates[i] = coordLonLat;
+        }
+
+        fetch(`http://${endpoint}:8080/path`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'path': convertedCoordinates })
+        })
+    }
+};
 
 function fetchLoop() {
     fetch(`/data`, {

@@ -1,5 +1,4 @@
-const $ = document.querySelector.bind(document)
-const $$ = document.querySelectorAll.bind(document)
+const WEB_MERCATOR_PROJ = "EPSG:3857";
 
 const myTileServer = new ol.layer.Tile({
 	source: new ol.source.OSM({
@@ -9,7 +8,7 @@ const myTileServer = new ol.layer.Tile({
 	})
 })
 
-init_lonlat = [-87.3267108, 39.4833491]
+const init_lonlat = [-87.3267108, 39.4833491]
 
 const vectorSource = new ol.source.Vector({ wrapX: false });
 const vectorLayer = new ol.layer.Vector({
@@ -26,16 +25,10 @@ function enableDrawingOnMap() {
 		type: 'LineString',
 	});
 	map.addInteraction(draw);
-	draw.on('drawend', function (e) {
-		onLineDrawn(e.feature);
+	draw.on('drawend', function (drawEvent) {
+		currentLineString = drawEvent.feature;
 		map.removeInteraction(draw);
 	});
-}
-
-function onLineDrawn(lineString){
-	currentLineString = lineString;
-	console.log(lineString);
-	console.log(lineString.getGeometry().getCoordinates());
 }
 
 $("#record_path").onclick = (event) => {
