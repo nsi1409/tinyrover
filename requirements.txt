@@ -10,3 +10,5 @@ requests
 simple-pid
 opencv-contrib-python==4.6.0.66
 Flask-Cors
+scipy
+networkx
