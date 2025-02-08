@@ -3,7 +3,9 @@
     align-items: start;
 }
 #magnitude {
-    appearance: slider-vertical;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    margin-top: 10px;
 }
 #trim_div {
 	display: flex;
@@ -34,11 +36,15 @@
     margin-bottom: 0;
 }
 p{
-    margin: 2px  0;
+    margin: 2px 0;
 }
 h3{
     margin: 1em 0 0;
 }
 h4{
     margin: 1em 0 0;
+}
+input{
+    margin-right: 4px;
+    max-width: 125px;
 }

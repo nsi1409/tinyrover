@@ -17,7 +17,10 @@ const vectorLayer = new ol.layer.Vector({
 
 let draw;
 let currentLineString;
-function enableDrawingOnMap() {
+let currentPoint;
+
+function enableDrawingLineOnMap() {
+	map.removeInteraction(draw);
 	currentLineString = null;
 	vectorSource.clear();
 	draw = new ol.interaction.Draw({
@@ -31,8 +34,31 @@ function enableDrawingOnMap() {
 	});
 }
 
+function enablePointSelectionOnMap() {
+	map.removeInteraction(draw);
+	currentPoint = null;
+	vectorSource.clear();
+
+	draw = new ol.interaction.Draw({
+		source: vectorSource,
+		type: 'Point',
+	});
+	map.addInteraction(draw);
+	draw.on('drawend', function (drawEvent) {
+		currentPoint = drawEvent.feature.getGeometry().getCoordinates();
+		currentLonLat = ol.proj.toLonLat(currentPoint, ol.proj.Projection(WEB_MERCATOR_PROJ));
+		$("#smart_direct_latitude").value = currentLonLat[0];
+		$("#smart_direct_longitude").value = currentLonLat[1];
+		map.removeInteraction(draw);
+	});
+}
+
 $("#record_path").onclick = (event) => {
-	enableDrawingOnMap();
+	enableDrawingLineOnMap();
+};
+
+$("#record_point").onclick = (event) => {
+	enablePointSelectionOnMap();
 };
 
 var map = new ol.Map({
