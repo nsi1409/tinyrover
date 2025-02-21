@@ -65,13 +65,13 @@ void setup() {
   //ONLY UNCOMMENT ONE OF THESE SETUP FUNCTIONS AT A TIME
 
   //Set throttle range
-  resetThrottleRangeForMotors();
+  //resetThrottleRangeForMotors();
 
   // Change motor to drive forwards and backwards
   // setMotorsToForwardsAndBackwards();
 
   //Already setup, normal working mode
-  // normalWorkingMode();
+  normalWorkingMode();
 
 
 
