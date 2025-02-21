@@ -50,7 +50,7 @@ def wheel_stop():
 	msg = f'left: {left}, right: {right}'
 	print(msg)
 	j2a.send_both(left, right)
-	exit()
+	#exit()
 	return 'ok', 200
 
 @app.route('/wheel_command_trim', methods=['GET', 'POST', 'PUT'])

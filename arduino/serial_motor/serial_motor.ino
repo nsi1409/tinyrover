@@ -31,6 +31,7 @@ size_t opCodeSize = 1;
 // int ipn[6] = {9, 6, 5, 4, 7, 3}; // Old mega pin setup
 // int ipn[6] = {3,20,21,22,1,2}; //Teensy
 int ipn[6] = {6,11,10,9,3,5}; //new mega
+//Front right, Front left, Middle Left, Back Left, Back Right, Middle Right
 // pin 20 front left
 // pin 3 front right
 // pin 21 middle left
@@ -39,8 +40,8 @@ int ipn[6] = {6,11,10,9,3,5}; //new mega
 // pin 1 back right
 
 void setup() {
-	for (int i = 0; i < 4; i++) {
-		pinMode(ipn[i], OUTPUT);
+	for (int pin :ipn) {
+		pinMode(pin, OUTPUT);
 	}
 
   
