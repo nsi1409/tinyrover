@@ -2,7 +2,6 @@ import requests
 
 def get_elevation(lat, long):
 	url = 'https://epqs.nationalmap.gov/v1/json'
-	#x = long
 	params = {
 		'x': long,
 		'y': lat,
@@ -11,9 +10,9 @@ def get_elevation(lat, long):
 		'includeDate': False
 	}
 	r = requests.get(url, params=params)
-	print(r)
-	print(r.text)
 	json = r.json()
+	if not r.ok:
+		raise Exception("failed to fetch")
 	return json['value']
 
 if __name__ == '__main__':
