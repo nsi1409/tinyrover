@@ -2,15 +2,13 @@
     margin: 1em;
     align-items: start;
 }
-#magnitude {
+#magnitude_slider {
     writing-mode: vertical-lr;
     direction: rtl;
     margin-top: 10px;
 }
-#trim_div {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+#mag_trim_div {
+	display: inline-grid;
 }
 #map-wrapper {
     position: relative;

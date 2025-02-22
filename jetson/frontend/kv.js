@@ -19,6 +19,7 @@ $("#location").addEventListener('change', function () {
     } else {
         endpoint = localEndpoint;
     }
+    document.activeElement.blur();
 });
 
 $("#send_wheels_left_right").onclick = (event) => {
@@ -31,7 +32,8 @@ $("#send_wheels_left_right").onclick = (event) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 'left': leftMag, 'right': rightMag })
-    })
+    });
+    document.activeElement.blur();
 };
 
 $("#send_wheels_mag_trim").onclick = (event) => {
@@ -44,7 +46,8 @@ $("#send_wheels_mag_trim").onclick = (event) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 'magnitude': mag, 'trim': trim })
-    })
+    });
+    document.activeElement.blur();
 }
 
 $("#send_wheels_stop").onclick = (event) => {
@@ -68,7 +71,6 @@ function send_wheel_stop() {
     })
 }
 
-
 $("#send_smart_turn").onclick = (event) => {
     heading = $("#smart_turn_heading").value;
 
@@ -79,7 +81,8 @@ $("#send_smart_turn").onclick = (event) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 'target': heading })
-    })
+    });
+    document.activeElement.blur();
 }
 
 $("#send_smart_straight").onclick = (event) => {
@@ -93,7 +96,8 @@ $("#send_smart_straight").onclick = (event) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 'duration': duration, 'velocity': velocity })
-    })
+    });
+    document.activeElement.blur();
 }
 
 $("#send_smart_direct").onclick = (event) => {
@@ -107,7 +111,8 @@ $("#send_smart_direct").onclick = (event) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 'lat': lat, 'long': long })
-    })
+    });
+    document.activeElement.blur();
 }
 
 $("#send_path").onclick = (event) => {
@@ -130,7 +135,8 @@ $("#send_path").onclick = (event) => {
             },
             body: JSON.stringify({ 'path': convertedCoordinates })
         })
-    }
+    };
+    document.activeElement.blur();
 };
 
 function fetchLoop() {
