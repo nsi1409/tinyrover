@@ -71,7 +71,7 @@ function send_wheel_stop() {
 $("#send_smart_turn").onclick = (event) => {
     heading = $("#smart_turn_heading").value;
 
-    fetch(`http://${endpoint}:8080/turn`, {
+    fetch(`http://${endpoint}:8081/turn`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -85,7 +85,7 @@ $("#send_smart_straight").onclick = (event) => {
     duration = $("#smart_straight_duration").value;
     velocity = $("#smart_straight_velocity").value;
 
-    fetch(`http://${endpoint}:8080/drivestraight`, {
+    fetch(`http://${endpoint}:8081/drivestraight`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -99,7 +99,7 @@ $("#send_smart_direct").onclick = (event) => {
     lat = $("#smart_direct_latitude").value;
     long = $("#smart_direct_longitude").value;
 
-    fetch(`http://${endpoint}:8080/directpath`, {
+    fetch(`http://${endpoint}:8081/directpath`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -121,7 +121,7 @@ $("#send_path").onclick = (event) => {
             convertedCoordinates[i] = coordLonLat;
         }
 
-        fetch(`http://${endpoint}:8080/path`, {
+        fetch(`http://${endpoint}:8081/path`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
