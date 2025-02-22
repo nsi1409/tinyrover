@@ -59,8 +59,8 @@ def wheel_trim():
 	json = request.json
 	trim = json["trim"]
 	magnitude = json["magnitude"]
-	magnitude = int(magnitude)
-	trim = int(trim)
+	magnitude = float(magnitude)
+	trim = float(trim)
 	assert magnitude >= -1
 	assert magnitude <= 1
 	if(trim > 0):
