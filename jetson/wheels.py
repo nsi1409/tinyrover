@@ -69,8 +69,8 @@ def wheel_trim():
 	else:
 		left = (90 * magnitude) + 90
 		right = (90 * (magnitude * (1 - ((-1) * trim)))) + 90
-	left = min(180, max(0, left))
-	right = min(180, max(0, right))
+	left = min(180, max(0, int(left)))
+	right = min(180, max(0, int(right)))
 	msg = f'trim drive left: {left}, right: {right}'
 	print(msg)
 	j2a.send_both(left, right)
