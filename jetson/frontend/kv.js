@@ -4,7 +4,7 @@ setInterval(fetchLoop, 400);
 localEndpoint = "localhost";
 remoteEndpoint = "192.168.0.12";
 
-if (document.url == "http://192.168.0.12:5001/") {
+if (document.URL == "http://192.168.0.12:5001/") {
     endpoint = remoteEndpoint;
     $("#location").value = "remote";
 } else {
@@ -19,22 +19,11 @@ $("#location").addEventListener('change', function () {
     } else {
         endpoint = localEndpoint;
     }
-    console.log("endpoint is " + endpoint);
 });
 
 $("#send_wheels_left_right").onclick = (event) => {
     leftMag = $("#left").value;
     rightMag = $("#right").value;
-    if (rightMag < 0) {
-        rightMag = 0;
-    } else if (rightMag > 180) {
-        rightMag = 180;
-    }
-    if (leftMag < 0) {
-        leftMag = 0;
-    } else if (leftMag > 180) {
-        leftMag = 180;
-    }
     fetch(`http://${endpoint}:8080/wheel_command_both`, {
         method: 'POST',
         headers: {
