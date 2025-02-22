@@ -39,7 +39,7 @@ def wheel_both():
 	right = json["right"]
 	msg = f'left: {left}, right: {right}'
 	print(msg)
-	j2a.send_both(left, right)
+	j2a.send_both(min(180, max(0, int(left))), min(180, max(0, int(right))))
 	return 'ok', 200
 
 @app.route('/wheel_command_stop', methods=['GET', 'POST', 'PUT'])
@@ -67,8 +67,8 @@ def wheel_trim():
 	else:
 		left = (90 * magnitude) + 90
 		right = (90 * (magnitude * (1 - ((-1) * trim)))) + 90
-	left = int(left)
-	right = int(right)
+	left = min(180, max(0, int(left)))
+	right = min(180, max(0, int(right)))
 	msg = f'trim drive left: {left}, right: {right}'
 	print(msg)
 	j2a.send_both(left, right)
@@ -79,7 +79,7 @@ def wheel_trim():
 def wheel_left():
 	json = request.json
 	left = json["left"]
-	j2a.send_left(left)
+	j2a.send_left(min(180, max(0, int(left))))
 	return 'ok', 200
 
 @app.route('/wheel_command_right', methods=['GET', 'POST', 'PUT'])
@@ -87,7 +87,7 @@ def wheel_left():
 def wheel_right():
 	json = request.json
 	right = json["right"]
-	j2a.send_right(right)
+	j2a.send_right(min(180, max(0, int(right))))
 	return 'ok', 200
 
 def arm_joint_move():
