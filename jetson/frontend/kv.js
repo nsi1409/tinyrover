@@ -36,7 +36,7 @@ $("#send_wheels_left_right").onclick = (event) => {
 
 $("#send_wheels_mag_trim").onclick = (event) => {
     mag = $("#magnitude_slider").value;
-    trim = $("#trim").value;
+    trim = $("#trim_slider").value;
     fetch(`http://${endpoint}:8080/wheel_command_trim`, {
         method: 'POST',
         headers: {
@@ -136,11 +136,23 @@ $("#magnitude_slider").onchange = (event) => {
     if ($("#magnitude_input").value != $("#magnitude_slider").value) {
         $("#magnitude_input").value = $("#magnitude_slider").value;
     }
+}
 
-    $("#magnitude_input").onchange = (event) => {
-        if ($("#magnitude_input").value != $("#magnitude_slider").value) {
-            $("#magnitude_slider").value = $("#magnitude_input").value;
-        }
+$("#magnitude_input").onchange = (event) => {
+    if ($("#magnitude_input").value != $("#magnitude_slider").value) {
+        $("#magnitude_slider").value = $("#magnitude_input").value;
+    }
+}
+
+$("#trim_slider").onchange = (event) => {
+    if ($("#trim_input").value != $("#trim_slider").value) {
+        $("#trim_input").value = $("#trim_slider").value;
+    }
+}
+
+$("#trim_input").onchange = (event) => {
+    if ($("#trim_input").value != $("#trim_slider").value) {
+        $("#trim_slider").value = $("#trim_input").value;
     }
 }
 

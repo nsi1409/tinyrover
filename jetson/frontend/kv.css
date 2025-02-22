@@ -3,8 +3,8 @@
     align-items: start;
 }
 #magnitude_slider {
-    writing-mode: vertical-lr;
-    direction: rtl;
+    /* writing-mode: vertical-lr;
+    direction: rtl; */
     margin-top: 10px;
 }
 #mag_trim_div {

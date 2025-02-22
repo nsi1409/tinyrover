@@ -43,12 +43,16 @@
 				<input type="number" id="right" value=90>
 				<button id="send_wheels_left_right">send</button>
 				<div id="mag_trim_div">
-					<label for="magnitude_slider">Magnitude:</label>
-					<input type="range" min="-1" max="1" step="0.01" id="magnitude_slider" value=0>
-					<input type="number" id="magnitude_input" value=0>
-
-					<label for="trim">Trim:</label>
-					<input type="range" min="-2" max="2" step="0.02" id="trim" value=0>
+					<div id="mag_div">
+						<label for="magnitude_slider">Magnitude:</label>
+						<input type="range" min="-1" max="1" step="0.01" id="magnitude_slider" value=0>
+						<input type="number" id="magnitude_input" value=0>
+					</div>
+					<div id="trim_div">
+						<label for="trim_slider">Trim:</label>
+						<input type="range" min="-2" max="2" step="0.02" id="trim_slider" value=0>
+						<input type="number" id="trim_input" value=0>
+					</div>
 					<button id="send_wheels_mag_trim">send</button>
 				</div>
 			</div>
