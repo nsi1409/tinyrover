@@ -134,25 +134,25 @@ $("#send_path").onclick = (event) => {
 
 $("#magnitude_slider").onchange = (event) => {
     if ($("#magnitude_input").value != $("#magnitude_slider").value) {
-        $("#magnitude_input").value = $("#magnitude_slider").value;
+        $("#magnitude_input").value = $("#magnitude_slider").value * 100;
     }
 }
 
 $("#magnitude_input").onchange = (event) => {
     if ($("#magnitude_input").value != $("#magnitude_slider").value) {
-        $("#magnitude_slider").value = $("#magnitude_input").value;
+        $("#magnitude_slider").value = $("#magnitude_input").value / 100;
     }
 }
 
 $("#trim_slider").onchange = (event) => {
     if ($("#trim_input").value != $("#trim_slider").value) {
-        $("#trim_input").value = $("#trim_slider").value;
+        $("#trim_input").value = $("#trim_slider").value * 50;
     }
 }
 
 $("#trim_input").onchange = (event) => {
     if ($("#trim_input").value != $("#trim_slider").value) {
-        $("#trim_slider").value = $("#trim_input").value;
+        $("#trim_slider").value = $("#trim_input").value / 50;
     }
 }
 
