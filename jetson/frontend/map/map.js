@@ -1,10 +1,12 @@
 const WEB_MERCATOR_PROJ = "EPSG:3857";
 
+const osmURL = 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const arcGISURL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+
 const myTileServer = new ol.layer.Tile({
 	source: new ol.source.OSM({
 		crossOrigin: null,
-		//url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-		url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+		url: arcGISURL
 	})
 })
 
@@ -80,6 +82,5 @@ function changeCenter(lat, lon) {
 
 function gpsData(state) {
 	gps = state["gps"]
-	// console.log("gps: " + gps + " yaw: " + state["yaw"]);
 	changeCenter(gps[0], -1 * gps[1]);
 }

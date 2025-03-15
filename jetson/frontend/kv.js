@@ -217,10 +217,8 @@ function fetchFor3dVisualizerLoop() {
         },
         body: JSON.stringify({ "k": "quat" })
     }).then((response) => {
-        // console.log(response);
         return response.json();
     }).then((data) => {
-        // console.log(data);
         let state = data;
         if (data.length == 4) {
             quaternion = new THREE.Quaternion(data[0], data[1], data[2], data[3]);
