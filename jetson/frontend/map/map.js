@@ -80,6 +80,6 @@ function changeCenter(lat, lon) {
 
 function gpsData(state) {
 	gps = state["gps"]
-	console.log("gps: " + gps + " yaw: " + state["yaw"]);
+	// console.log("gps: " + gps + " yaw: " + state["yaw"]);
 	changeCenter(gps[0], -1 * gps[1]);
 }

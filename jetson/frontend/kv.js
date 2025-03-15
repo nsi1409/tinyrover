@@ -1,8 +1,12 @@
-setInterval(fetchLoop, 400);
-//setInterval(fetchFor3dVisualizerLoop, 400);
+import * as THREE from 'three';
 
-localEndpoint = "localhost";
-remoteEndpoint = "192.168.0.12";
+setInterval(fetchLoop, 400);
+// setInterval(fetchFor3dVisualizerLoop, 400);
+
+const localEndpoint = "localhost";
+const remoteEndpoint = "192.168.0.12";
+
+let endpoint;
 
 if (document.URL == "http://192.168.0.12:5001/") {
     endpoint = remoteEndpoint;
@@ -203,7 +207,7 @@ function fetchLoop() {
     })
 }
 
-quaternion = new THREE.Quaternion(1, 0, 0, 0);
+let quaternion = new THREE.Quaternion(1, 0, 0, 0);
 function fetchFor3dVisualizerLoop() {
     fetch(`/brown`, {
         method: 'POST',
@@ -213,17 +217,17 @@ function fetchFor3dVisualizerLoop() {
         },
         body: JSON.stringify({ "k": "quat" })
     }).then((response) => {
-        console.log(response);
+        // console.log(response);
         return response.json();
     }).then((data) => {
-        console.log(data);
-        state = data;
+        // console.log(data);
+        let state = data;
         if (data.length == 4) {
             quaternion = new THREE.Quaternion(data[0], data[1], data[2], data[3]);
         }
         $("#gps").innerHTML = "GPS: " + data["gps"];
         $("#quat").innerHTML = "Quaternion: " + data["quat"];
-        yaw = data["scuffed_yaw"]
+        let yaw = data["scuffed_yaw"]
         $("#yaw").innerHTML = "Yaw: " + yaw;
         try {
             gpsData(state);
@@ -231,7 +235,7 @@ function fetchFor3dVisualizerLoop() {
         catch {
 
         }
-        $('#nyomi').style.transform = "rotate(" + ((yaw * (180 / Math.PI)) + 90) + "deg)"; //west = 0, increases as it turns clockwise, north = 90
+        $('#nyomi').style.transform = "rotate(" + yaw + "deg)"; //west = 0, increases as it turns clockwise, north = 90
     }).catch(error => {
         console.log(error);
     })
@@ -251,7 +255,7 @@ camera.position.z = 5;
 function animate() {
     requestAnimationFrame(animate);
     //console.log(quaternion);
-    cube.applyQuaternion(quaternion);
+    cube.setRotationFromQuaternion(quaternion);
     renderer.render(scene, camera);
 }
 

@@ -78,7 +78,7 @@ def browniansleep():
 	time.sleep(0.25)
 	return v
 
-@app.route('/frontend/<path>')
+@app.route('/frontend/<path:path>')
 @cross_origin()
 def send_report(path):
 	return send_from_directory('frontend', path)

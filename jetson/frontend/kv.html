@@ -8,8 +8,8 @@
 	<script type="importmap">
       {
         "imports": {
-          "three": "https://unpkg.com/three@<0.159.0>/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@<0.159.0>/examples/jsm/"
+		  "three": "/frontend/resources/threejs/three.module.min.js",
+          "three/addons/": "/frontend/resources/threejs/examples/jsm/"
         }
       }
     </script>
@@ -91,23 +91,21 @@
 				<button id="record_path">record path</button>
 				<button id="send_path">send path</button>
 			</div>
-
-			<script src="https://threejs.org/build/three.js"></script>
 		</div>
 
 		<div id="map-wrapper">
 			<div tabindex="700" id="map" class="map"></div>
-			<img src="frontend/nyomi_yaw.png" id="nyomi">
+			<img src="frontend/map/nyomi_yaw.png" id="nyomi">
 		</div>
 	</div>
 
 	<link rel="stylesheet" href="frontend/kv.css">
-	<link rel="stylesheet" href="frontend/ol.css">
-	<link rel="stylesheet" href="frontend/map.css">
-	<script src="frontend/jqs.js"></script>
-	<script src="frontend/ol.js"></script>
-	<script src="frontend/map.js"></script>
-	<script src="frontend/kv.js"></script>
+	<link rel="stylesheet" href="frontend/map/ol/ol.css">
+	<link rel="stylesheet" href="frontend/map/map.css">
+	<script src="frontend/resources/jqs.js"></script>
+	<script src="frontend/map/ol/ol.js"></script>
+	<script src="frontend/map/map.js"></script>
+	<script type="module" src="frontend/kv.js"></script>
 </body>
 
 </html>
