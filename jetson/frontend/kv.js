@@ -40,7 +40,7 @@ $("#send_wheels_left_right").onclick = (event) => {
 
 $("#send_wheels_mag_trim").onclick = (event) => {
     mag = $("#magnitude_slider").value;
-    trim = $("#trim_slider").value;
+    trim = -$("#trim_slider").value;
     fetch(`http://${endpoint}:8080/wheel_command_trim`, {
         method: 'POST',
         headers: {
