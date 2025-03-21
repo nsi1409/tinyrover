@@ -1,15 +1,1 @@
-class NodeAttribute {
-
-	constructor( name, type, node = null ) {
-
-		this.isNodeAttribute = true;
-
-		this.name = name;
-		this.type = type;
-		this.node = node;
-
-	}
-
-}
-
-export default NodeAttribute;
+class NodeAttribute{constructor(t,e,i=null){this.isNodeAttribute=!0,this.name=t,this.type=e,this.node=i}}export default NodeAttribute;

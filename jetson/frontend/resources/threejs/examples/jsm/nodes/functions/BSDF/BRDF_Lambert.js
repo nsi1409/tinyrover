@@ -1,9 +1,1 @@
-import { tslFn } from '../../shadernode/ShaderNode.js';
-
-const BRDF_Lambert = tslFn( ( inputs ) => {
-
-	return inputs.diffuseColor.mul( 1 / Math.PI ); // punctual light
-
-} ); // validated
-
-export default BRDF_Lambert;
+import{tslFn as e}from"../../shadernode/ShaderNode.js";let BRDF_Lambert=e(e=>e.diffuseColor.mul(1/Math.PI));export default BRDF_Lambert;

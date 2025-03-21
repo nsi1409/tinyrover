@@ -1,15 +1,1 @@
-class NodeCode {
-
-	constructor( name, type, code = '' ) {
-
-		this.name = name;
-		this.type = type;
-		this.code = code;
-
-		Object.defineProperty( this, 'isNodeCode', { value: true } );
-
-	}
-
-}
-
-export default NodeCode;
+class NodeCode{constructor(e,o,t=""){this.name=e,this.type=o,this.code=t,Object.defineProperty(this,"isNodeCode",{value:!0})}}export default NodeCode;

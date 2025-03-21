@@ -1,14 +1,1 @@
-class NodeVar {
-
-	constructor( name, type ) {
-
-		this.isNodeVar = true;
-
-		this.name = name;
-		this.type = type;
-
-	}
-
-}
-
-export default NodeVar;
+class NodeVar{constructor(t,e){this.isNodeVar=!0,this.name=t,this.type=e}}export default NodeVar;

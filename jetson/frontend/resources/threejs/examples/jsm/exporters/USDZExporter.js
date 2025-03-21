@@ -1,166 +1,4 @@
-import * as THREE from 'three';
-import * as fflate from '../libs/fflate.module.js';
-
-class USDZExporter {
-
-	async parse( scene, options = {} ) {
-
-		options = Object.assign( {
-			ar: {
-				anchoring: { type: 'plane' },
-				planeAnchoring: { alignment: 'horizontal' }
-			},
-			quickLookCompatible: false,
-		}, options );
-
-		const files = {};
-		const modelFileName = 'model.usda';
-
-		// model file should be first in USDZ archive so we init it here
-		files[ modelFileName ] = null;
-
-		let output = buildHeader();
-
-		output += buildSceneStart( options );
-
-		const materials = {};
-		const textures = {};
-
-		scene.traverseVisible( ( object ) => {
-
-			if ( object.isMesh ) {
-
-				const geometry = object.geometry;
-				const material = object.material;
-
-				if ( material.isMeshStandardMaterial ) {
-
-					const geometryFileName = 'geometries/Geometry_' + geometry.id + '.usda';
-
-					if ( ! ( geometryFileName in files ) ) {
-
-						const meshObject = buildMeshObject( geometry );
-						files[ geometryFileName ] = buildUSDFileAsString( meshObject );
-
-					}
-
-					if ( ! ( material.uuid in materials ) ) {
-
-						materials[ material.uuid ] = material;
-
-					}
-
-					output += buildXform( object, geometry, material );
-
-				} else {
-
-					console.warn( 'THREE.USDZExporter: Unsupported material type (USDZ only supports MeshStandardMaterial)', object );
-
-				}
-
-			} else if ( object.isCamera ) {
-
-				output += buildCamera( object );
-
-			}
-
-		} );
-
-
-		output += buildSceneEnd();
-
-		output += buildMaterials( materials, textures, options.quickLookCompatible );
-
-		files[ modelFileName ] = fflate.strToU8( output );
-		output = null;
-
-		for ( const id in textures ) {
-
-			const texture = textures[ id ];
-
-			const canvas = imageToCanvas( texture.image, texture.flipY );
-			const blob = await new Promise( resolve => canvas.toBlob( resolve, 'image/png', 1 ) );
-
-			files[ `textures/Texture_${ id }.png` ] = new Uint8Array( await blob.arrayBuffer() );
-
-		}
-
-		// 64 byte alignment
-		// https://github.com/101arrowz/fflate/issues/39#issuecomment-777263109
-
-		let offset = 0;
-
-		for ( const filename in files ) {
-
-			const file = files[ filename ];
-			const headerSize = 34 + filename.length;
-
-			offset += headerSize;
-
-			const offsetMod64 = offset & 63;
-
-			if ( offsetMod64 !== 4 ) {
-
-				const padLength = 64 - offsetMod64;
-				const padding = new Uint8Array( padLength );
-
-				files[ filename ] = [ file, { extra: { 12345: padding } } ];
-
-			}
-
-			offset = file.length;
-
-		}
-
-		return fflate.zipSync( files, { level: 0 } );
-
-	}
-
-}
-
-function imageToCanvas( image, flipY ) {
-
-	if ( ( typeof HTMLImageElement !== 'undefined' && image instanceof HTMLImageElement ) ||
-		( typeof HTMLCanvasElement !== 'undefined' && image instanceof HTMLCanvasElement ) ||
-		( typeof OffscreenCanvas !== 'undefined' && image instanceof OffscreenCanvas ) ||
-		( typeof ImageBitmap !== 'undefined' && image instanceof ImageBitmap ) ) {
-
-		const scale = 1024 / Math.max( image.width, image.height );
-
-		const canvas = document.createElement( 'canvas' );
-		canvas.width = image.width * Math.min( 1, scale );
-		canvas.height = image.height * Math.min( 1, scale );
-
-		const context = canvas.getContext( '2d' );
-
-		// TODO: We should be able to do this in the UsdTransform2d?
-
-		if ( flipY === true ) {
-
-			context.translate( 0, canvas.height );
-			context.scale( 1, - 1 );
-
-		}
-
-		context.drawImage( image, 0, 0, canvas.width, canvas.height );
-
-		return canvas;
-
-	} else {
-
-		throw new Error( 'THREE.USDZExporter: No valid image data found. Unable to process texture.' );
-
-	}
-
-}
-
-//
-
-const PRECISION = 7;
-
-function buildHeader() {
-
-	return `#usda 1.0
+import*as e from"three";import*as t from"../libs/fflate.module.js";class USDZExporter{async parse(e,r={}){r=Object.assign({ar:{anchoring:{type:"plane"},planeAnchoring:{alignment:"horizontal"}},quickLookCompatible:!1},r);let i={},o="model.usda";i[o]=null;let a=buildHeader();a+=buildSceneStart(r);let n={},s={};for(let l in e.traverseVisible(e=>{if(e.isMesh){let t=e.geometry,r=e.material;if(r.isMeshStandardMaterial){let o="geometries/Geometry_"+t.id+".usda";if(!(o in i)){let s=buildMeshObject(t);i[o]=buildUSDFileAsString(s)}r.uuid in n||(n[r.uuid]=r),a+=buildXform(e,t,r)}else console.warn("THREE.USDZExporter: Unsupported material type (USDZ only supports MeshStandardMaterial)",e)}else e.isCamera&&(a+=buildCamera(e))}),a+=buildSceneEnd(),a+=buildMaterials(n,s,r.quickLookCompatible),i[o]=t.strToU8(a),a=null,s){let u=s[l],p=imageToCanvas(u.image,u.flipY),c=await new Promise(e=>p.toBlob(e,"image/png",1));i[`textures/Texture_${l}.png`]=new Uint8Array(await c.arrayBuffer())}let d=0;for(let f in i){let m=i[f],h=63&(d+=34+f.length);if(4!==h){let b=64-h,g=new Uint8Array(b);i[f]=[m,{extra:{12345:g}}]}d=m.length}return t.zipSync(i,{level:0})}}function imageToCanvas(e,t){if("undefined"!=typeof HTMLImageElement&&e instanceof HTMLImageElement||"undefined"!=typeof HTMLCanvasElement&&e instanceof HTMLCanvasElement||"undefined"!=typeof OffscreenCanvas&&e instanceof OffscreenCanvas||"undefined"!=typeof ImageBitmap&&e instanceof ImageBitmap){let r=1024/Math.max(e.width,e.height),i=document.createElement("canvas");i.width=e.width*Math.min(1,r),i.height=e.height*Math.min(1,r);let o=i.getContext("2d");return!0===t&&(o.translate(0,i.height),o.scale(1,-1)),o.drawImage(e,0,0,i.width,i.height),i}throw Error("THREE.USDZExporter: No valid image data found. Unable to process texture.")}let PRECISION=7;function buildHeader(){return`#usda 1.0
 (
 	customLayerData = {
 		string creator = "Three.js USDZExporter"
@@ -170,13 +8,7 @@ function buildHeader() {
 	upAxis = "Y"
 )
 
-`;
-
-}
-
-function buildSceneStart( options ) {
-
-	return `def Xform "Root"
+`}function buildSceneStart(e){return`def Xform "Root"
 {
 	def Scope "Scenes" (
 		kind = "sceneLibrary"
@@ -190,515 +22,121 @@ function buildSceneStart( options ) {
 			sceneName = "Scene"
 		)
 		{
-		token preliminary:anchoring:type = "${options.ar.anchoring.type}"
-		token preliminary:planeAnchoring:alignment = "${options.ar.planeAnchoring.alignment}"
+		token preliminary:anchoring:type = "${e.ar.anchoring.type}"
+		token preliminary:planeAnchoring:alignment = "${e.ar.planeAnchoring.alignment}"
 
-`;
-
-}
-
-function buildSceneEnd() {
-
-	return `
+`}function buildSceneEnd(){return`
 		}
 	}
 }
 
-`;
-
-}
-
-function buildUSDFileAsString( dataToInsert ) {
-
-	let output = buildHeader();
-	output += dataToInsert;
-	return fflate.strToU8( output );
-
-}
-
-// Xform
-
-function buildXform( object, geometry, material ) {
-
-	const name = 'Object_' + object.id;
-	const transform = buildMatrix( object.matrixWorld );
-
-	if ( object.matrixWorld.determinant() < 0 ) {
-
-		console.warn( 'THREE.USDZExporter: USDZ does not support negative scales', object );
-
-	}
-
-	return `def Xform "${ name }" (
-	prepend references = @./geometries/Geometry_${ geometry.id }.usda@</Geometry>
+`}function buildUSDFileAsString(e){let r=buildHeader();return r+=e,t.strToU8(r)}function buildXform(e,t,r){let i="Object_"+e.id,o=buildMatrix(e.matrixWorld);return 0>e.matrixWorld.determinant()&&console.warn("THREE.USDZExporter: USDZ does not support negative scales",e),`def Xform "${i}" (
+	prepend references = @./geometries/Geometry_${t.id}.usda@</Geometry>
 	prepend apiSchemas = ["MaterialBindingAPI"]
 )
 {
-	matrix4d xformOp:transform = ${ transform }
+	matrix4d xformOp:transform = ${o}
 	uniform token[] xformOpOrder = ["xformOp:transform"]
 
-	rel material:binding = </Materials/Material_${ material.id }>
+	rel material:binding = </Materials/Material_${r.id}>
 }
 
-`;
-
-}
-
-function buildMatrix( matrix ) {
-
-	const array = matrix.elements;
-
-	return `( ${ buildMatrixRow( array, 0 ) }, ${ buildMatrixRow( array, 4 ) }, ${ buildMatrixRow( array, 8 ) }, ${ buildMatrixRow( array, 12 ) } )`;
-
-}
-
-function buildMatrixRow( array, offset ) {
-
-	return `(${ array[ offset + 0 ] }, ${ array[ offset + 1 ] }, ${ array[ offset + 2 ] }, ${ array[ offset + 3 ] })`;
-
-}
-
-// Mesh
-
-function buildMeshObject( geometry ) {
-
-	const mesh = buildMesh( geometry );
-	return `
+`}function buildMatrix(e){let t=e.elements;return`( ${buildMatrixRow(t,0)}, ${buildMatrixRow(t,4)}, ${buildMatrixRow(t,8)}, ${buildMatrixRow(t,12)} )`}function buildMatrixRow(e,t){return`(${e[t+0]}, ${e[t+1]}, ${e[t+2]}, ${e[t+3]})`}function buildMeshObject(e){return`
 def "Geometry"
 {
-${mesh}
+${buildMesh(e)}
 }
-`;
-
-}
-
-function buildMesh( geometry ) {
-
-	const name = 'Geometry';
-	const attributes = geometry.attributes;
-	const count = attributes.position.count;
-
-	return `
-	def Mesh "${ name }"
+`}function buildMesh(e){let t=e.attributes,r=t.position.count;return`
+	def Mesh "Geometry"
 	{
-		int[] faceVertexCounts = [${ buildMeshVertexCount( geometry ) }]
-		int[] faceVertexIndices = [${ buildMeshVertexIndices( geometry ) }]
-		normal3f[] normals = [${ buildVector3Array( attributes.normal, count )}] (
+		int[] faceVertexCounts = [${buildMeshVertexCount(e)}]
+		int[] faceVertexIndices = [${buildMeshVertexIndices(e)}]
+		normal3f[] normals = [${buildVector3Array(t.normal,r)}] (
 			interpolation = "vertex"
 		)
-		point3f[] points = [${ buildVector3Array( attributes.position, count )}]
-${ buildPrimvars( attributes ) }
+		point3f[] points = [${buildVector3Array(t.position,r)}]
+${buildPrimvars(t)}
 		uniform token subdivisionScheme = "none"
 	}
-`;
-
-}
-
-function buildMeshVertexCount( geometry ) {
-
-	const count = geometry.index !== null ? geometry.index.count : geometry.attributes.position.count;
-
-	return Array( count / 3 ).fill( 3 ).join( ', ' );
-
-}
-
-function buildMeshVertexIndices( geometry ) {
-
-	const index = geometry.index;
-	const array = [];
-
-	if ( index !== null ) {
-
-		for ( let i = 0; i < index.count; i ++ ) {
-
-			array.push( index.getX( i ) );
-
-		}
-
-	} else {
-
-		const length = geometry.attributes.position.count;
-
-		for ( let i = 0; i < length; i ++ ) {
-
-			array.push( i );
-
-		}
-
-	}
-
-	return array.join( ', ' );
-
-}
-
-function buildVector3Array( attribute, count ) {
-
-	if ( attribute === undefined ) {
-
-		console.warn( 'USDZExporter: Normals missing.' );
-		return Array( count ).fill( '(0, 0, 0)' ).join( ', ' );
-
-	}
-
-	const array = [];
-
-	for ( let i = 0; i < attribute.count; i ++ ) {
-
-		const x = attribute.getX( i );
-		const y = attribute.getY( i );
-		const z = attribute.getZ( i );
-
-		array.push( `(${ x.toPrecision( PRECISION ) }, ${ y.toPrecision( PRECISION ) }, ${ z.toPrecision( PRECISION ) })` );
-
-	}
-
-	return array.join( ', ' );
-
-}
-
-function buildVector2Array( attribute ) {
-
-	const array = [];
-
-	for ( let i = 0; i < attribute.count; i ++ ) {
-
-		const x = attribute.getX( i );
-		const y = attribute.getY( i );
-
-		array.push( `(${ x.toPrecision( PRECISION ) }, ${ 1 - y.toPrecision( PRECISION ) })` );
-
-	}
-
-	return array.join( ', ' );
-
-}
-
-function buildPrimvars( attributes ) {
-
-	let string = '';
-
-	for ( let i = 0; i < 4; i ++ ) {
-
-		const id = ( i > 0 ? i : '' );
-		const attribute = attributes[ 'uv' + id ];
-
-		if ( attribute !== undefined ) {
-
-			string += `
-		texCoord2f[] primvars:st${ id } = [${ buildVector2Array( attribute )}] (
+`}function buildMeshVertexCount(e){return Array((null!==e.index?e.index.count:e.attributes.position.count)/3).fill(3).join(", ")}function buildMeshVertexIndices(e){let t=e.index,r=[];if(null!==t)for(let i=0;i<t.count;i++)r.push(t.getX(i));else{let o=e.attributes.position.count;for(let a=0;a<o;a++)r.push(a)}return r.join(", ")}function buildVector3Array(e,t){if(void 0===e)return console.warn("USDZExporter: Normals missing."),Array(t).fill("(0, 0, 0)").join(", ");let r=[];for(let i=0;i<e.count;i++){let o=e.getX(i),a=e.getY(i),n=e.getZ(i);r.push(`(${o.toPrecision(7)}, ${a.toPrecision(7)}, ${n.toPrecision(7)})`)}return r.join(", ")}function buildVector2Array(e){let t=[];for(let r=0;r<e.count;r++){let i=e.getX(r),o=e.getY(r);t.push(`(${i.toPrecision(7)}, ${1-o.toPrecision(7)})`)}return t.join(", ")}function buildPrimvars(e){let t="";for(let r=0;r<4;r++){let i=r>0?r:"",o=e["uv"+i];void 0!==o&&(t+=`
+		texCoord2f[] primvars:st${i} = [${buildVector2Array(o)}] (
 			interpolation = "vertex"
-		)`;
-
-		}
-
-	}
-
-	return string;
-
-}
-
-// Materials
-
-function buildMaterials( materials, textures, quickLookCompatible = false ) {
-
-	const array = [];
-
-	for ( const uuid in materials ) {
-
-		const material = materials[ uuid ];
-
-		array.push( buildMaterial( material, textures, quickLookCompatible ) );
-
-	}
-
-	return `def "Materials"
+		)`)}return t}function buildMaterials(e,t,r=!1){let i=[];for(let o in e){let a=e[o];i.push(buildMaterial(a,t,r))}return`def "Materials"
 {
-${ array.join( '' ) }
+${i.join("")}
 }
 
-`;
-
-}
-
-function buildMaterial( material, textures, quickLookCompatible = false ) {
-
-	// https://graphics.pixar.com/usd/docs/UsdPreviewSurface-Proposal.html
-
-	const pad = '			';
-	const inputs = [];
-	const samplers = [];
-
-	function buildTexture( texture, mapType, color ) {
-
-		const id = texture.source.id + '_' + texture.flipY;
-
-		textures[ id ] = texture;
-
-		const uv = texture.channel > 0 ? 'st' + texture.channel : 'st';
-
-		const WRAPPINGS = {
-			1000: 'repeat', // RepeatWrapping
-			1001: 'clamp', // ClampToEdgeWrapping
-			1002: 'mirror' // MirroredRepeatWrapping
-		};
-
-		const repeat = texture.repeat.clone();
-		const offset = texture.offset.clone();
-		const rotation = texture.rotation;
-
-		// rotation is around the wrong point. after rotation we need to shift offset again so that we're rotating around the right spot
-		const xRotationOffset = Math.sin( rotation );
-		const yRotationOffset = Math.cos( rotation );
-
-		// texture coordinates start in the opposite corner, need to correct
-		offset.y = 1 - offset.y - repeat.y;
-
-		// turns out QuickLook is buggy and interprets texture repeat inverted/applies operations in a different order.
-		// Apple Feedback: 	FB10036297 and FB11442287
-		if ( quickLookCompatible ) {
-
-			// This is NOT correct yet in QuickLook, but comes close for a range of models.
-			// It becomes more incorrect the bigger the offset is
-
-			offset.x = offset.x / repeat.x;
-			offset.y = offset.y / repeat.y;
-
-			offset.x += xRotationOffset / repeat.x;
-			offset.y += yRotationOffset - 1;
-
-		} else {
-
-			// results match glTF results exactly. verified correct in usdview.
-			offset.x += xRotationOffset * repeat.x;
-			offset.y += ( 1 - yRotationOffset ) * repeat.y;
-
-		}
-
-		return `
-		def Shader "PrimvarReader_${ mapType }"
+`}function buildMaterial(t,r,i=!1){let o=[],a=[];function n(o,a,n){let s=o.source.id+"_"+o.flipY;r[s]=o;let l=o.channel>0?"st"+o.channel:"st",u={1e3:"repeat",1001:"clamp",1002:"mirror"},p=o.repeat.clone(),c=o.offset.clone(),d=o.rotation,f=Math.sin(d),m=Math.cos(d);return c.y=1-c.y-p.y,i?(c.x=c.x/p.x,c.y=c.y/p.y,c.x+=f/p.x,c.y+=m-1):(c.x+=f*p.x,c.y+=(1-m)*p.y),`
+		def Shader "PrimvarReader_${a}"
 		{
 			uniform token info:id = "UsdPrimvarReader_float2"
 			float2 inputs:fallback = (0.0, 0.0)
-			token inputs:varname = "${ uv }"
+			token inputs:varname = "${l}"
 			float2 outputs:result
 		}
 
-		def Shader "Transform2d_${ mapType }"
+		def Shader "Transform2d_${a}"
 		{
 			uniform token info:id = "UsdTransform2d"
-			token inputs:in.connect = </Materials/Material_${ material.id }/PrimvarReader_${ mapType }.outputs:result>
-			float inputs:rotation = ${ ( rotation * ( 180 / Math.PI ) ).toFixed( PRECISION ) }
-			float2 inputs:scale = ${ buildVector2( repeat ) }
-			float2 inputs:translation = ${ buildVector2( offset ) }
+			token inputs:in.connect = </Materials/Material_${t.id}/PrimvarReader_${a}.outputs:result>
+			float inputs:rotation = ${(d*(180/Math.PI)).toFixed(7)}
+			float2 inputs:scale = ${buildVector2(p)}
+			float2 inputs:translation = ${buildVector2(c)}
 			float2 outputs:result
 		}
 
-		def Shader "Texture_${ texture.id }_${ mapType }"
+		def Shader "Texture_${o.id}_${a}"
 		{
 			uniform token info:id = "UsdUVTexture"
-			asset inputs:file = @textures/Texture_${ id }.png@
-			float2 inputs:st.connect = </Materials/Material_${ material.id }/Transform2d_${ mapType }.outputs:result>
-			${ color !== undefined ? 'float4 inputs:scale = ' + buildColor4( color ) : '' }
-			token inputs:sourceColorSpace = "${ texture.colorSpace === THREE.NoColorSpace ? 'raw' : 'sRGB' }"
-			token inputs:wrapS = "${ WRAPPINGS[ texture.wrapS ] }"
-			token inputs:wrapT = "${ WRAPPINGS[ texture.wrapT ] }"
+			asset inputs:file = @textures/Texture_${s}.png@
+			float2 inputs:st.connect = </Materials/Material_${t.id}/Transform2d_${a}.outputs:result>
+			${void 0!==n?"float4 inputs:scale = "+buildColor4(n):""}
+			token inputs:sourceColorSpace = "${o.colorSpace===e.NoColorSpace?"raw":"sRGB"}"
+			token inputs:wrapS = "${u[o.wrapS]}"
+			token inputs:wrapT = "${u[o.wrapT]}"
 			float outputs:r
 			float outputs:g
 			float outputs:b
 			float3 outputs:rgb
-			${ material.transparent || material.alphaTest > 0.0 ? 'float outputs:a' : '' }
-		}`;
-
-	}
-
-
-	if ( material.side === THREE.DoubleSide ) {
-
-		console.warn( 'THREE.USDZExporter: USDZ does not support double sided materials', material );
-
-	}
-
-	if ( material.map !== null ) {
-
-		inputs.push( `${ pad }color3f inputs:diffuseColor.connect = </Materials/Material_${ material.id }/Texture_${ material.map.id }_diffuse.outputs:rgb>` );
-
-		if ( material.transparent ) {
-
-			inputs.push( `${ pad }float inputs:opacity.connect = </Materials/Material_${ material.id }/Texture_${ material.map.id }_diffuse.outputs:a>` );
-
-		} else if ( material.alphaTest > 0.0 ) {
-
-			inputs.push( `${ pad }float inputs:opacity.connect = </Materials/Material_${ material.id }/Texture_${ material.map.id }_diffuse.outputs:a>` );
-			inputs.push( `${ pad }float inputs:opacityThreshold = ${material.alphaTest}` );
-
-		}
-
-		samplers.push( buildTexture( material.map, 'diffuse', material.color ) );
-
-	} else {
-
-		inputs.push( `${ pad }color3f inputs:diffuseColor = ${ buildColor( material.color ) }` );
-
-	}
-
-	if ( material.emissiveMap !== null ) {
-
-		inputs.push( `${ pad }color3f inputs:emissiveColor.connect = </Materials/Material_${ material.id }/Texture_${ material.emissiveMap.id }_emissive.outputs:rgb>` );
-
-		samplers.push( buildTexture( material.emissiveMap, 'emissive' ) );
-
-	} else if ( material.emissive.getHex() > 0 ) {
-
-		inputs.push( `${ pad }color3f inputs:emissiveColor = ${ buildColor( material.emissive ) }` );
-
-	}
-
-	if ( material.normalMap !== null ) {
-
-		inputs.push( `${ pad }normal3f inputs:normal.connect = </Materials/Material_${ material.id }/Texture_${ material.normalMap.id }_normal.outputs:rgb>` );
-
-		samplers.push( buildTexture( material.normalMap, 'normal' ) );
-
-	}
-
-	if ( material.aoMap !== null ) {
-
-		inputs.push( `${ pad }float inputs:occlusion.connect = </Materials/Material_${ material.id }/Texture_${ material.aoMap.id }_occlusion.outputs:r>` );
-
-		samplers.push( buildTexture( material.aoMap, 'occlusion' ) );
-
-	}
-
-	if ( material.roughnessMap !== null && material.roughness === 1 ) {
-
-		inputs.push( `${ pad }float inputs:roughness.connect = </Materials/Material_${ material.id }/Texture_${ material.roughnessMap.id }_roughness.outputs:g>` );
-
-		samplers.push( buildTexture( material.roughnessMap, 'roughness' ) );
-
-	} else {
-
-		inputs.push( `${ pad }float inputs:roughness = ${ material.roughness }` );
-
-	}
-
-	if ( material.metalnessMap !== null && material.metalness === 1 ) {
-
-		inputs.push( `${ pad }float inputs:metallic.connect = </Materials/Material_${ material.id }/Texture_${ material.metalnessMap.id }_metallic.outputs:b>` );
-
-		samplers.push( buildTexture( material.metalnessMap, 'metallic' ) );
-
-	} else {
-
-		inputs.push( `${ pad }float inputs:metallic = ${ material.metalness }` );
-
-	}
-
-	if ( material.alphaMap !== null ) {
-
-		inputs.push( `${pad}float inputs:opacity.connect = </Materials/Material_${material.id}/Texture_${material.alphaMap.id}_opacity.outputs:r>` );
-		inputs.push( `${pad}float inputs:opacityThreshold = 0.0001` );
-
-		samplers.push( buildTexture( material.alphaMap, 'opacity' ) );
-
-	} else {
-
-		inputs.push( `${pad}float inputs:opacity = ${material.opacity}` );
-
-	}
-
-	if ( material.isMeshPhysicalMaterial ) {
-
-		inputs.push( `${ pad }float inputs:clearcoat = ${ material.clearcoat }` );
-		inputs.push( `${ pad }float inputs:clearcoatRoughness = ${ material.clearcoatRoughness }` );
-		inputs.push( `${ pad }float inputs:ior = ${ material.ior }` );
-
-	}
-
-	return `
-	def Material "Material_${ material.id }"
+			${t.transparent||t.alphaTest>0?"float outputs:a":""}
+		}`}return t.side===e.DoubleSide&&console.warn("THREE.USDZExporter: USDZ does not support double sided materials",t),null!==t.map?(o.push(`			color3f inputs:diffuseColor.connect = </Materials/Material_${t.id}/Texture_${t.map.id}_diffuse.outputs:rgb>`),t.transparent?o.push(`			float inputs:opacity.connect = </Materials/Material_${t.id}/Texture_${t.map.id}_diffuse.outputs:a>`):t.alphaTest>0&&(o.push(`			float inputs:opacity.connect = </Materials/Material_${t.id}/Texture_${t.map.id}_diffuse.outputs:a>`),o.push(`			float inputs:opacityThreshold = ${t.alphaTest}`)),a.push(n(t.map,"diffuse",t.color))):o.push(`			color3f inputs:diffuseColor = ${buildColor(t.color)}`),null!==t.emissiveMap?(o.push(`			color3f inputs:emissiveColor.connect = </Materials/Material_${t.id}/Texture_${t.emissiveMap.id}_emissive.outputs:rgb>`),a.push(n(t.emissiveMap,"emissive"))):t.emissive.getHex()>0&&o.push(`			color3f inputs:emissiveColor = ${buildColor(t.emissive)}`),null!==t.normalMap&&(o.push(`			normal3f inputs:normal.connect = </Materials/Material_${t.id}/Texture_${t.normalMap.id}_normal.outputs:rgb>`),a.push(n(t.normalMap,"normal"))),null!==t.aoMap&&(o.push(`			float inputs:occlusion.connect = </Materials/Material_${t.id}/Texture_${t.aoMap.id}_occlusion.outputs:r>`),a.push(n(t.aoMap,"occlusion"))),null!==t.roughnessMap&&1===t.roughness?(o.push(`			float inputs:roughness.connect = </Materials/Material_${t.id}/Texture_${t.roughnessMap.id}_roughness.outputs:g>`),a.push(n(t.roughnessMap,"roughness"))):o.push(`			float inputs:roughness = ${t.roughness}`),null!==t.metalnessMap&&1===t.metalness?(o.push(`			float inputs:metallic.connect = </Materials/Material_${t.id}/Texture_${t.metalnessMap.id}_metallic.outputs:b>`),a.push(n(t.metalnessMap,"metallic"))):o.push(`			float inputs:metallic = ${t.metalness}`),null!==t.alphaMap?(o.push(`			float inputs:opacity.connect = </Materials/Material_${t.id}/Texture_${t.alphaMap.id}_opacity.outputs:r>`),o.push(`			float inputs:opacityThreshold = 0.0001`),a.push(n(t.alphaMap,"opacity"))):o.push(`			float inputs:opacity = ${t.opacity}`),t.isMeshPhysicalMaterial&&(o.push(`			float inputs:clearcoat = ${t.clearcoat}`),o.push(`			float inputs:clearcoatRoughness = ${t.clearcoatRoughness}`),o.push(`			float inputs:ior = ${t.ior}`)),`
+	def Material "Material_${t.id}"
 	{
 		def Shader "PreviewSurface"
 		{
 			uniform token info:id = "UsdPreviewSurface"
-${ inputs.join( '\n' ) }
+${o.join("\n")}
 			int inputs:useSpecularWorkflow = 0
 			token outputs:surface
 		}
 
-		token outputs:surface.connect = </Materials/Material_${ material.id }/PreviewSurface.outputs:surface>
+		token outputs:surface.connect = </Materials/Material_${t.id}/PreviewSurface.outputs:surface>
 
-${ samplers.join( '\n' ) }
-
-	}
-`;
-
-}
-
-function buildColor( color ) {
-
-	return `(${ color.r }, ${ color.g }, ${ color.b })`;
-
-}
-
-function buildColor4( color ) {
-
-	return `(${ color.r }, ${ color.g }, ${ color.b }, 1.0)`;
-
-}
-
-function buildVector2( vector ) {
-
-	return `(${ vector.x }, ${ vector.y })`;
-
-}
-
-
-function buildCamera( camera ) {
-
-	const name = camera.name ? camera.name : 'Camera_' + camera.id;
-
-	const transform = buildMatrix( camera.matrixWorld );
-
-	if ( camera.matrixWorld.determinant() < 0 ) {
-
-		console.warn( 'THREE.USDZExporter: USDZ does not support negative scales', camera );
+${a.join("\n")}
 
 	}
-
-	if ( camera.isOrthographicCamera ) {
-
-		return `def Camera "${name}"
+`}function buildColor(e){return`(${e.r}, ${e.g}, ${e.b})`}function buildColor4(e){return`(${e.r}, ${e.g}, ${e.b}, 1.0)`}function buildVector2(e){return`(${e.x}, ${e.y})`}function buildCamera(e){let t=e.name?e.name:"Camera_"+e.id,r=buildMatrix(e.matrixWorld);return(0>e.matrixWorld.determinant()&&console.warn("THREE.USDZExporter: USDZ does not support negative scales",e),e.isOrthographicCamera)?`def Camera "${t}"
 		{
-			matrix4d xformOp:transform = ${ transform }
+			matrix4d xformOp:transform = ${r}
 			uniform token[] xformOpOrder = ["xformOp:transform"]
 
-			float2 clippingRange = (${ camera.near.toPrecision( PRECISION ) }, ${ camera.far.toPrecision( PRECISION ) })
-			float horizontalAperture = ${ ( ( Math.abs( camera.left ) + Math.abs( camera.right ) ) * 10 ).toPrecision( PRECISION ) }
-			float verticalAperture = ${ ( ( Math.abs( camera.top ) + Math.abs( camera.bottom ) ) * 10 ).toPrecision( PRECISION ) }
+			float2 clippingRange = (${e.near.toPrecision(7)}, ${e.far.toPrecision(7)})
+			float horizontalAperture = ${((Math.abs(e.left)+Math.abs(e.right))*10).toPrecision(7)}
+			float verticalAperture = ${((Math.abs(e.top)+Math.abs(e.bottom))*10).toPrecision(7)}
 			token projection = "orthographic"
 		}
 	
-	`;
-
-	} else {
-
-		return `def Camera "${name}"
+	`:`def Camera "${t}"
 		{
-			matrix4d xformOp:transform = ${ transform }
+			matrix4d xformOp:transform = ${r}
 			uniform token[] xformOpOrder = ["xformOp:transform"]
 
-			float2 clippingRange = (${ camera.near.toPrecision( PRECISION ) }, ${ camera.far.toPrecision( PRECISION ) })
-			float focalLength = ${ camera.getFocalLength().toPrecision( PRECISION ) }
-			float focusDistance = ${ camera.focus.toPrecision( PRECISION ) }
-			float horizontalAperture = ${ camera.getFilmWidth().toPrecision( PRECISION ) }
+			float2 clippingRange = (${e.near.toPrecision(7)}, ${e.far.toPrecision(7)})
+			float focalLength = ${e.getFocalLength().toPrecision(7)}
+			float focusDistance = ${e.focus.toPrecision(7)}
+			float horizontalAperture = ${e.getFilmWidth().toPrecision(7)}
 			token projection = "perspective"
-			float verticalAperture = ${ camera.getFilmHeight().toPrecision( PRECISION ) }
+			float verticalAperture = ${e.getFilmHeight().toPrecision(7)}
 		}
 	
-	`;
-
-	}
-
-}
-
-export { USDZExporter };
+	`}export{USDZExporter};

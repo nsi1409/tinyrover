@@ -1,13 +1,1 @@
-import DFGApprox from './DFGApprox.js';
-import { tslFn } from '../../shadernode/ShaderNode.js';
-
-const EnvironmentBRDF = tslFn( ( inputs ) => {
-
-	const { dotNV, specularColor, specularF90, roughness } = inputs;
-
-	const fab = DFGApprox( { dotNV, roughness } );
-	return specularColor.mul( fab.x ).add( specularF90.mul( fab.y ) );
-
-} );
-
-export default EnvironmentBRDF;
+import r from"./DFGApprox.js";import{tslFn as o}from"../../shadernode/ShaderNode.js";let EnvironmentBRDF=o(o=>{let{dotNV:e,specularColor:t,specularF90:n,roughness:s}=o,d=r({dotNV:e,roughness:s});return t.mul(d.x).add(n.mul(d.y))});export default EnvironmentBRDF;

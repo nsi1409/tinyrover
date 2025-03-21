@@ -1,13 +1,1 @@
-import { normalGeometry } from '../../accessors/NormalNode.js';
-import { tslFn } from '../../shadernode/ShaderNode.js';
-
-const getGeometryRoughness = tslFn( () => {
-
-	const dxy = normalGeometry.dFdx().abs().max( normalGeometry.dFdy().abs() );
-	const geometryRoughness = dxy.x.max( dxy.y ).max( dxy.z );
-
-	return geometryRoughness;
-
-} );
-
-export default getGeometryRoughness;
+import{normalGeometry as e}from"../../accessors/NormalNode.js";import{tslFn as o}from"../../shadernode/ShaderNode.js";let getGeometryRoughness=o(()=>{let o=e.dFdx().abs().max(e.dFdy().abs());return o.x.max(o.y).max(o.z)});export default getGeometryRoughness;
