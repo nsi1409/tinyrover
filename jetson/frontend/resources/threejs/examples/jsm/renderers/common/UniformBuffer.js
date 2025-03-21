@@ -1,15 +1,1 @@
-import Buffer from './Buffer.js';
-
-class UniformBuffer extends Buffer {
-
-	constructor( name, buffer = null ) {
-
-		super( name, buffer );
-
-		this.isUniformBuffer = true;
-
-	}
-
-}
-
-export default UniformBuffer;
+import f from"./Buffer.js";class UniformBuffer extends f{constructor(f,r=null){super(f,r),this.isUniformBuffer=!0}}export default UniformBuffer;

@@ -1,13 +1,1 @@
-class Pipeline {
-
-	constructor( cacheKey ) {
-
-		this.cacheKey = cacheKey;
-
-		this.usedTimes = 0;
-
-	}
-
-}
-
-export default Pipeline;
+class Pipeline{constructor(e){this.cacheKey=e,this.usedTimes=0}}export default Pipeline;

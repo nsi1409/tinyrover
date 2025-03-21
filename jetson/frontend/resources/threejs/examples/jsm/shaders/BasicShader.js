@@ -1,29 +1,13 @@
-/**
- * Simple test shader
- */
-
-const BasicShader = {
-
-	name: 'BasicShader',
-
-	uniforms: {},
-
-	vertexShader: /* glsl */`
+let BasicShader={name:"BasicShader",uniforms:{},vertexShader:`
 
 		void main() {
 
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		void main() {
 
 			gl_FragColor = vec4( 1.0, 0.0, 0.0, 0.5 );
 
-		}`
-
-};
-
-export { BasicShader };
+		}`};export{BasicShader};

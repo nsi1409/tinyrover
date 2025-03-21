@@ -1,18 +1,1 @@
-class Transpiler {
-
-	constructor( decoder, encoder ) {
-
-		this.decoder = decoder;
-		this.encoder = encoder;
-
-	}
-
-	parse( source ) {
-
-		return this.encoder.emit( this.decoder.parse( source ) );
-
-	}
-
-}
-
-export default Transpiler;
+class Transpiler{constructor(e,r){this.decoder=e,this.encoder=r}parse(e){return this.encoder.emit(this.decoder.parse(e))}}export default Transpiler;

@@ -1,19 +1,4 @@
-/**
- * Luminosity
- * http://en.wikipedia.org/wiki/Luminosity
- */
-
-const LuminosityShader = {
-
-	name: 'LuminosityShader',
-
-	uniforms: {
-
-		'tDiffuse': { value: null }
-
-	},
-
-	vertexShader: /* glsl */`
+let LuminosityShader={name:"LuminosityShader",uniforms:{tDiffuse:{value:null}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -23,9 +8,7 @@ const LuminosityShader = {
 
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		#include <common>
 
@@ -41,8 +24,4 @@ const LuminosityShader = {
 
 			gl_FragColor = vec4( l, l, l, texel.w );
 
-		}`
-
-};
-
-export { LuminosityShader };
+		}`};export{LuminosityShader};

@@ -1,16 +1,1 @@
-import Pipeline from './Pipeline.js';
-
-class RenderPipeline extends Pipeline {
-
-	constructor( cacheKey, vertexProgram, fragmentProgram ) {
-
-		super( cacheKey );
-
-		this.vertexProgram = vertexProgram;
-		this.fragmentProgram = fragmentProgram;
-
-	}
-
-}
-
-export default RenderPipeline;
+import e from"./Pipeline.js";class RenderPipeline extends e{constructor(e,r,t){super(e),this.vertexProgram=r,this.fragmentProgram=t}}export default RenderPipeline;

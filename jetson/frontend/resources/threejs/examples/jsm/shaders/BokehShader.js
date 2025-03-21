@@ -1,32 +1,4 @@
-/**
- * Depth-of-field shader with bokeh
- * ported from GLSL shader by Martins Upitis
- * http://artmartinsh.blogspot.com/2010/02/glsl-lens-blur-filter-with-bokeh.html
- */
-
-const BokehShader = {
-
-	name: 'BokehShader',
-
-	defines: {
-		'DEPTH_PACKING': 1,
-		'PERSPECTIVE_CAMERA': 1,
-	},
-
-	uniforms: {
-
-		'tColor': { value: null },
-		'tDepth': { value: null },
-		'focus': { value: 1.0 },
-		'aspect': { value: 1.0 },
-		'aperture': { value: 0.025 },
-		'maxblur': { value: 0.01 },
-		'nearClip': { value: 1.0 },
-		'farClip': { value: 1000.0 },
-
-	},
-
-	vertexShader: /* glsl */`
+let BokehShader={name:"BokehShader",defines:{DEPTH_PACKING:1,PERSPECTIVE_CAMERA:1},uniforms:{tColor:{value:null},tDepth:{value:null},focus:{value:1},aspect:{value:1},aperture:{value:.025},maxblur:{value:.01},nearClip:{value:1},farClip:{value:1e3}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -35,9 +7,7 @@ const BokehShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		#include <common>
 
@@ -138,8 +108,4 @@ const BokehShader = {
 			gl_FragColor = col / 41.0;
 			gl_FragColor.a = 1.0;
 
-		}`
-
-};
-
-export { BokehShader };
+		}`};export{BokehShader};

@@ -1,18 +1,1 @@
-import Binding from './Binding.js';
-
-class Sampler extends Binding {
-
-	constructor( name, texture ) {
-
-		super( name );
-
-		this.texture = texture;
-		this.version = texture ? texture.version : 0;
-
-		this.isSampler = true;
-
-	}
-
-}
-
-export default Sampler;
+import e from"./Binding.js";class Sampler extends e{constructor(e,r){super(e),this.texture=r,this.version=r?r.version:0,this.isSampler=!0}}export default Sampler;

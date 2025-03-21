@@ -1,17 +1,1 @@
-import Pipeline from './Pipeline.js';
-
-class ComputePipeline extends Pipeline {
-
-	constructor( cacheKey, computeProgram ) {
-
-		super( cacheKey );
-
-		this.computeProgram = computeProgram;
-
-		this.isComputePipeline = true;
-
-	}
-
-}
-
-export default ComputePipeline;
+import e from"./Pipeline.js";class ComputePipeline extends e{constructor(e,i){super(e),this.computeProgram=i,this.isComputePipeline=!0}}export default ComputePipeline;

@@ -1,14 +1,1 @@
-import NodeParser from '../../../nodes/core/NodeParser.js';
-import WGSLNodeFunction from './WGSLNodeFunction.js';
-
-class WGSLNodeParser extends NodeParser {
-
-	parseFunction( source ) {
-
-		return new WGSLNodeFunction( source );
-
-	}
-
-}
-
-export default WGSLNodeParser;
+import e from"../../../nodes/core/NodeParser.js";import r from"./WGSLNodeFunction.js";class WGSLNodeParser extends e{parseFunction(e){return new r(e)}}export default WGSLNodeParser;

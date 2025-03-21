@@ -1,15 +1,4 @@
-const OutputShader = {
-
-	name: 'OutputShader',
-
-	uniforms: {
-
-		'tDiffuse': { value: null },
-		'toneMappingExposure': { value: 1 }
-
-	},
-
-	vertexShader: /* glsl */`
+let OutputShader={name:"OutputShader",uniforms:{tDiffuse:{value:null},toneMappingExposure:{value:1}},vertexShader:`
 		precision highp float;
 
 		uniform mat4 modelViewMatrix;
@@ -25,9 +14,7 @@ const OutputShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 	
 		precision highp float;
 
@@ -70,8 +57,4 @@ const OutputShader = {
 
 			#endif
 
-		}`
-
-};
-
-export { OutputShader };
+		}`};export{OutputShader};

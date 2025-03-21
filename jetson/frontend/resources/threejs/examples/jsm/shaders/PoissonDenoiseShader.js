@@ -1,40 +1,4 @@
-import {
-	Matrix4,
-	Vector2,
-} from 'three';
-
-/**
- * References:
- * https://github.com/0beqz/realism-effects
- * https://github.com/N8python/n8ao
- */
-
-const PoissonDenoiseShader = {
-
-	name: 'PoissonDenoiseShader',
-
-	defines: {
-		'SAMPLES': 16,
-		'SAMPLE_VECTORS': generatePdSamplePointInitializer( 16, 4 ),
-		'NORMAL_VECTOR_TYPE': 1,
-		'DEPTH_VALUE_SOURCE': 0,
-	},
-
-	uniforms: {
-		'tDiffuse': { value: null },
-		'tNormal': { value: null },
-		'tDepth': { value: null },
-		'tNoise': { value: null },
-		'resolution': { value: new Vector2() },
-		'cameraProjectionMatrixInverse': { value: new Matrix4() },
-		'lumaPhi': { value: 5. },
-		'depthPhi': { value: 5. },
-		'normalPhi': { value: 5. },
-		'radius': { value: 10. },
-		'index': { value: 0 }
-	},
-
-	vertexShader: /* glsl */`
+import{Matrix4 as e,Vector2 as t}from"three";let PoissonDenoiseShader={name:"PoissonDenoiseShader",defines:{SAMPLES:16,SAMPLE_VECTORS:generatePdSamplePointInitializer(16,4),NORMAL_VECTOR_TYPE:1,DEPTH_VALUE_SOURCE:0},uniforms:{tDiffuse:{value:null},tNormal:{value:null},tDepth:{value:null},tNoise:{value:null},resolution:{value:new t},cameraProjectionMatrixInverse:{value:new e},lumaPhi:{value:5},depthPhi:{value:5},normalPhi:{value:5},radius:{value:10},index:{value:0}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -44,9 +8,7 @@ const PoissonDenoiseShader = {
 
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		varying vec2 vUv;
 
@@ -188,61 +150,4 @@ const PoissonDenoiseShader = {
 				denoised /= totalWeight;
 			}
 			gl_FragColor = FRAGMENT_OUTPUT;
-		}`
-
-};
-
-function generatePdSamplePointInitializer( samples, rings ) {
-
-	const poissonDisk = generateDenoiseSamples(
-		samples,
-		rings,
-
-	);
-
-	let glslCode = 'vec2[SAMPLES](';
-
-	for ( let i = 0; i < samples; i ++ ) {
-
-		const sample = poissonDisk[ i ];
-		glslCode += `vec2(${sample.x}, ${sample.y})`;
-
-		if ( i < samples - 1 ) {
-
-			glslCode += ',';
-
-		}
-
-	}
-
-	glslCode += ')';
-
-	return glslCode;
-
-}
-
-function generateDenoiseSamples( numSamples, numRings ) {
-
-	const angleStep = ( 2 * Math.PI * numRings ) / numSamples;
-	const invNumSamples = 1.0 / numSamples;
-	const radiusStep = invNumSamples;
-	const samples = [];
-	let radius = invNumSamples;
-	let angle = 0;
-
-	for ( let i = 0; i < numSamples; i ++ ) {
-
-		const v = new Vector2( Math.cos( angle ), Math.sin( angle ) )
-			.multiplyScalar( Math.pow( radius, 0.75 ) );
-
-		samples.push( v );
-		radius += radiusStep;
-		angle += angleStep;
-
-	}
-
-	return samples;
-
-}
-
-export { generatePdSamplePointInitializer, PoissonDenoiseShader };
+		}`};function generatePdSamplePointInitializer(e,t){let i=generateDenoiseSamples(e,t),o="vec2[SAMPLES](";for(let a=0;a<e;a++){let n=i[a];o+=`vec2(${n.x}, ${n.y})`,a<e-1&&(o+=",")}return o+")"}function generateDenoiseSamples(e,i){let o=2*Math.PI*i/e,a=1/e,n=a,l=[],r=a,s=0;for(let v=0;v<e;v++){let c=new t(Math.cos(s),Math.sin(s)).multiplyScalar(Math.pow(r,.75));l.push(c),r+=n,s+=o}return l}export{generatePdSamplePointInitializer,PoissonDenoiseShader};

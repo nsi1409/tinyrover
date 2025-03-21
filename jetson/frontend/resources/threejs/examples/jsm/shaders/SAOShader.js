@@ -1,54 +1,11 @@
-import {
-	Matrix4,
-	Vector2
-} from 'three';
-
-/**
- * TODO
- */
-
-const SAOShader = {
-
-	name: 'SAOShader',
-
-	defines: {
-		'NUM_SAMPLES': 7,
-		'NUM_RINGS': 4,
-		'DIFFUSE_TEXTURE': 0,
-		'PERSPECTIVE_CAMERA': 1
-	},
-
-	uniforms: {
-
-		'tDepth': { value: null },
-		'tDiffuse': { value: null },
-		'tNormal': { value: null },
-		'size': { value: new Vector2( 512, 512 ) },
-
-		'cameraNear': { value: 1 },
-		'cameraFar': { value: 100 },
-		'cameraProjectionMatrix': { value: new Matrix4() },
-		'cameraInverseProjectionMatrix': { value: new Matrix4() },
-
-		'scale': { value: 1.0 },
-		'intensity': { value: 0.1 },
-		'bias': { value: 0.5 },
-
-		'minResolution': { value: 0.0 },
-		'kernelRadius': { value: 100.0 },
-		'randomSeed': { value: 0.0 }
-	},
-
-	vertexShader: /* glsl */`
+import{Matrix4 as e,Vector2 as i}from"three";let SAOShader={name:"SAOShader",defines:{NUM_SAMPLES:7,NUM_RINGS:4,DIFFUSE_TEXTURE:0,PERSPECTIVE_CAMERA:1},uniforms:{tDepth:{value:null},tDiffuse:{value:null},tNormal:{value:null},size:{value:new i(512,512)},cameraNear:{value:1},cameraFar:{value:100},cameraProjectionMatrix:{value:new e},cameraInverseProjectionMatrix:{value:new e},scale:{value:1},intensity:{value:.1},bias:{value:.5},minResolution:{value:0},kernelRadius:{value:100},randomSeed:{value:0}},vertexShader:`
 
 		varying vec2 vUv;
 
 		void main() {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		#include <common>
 
@@ -173,8 +130,4 @@ const SAOShader = {
 
 			gl_FragColor = getDefaultColor( vUv );
 			gl_FragColor.xyz *=  1.0 - ambientOcclusion;
-		}`
-
-};
-
-export { SAOShader };
+		}`};export{SAOShader};

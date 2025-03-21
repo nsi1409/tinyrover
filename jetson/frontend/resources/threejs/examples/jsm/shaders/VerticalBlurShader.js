@@ -1,24 +1,4 @@
-/**
- * Two pass Gaussian blur filter (horizontal and vertical blur shaders)
- * - see http://www.cake23.de/traveling-wavefronts-lit-up.html
- *
- * - 9 samples per pass
- * - standard deviation 2.7
- * - "h" and "v" parameters should be set to "1 / width" and "1 / height"
- */
-
-const VerticalBlurShader = {
-
-	name: 'VerticalBlurShader',
-
-	uniforms: {
-
-		'tDiffuse': { value: null },
-		'v': { value: 1.0 / 512.0 }
-
-	},
-
-	vertexShader: /* glsl */`
+let VerticalBlurShader={name:"VerticalBlurShader",uniforms:{tDiffuse:{value:null},v:{value:1/512}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -27,9 +7,7 @@ const VerticalBlurShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		uniform sampler2D tDiffuse;
 		uniform float v;
@@ -52,8 +30,4 @@ const VerticalBlurShader = {
 
 			gl_FragColor = sum;
 
-		}`
-
-};
-
-export { VerticalBlurShader };
+		}`};export{VerticalBlurShader};

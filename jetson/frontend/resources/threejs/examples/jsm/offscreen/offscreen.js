@@ -1,8 +1,1 @@
-import init from './scene.js';
-
-self.onmessage = function ( message ) {
-
-	const data = message.data;
-	init( data.drawingSurface, data.width, data.height, data.pixelRatio, data.path );
-
-};
+import e from"./scene.js";self.onmessage=function(t){let a=t.data;e(a.drawingSurface,a.width,a.height,a.pixelRatio,a.path)};

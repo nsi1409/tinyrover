@@ -1,15 +1,1 @@
-import Sampler from '../Sampler.js';
-
-class NodeSampler extends Sampler {
-
-	constructor( name, textureNode ) {
-
-		super( name, textureNode ? textureNode.value : null );
-
-		this.textureNode = textureNode;
-
-	}
-
-}
-
-export default NodeSampler;
+import e from"../Sampler.js";class NodeSampler extends e{constructor(e,r){super(e,r?r.value:null),this.textureNode=r}}export default NodeSampler;

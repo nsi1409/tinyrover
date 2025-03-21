@@ -1,24 +1,4 @@
-/**
- * Focus shader
- * based on PaintEffect postprocess from ro.me
- * http://code.google.com/p/3-dreams-of-black/source/browse/deploy/js/effects/PaintEffect.js
- */
-
-const FocusShader = {
-
-	name: 'FocusShader',
-
-	uniforms: {
-
-		'tDiffuse': { value: null },
-		'screenWidth': { value: 1024 },
-		'screenHeight': { value: 1024 },
-		'sampleDistance': { value: 0.94 },
-		'waveFactor': { value: 0.00125 }
-
-	},
-
-	vertexShader: /* glsl */`
+let FocusShader={name:"FocusShader",uniforms:{tDiffuse:{value:null},screenWidth:{value:1024},screenHeight:{value:1024},sampleDistance:{value:.94},waveFactor:{value:.00125}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -27,9 +7,7 @@ const FocusShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		uniform float screenWidth;
 		uniform float screenHeight;
@@ -82,8 +60,4 @@ const FocusShader = {
 
 			gl_FragColor = vec4( color.rgb * color.rgb * vec3( 0.95 ) + color.rgb, 1.0 );
 
-		}`
-
-};
-
-export { FocusShader };
+		}`};export{FocusShader};

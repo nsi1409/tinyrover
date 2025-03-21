@@ -1,20 +1,4 @@
-/**
- * Unpack RGBA depth shader
- * - show RGBA encoded depth as monochrome color
- */
-
-const UnpackDepthRGBAShader = {
-
-	name: 'UnpackDepthRGBAShader',
-
-	uniforms: {
-
-		'tDiffuse': { value: null },
-		'opacity': { value: 1.0 }
-
-	},
-
-	vertexShader: /* glsl */`
+let UnpackDepthRGBAShader={name:"UnpackDepthRGBAShader",uniforms:{tDiffuse:{value:null},opacity:{value:1}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -23,9 +7,7 @@ const UnpackDepthRGBAShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		uniform float opacity;
 
@@ -40,8 +22,4 @@ const UnpackDepthRGBAShader = {
 			float depth = 1.0 - unpackRGBAToDepth( texture2D( tDiffuse, vUv ) );
 			gl_FragColor = vec4( vec3( depth ), opacity );
 
-		}`
-
-};
-
-export { UnpackDepthRGBAShader };
+		}`};export{UnpackDepthRGBAShader};

@@ -1,27 +1,4 @@
-import {
-	Vector2
-} from 'three';
-
-/**
- * NVIDIA FXAA by Timothy Lottes
- * https://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf
- * - WebGL port by @supereggbert
- * http://www.glge.org/demos/fxaa/
- * Further improved by Daniel Sturk
- */
-
-const FXAAShader = {
-
-	name: 'FXAAShader',
-
-	uniforms: {
-
-		'tDiffuse': { value: null },
-		'resolution': { value: new Vector2( 1 / 1024, 1 / 512 ) }
-
-	},
-
-	vertexShader: /* glsl */`
+import{Vector2 as e}from"three";let FXAAShader={name:"FXAAShader",uniforms:{tDiffuse:{value:null},resolution:{value:new e(1/1024,1/512)}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -30,9 +7,7 @@ const FXAAShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 		precision highp float;
 
 		uniform sampler2D tDiffuse;
@@ -44,7 +19,7 @@ const FXAAShader = {
 		// FXAA 3.11 implementation by NVIDIA, ported to WebGL by Agost Biro (biro@archilogic.com)
 
 		//----------------------------------------------------------------------------------
-		// File:        es3-kepler\FXAA\assets\shaders/FXAA_DefaultES.frag
+		// File:        es3-keplerFXAAassetsshaders/FXAA_DefaultES.frag
 		// SDK Version: v3.00
 		// Email:       gameworks@nvidia.com
 		// Site:        http://developer.nvidia.com/
@@ -281,8 +256,4 @@ const FXAAShader = {
 			);
 
 		}
-	`
-
-};
-
-export { FXAAShader };
+	`};export{FXAAShader};

@@ -1,20 +1,4 @@
-import { Mesh, IcosahedronGeometry, ShaderMaterial, DoubleSide } from 'three';
-
-/**
- * Ground projected env map adapted from @react-three/drei.
- * https://github.com/pmndrs/drei/blob/master/src/core/Environment.tsx
- */
-class GroundProjectedSkybox extends Mesh {
-
-	constructor( texture, options = {} ) {
-
-		const isCubeMap = texture.isCubeTexture;
-
-		const defines = [
-			isCubeMap ? '#define ENVMAP_TYPE_CUBE' : ''
-		];
-
-		const vertexShader = /* glsl */ `
+import{Mesh as e,IcosahedronGeometry as o,ShaderMaterial as r,DoubleSide as t}from"three";class GroundProjectedSkybox extends e{constructor(e,i={}){let a=[e.isCubeTexture?"#define ENVMAP_TYPE_CUBE":""],c=`
 			varying vec3 vWorldPosition;
 
 			void main() {
@@ -25,8 +9,7 @@ class GroundProjectedSkybox extends Mesh {
 				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
 			}
-			`;
-		const fragmentShader = defines.join( '\n' ) + /* glsl */ `
+			`,n=a.join("\n")+`
 
 				varying vec3 vWorldPosition;
 
@@ -123,50 +106,4 @@ class GroundProjectedSkybox extends Mesh {
 					#include <colorspace_fragment>
 
 				}
-				`;
-
-		const uniforms = {
-			map: { value: texture },
-			height: { value: options.height || 15 },
-			radius: { value: options.radius || 100 },
-		};
-
-		const geometry = new IcosahedronGeometry( 1, 16 );
-		const material = new ShaderMaterial( {
-			uniforms,
-			fragmentShader,
-			vertexShader,
-			side: DoubleSide,
-		} );
-
-		super( geometry, material );
-
-	}
-
-	set radius( radius ) {
-
-		this.material.uniforms.radius.value = radius;
-
-	}
-
-	get radius() {
-
-		return this.material.uniforms.radius.value;
-
-	}
-
-	set height( height ) {
-
-		this.material.uniforms.height.value = height;
-
-	}
-
-	get height() {
-
-		return this.material.uniforms.height.value;
-
-	}
-
-}
-
-export { GroundProjectedSkybox };
+				`,s={map:{value:e},height:{value:i.height||15},radius:{value:i.radius||100}},l;super(new o(1,16),new r({uniforms:s,fragmentShader:n,vertexShader:c,side:t}))}set radius(e){this.material.uniforms.radius.value=e}get radius(){return this.material.uniforms.radius.value}set height(e){this.material.uniforms.height.value=e}get height(){return this.material.uniforms.height.value}}export{GroundProjectedSkybox};

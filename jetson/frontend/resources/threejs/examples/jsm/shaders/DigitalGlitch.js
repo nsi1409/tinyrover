@@ -1,39 +1,10 @@
-/**
- * RGB Shift Shader
- * Shifts red and blue channels from center in opposite directions
- * Ported from http://kriss.cx/tom/2009/05/rgb-shift/
- * by Tom Butterworth / http://kriss.cx/tom/
- *
- * amount: shift distance (1 is width of input)
- * angle: shift angle in radians
- */
-
-const DigitalGlitch = {
-
-	uniforms: {
-
-		'tDiffuse': { value: null }, //diffuse texture
-		'tDisp': { value: null }, //displacement texture for digital glitch squares
-		'byp': { value: 0 }, //apply the glitch ?
-		'amount': { value: 0.08 },
-		'angle': { value: 0.02 },
-		'seed': { value: 0.02 },
-		'seed_x': { value: 0.02 }, //-1,1
-		'seed_y': { value: 0.02 }, //-1,1
-		'distortion_x': { value: 0.5 },
-		'distortion_y': { value: 0.6 },
-		'col_s': { value: 0.05 }
-	},
-
-	vertexShader: /* glsl */`
+let DigitalGlitch={uniforms:{tDiffuse:{value:null},tDisp:{value:null},byp:{value:0},amount:{value:.08},angle:{value:.02},seed:{value:.02},seed_x:{value:.02},seed_y:{value:.02},distortion_x:{value:.5},distortion_y:{value:.6},col_s:{value:.05}},vertexShader:`
 
 		varying vec2 vUv;
 		void main() {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		uniform int byp; //should we apply the glitch ?
 
@@ -94,8 +65,4 @@ const DigitalGlitch = {
 			else {
 				gl_FragColor=texture2D (tDiffuse, vUv);
 			}
-		}`
-
-};
-
-export { DigitalGlitch };
+		}`};export{DigitalGlitch};

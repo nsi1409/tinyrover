@@ -1,32 +1,4 @@
-import {
-	Vector2
-} from 'three';
-
-/**
- * Convolution shader
- * ported from o3d sample to WebGL / GLSL
- */
-
-const ConvolutionShader = {
-
-	name: 'ConvolutionShader',
-
-	defines: {
-
-		'KERNEL_SIZE_FLOAT': '25.0',
-		'KERNEL_SIZE_INT': '25'
-
-	},
-
-	uniforms: {
-
-		'tDiffuse': { value: null },
-		'uImageIncrement': { value: new Vector2( 0.001953125, 0.0 ) },
-		'cKernel': { value: [] }
-
-	},
-
-	vertexShader: /* glsl */`
+import{Vector2 as e}from"three";let ConvolutionShader={name:"ConvolutionShader",defines:{KERNEL_SIZE_FLOAT:"25.0",KERNEL_SIZE_INT:"25"},uniforms:{tDiffuse:{value:null},uImageIncrement:{value:new e(.001953125,0)},cKernel:{value:[]}},vertexShader:`
 
 		uniform vec2 uImageIncrement;
 
@@ -37,9 +9,7 @@ const ConvolutionShader = {
 			vUv = uv - ( ( KERNEL_SIZE_FLOAT - 1.0 ) / 2.0 ) * uImageIncrement;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		uniform float cKernel[ KERNEL_SIZE_INT ];
 
@@ -62,42 +32,4 @@ const ConvolutionShader = {
 
 			gl_FragColor = sum;
 
-		}`,
-
-	buildKernel: function ( sigma ) {
-
-		// We lop off the sqrt(2 * pi) * sigma term, since we're going to normalize anyway.
-
-		const kMaxKernelSize = 25;
-		let kernelSize = 2 * Math.ceil( sigma * 3.0 ) + 1;
-
-		if ( kernelSize > kMaxKernelSize ) kernelSize = kMaxKernelSize;
-
-		const halfWidth = ( kernelSize - 1 ) * 0.5;
-
-		const values = new Array( kernelSize );
-		let sum = 0.0;
-		for ( let i = 0; i < kernelSize; ++ i ) {
-
-			values[ i ] = gauss( i - halfWidth, sigma );
-			sum += values[ i ];
-
-		}
-
-		// normalize the kernel
-
-		for ( let i = 0; i < kernelSize; ++ i ) values[ i ] /= sum;
-
-		return values;
-
-	}
-
-};
-
-function gauss( x, sigma ) {
-
-	return Math.exp( - ( x * x ) / ( 2.0 * sigma * sigma ) );
-
-}
-
-export { ConvolutionShader };
+		}`,buildKernel:function(e){let r=2*Math.ceil(3*e)+1;r>25&&(r=25);let n=(r-1)*.5,o=Array(r),i=0;for(let t=0;t<r;++t)o[t]=gauss(t-n,e),i+=o[t];for(let u=0;u<r;++u)o[u]/=i;return o}};function gauss(e,r){return Math.exp(-(e*e)/(2*r*r))}export{ConvolutionShader};

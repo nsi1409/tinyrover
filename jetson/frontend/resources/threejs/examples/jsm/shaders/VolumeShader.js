@@ -1,26 +1,4 @@
-import {
-	Vector2,
-	Vector3
-} from 'three';
-
-/**
- * Shaders to render 3D volumes using raycasting.
- * The applied techniques are based on similar implementations in the Visvis and Vispy projects.
- * This is not the only approach, therefore it's marked 1.
- */
-
-const VolumeRenderShader1 = {
-
-	uniforms: {
-		'u_size': { value: new Vector3( 1, 1, 1 ) },
-		'u_renderstyle': { value: 0 },
-		'u_renderthreshold': { value: 0.5 },
-		'u_clim': { value: new Vector2( 1, 1 ) },
-		'u_data': { value: null },
-		'u_cmdata': { value: null }
-	},
-
-	vertexShader: /* glsl */`
+import{Vector2 as e,Vector3 as a}from"three";let VolumeRenderShader1={uniforms:{u_size:{value:new a(1,1,1)},u_renderstyle:{value:0},u_renderthreshold:{value:.5},u_clim:{value:new e(1,1)},u_data:{value:null},u_cmdata:{value:null}},vertexShader:`
 
 		varying vec4 v_nearpos;
 		varying vec4 v_farpos;
@@ -50,9 +28,7 @@ const VolumeRenderShader1 = {
 				// Set varyings and output pos
 				v_position = position;
 				gl_Position = projectionMatrix * viewMatrix * modelMatrix * position4;
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 				precision highp float;
 				precision mediump sampler3D;
@@ -282,8 +258,4 @@ const VolumeRenderShader1 = {
 						final_color = color * (ambient_color + diffuse_color) + specular_color;
 						final_color.a = color.a;
 						return final_color;
-				}`
-
-};
-
-export { VolumeRenderShader1 };
+				}`};export{VolumeRenderShader1};

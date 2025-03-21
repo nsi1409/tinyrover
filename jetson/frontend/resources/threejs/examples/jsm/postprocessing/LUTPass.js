@@ -1,24 +1,4 @@
-import { ShaderPass } from './ShaderPass.js';
-
-const LUTShader = {
-
-	name: 'LUTShader',
-
-	defines: {
-		USE_3DTEXTURE: 1,
-	},
-
-	uniforms: {
-		lut3d: { value: null },
-
-		lut: { value: null },
-		lutSize: { value: 0 },
-
-		tDiffuse: { value: null },
-		intensity: { value: 1.0 },
-	},
-
-	vertexShader: /* glsl */`
+import{ShaderPass as e}from"./ShaderPass.js";let LUTShader={name:"LUTShader",defines:{USE_3DTEXTURE:1},uniforms:{lut3d:{value:null},lut:{value:null},lutSize:{value:0},tDiffuse:{value:null},intensity:{value:1}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -29,9 +9,7 @@ const LUTShader = {
 
 		}
 
-	`,
-
-	fragmentShader: /* glsl */`
+	`,fragmentShader:`
 
 		uniform float lutSize;
 		#if USE_3DTEXTURE
@@ -102,73 +80,4 @@ const LUTShader = {
 
 		}
 
-	`,
-
-};
-
-class LUTPass extends ShaderPass {
-
-	set lut( v ) {
-
-		const material = this.material;
-		if ( v !== this.lut ) {
-
-			material.uniforms.lut3d.value = null;
-			material.uniforms.lut.value = null;
-
-			if ( v ) {
-
-				const is3dTextureDefine = v.isData3DTexture ? 1 : 0;
-				if ( is3dTextureDefine !== material.defines.USE_3DTEXTURE ) {
-
-					material.defines.USE_3DTEXTURE = is3dTextureDefine;
-					material.needsUpdate = true;
-
-				}
-
-				material.uniforms.lutSize.value = v.image.width;
-				if ( v.isData3DTexture ) {
-
-					material.uniforms.lut3d.value = v;
-
-				} else {
-
-					material.uniforms.lut.value = v;
-
-				}
-
-			}
-
-		}
-
-	}
-
-	get lut() {
-
-		return this.material.uniforms.lut.value || this.material.uniforms.lut3d.value;
-
-	}
-
-	set intensity( v ) {
-
-		this.material.uniforms.intensity.value = v;
-
-	}
-
-	get intensity() {
-
-		return this.material.uniforms.intensity.value;
-
-	}
-
-	constructor( options = {} ) {
-
-		super( LUTShader );
-		this.lut = options.lut || null;
-		this.intensity = 'intensity' in options ? options.intensity : 1;
-
-	}
-
-}
-
-export { LUTPass };
+	`};class LUTPass extends e{set lut(e){let t=this.material;if(e!==this.lut&&(t.uniforms.lut3d.value=null,t.uniforms.lut.value=null,e)){let i=e.isData3DTexture?1:0;i!==t.defines.USE_3DTEXTURE&&(t.defines.USE_3DTEXTURE=i,t.needsUpdate=!0),t.uniforms.lutSize.value=e.image.width,e.isData3DTexture?t.uniforms.lut3d.value=e:t.uniforms.lut.value=e}}get lut(){return this.material.uniforms.lut.value||this.material.uniforms.lut3d.value}set intensity(e){this.material.uniforms.intensity.value=e}get intensity(){return this.material.uniforms.intensity.value}constructor(e={}){super(LUTShader),this.lut=e.lut||null,this.intensity="intensity"in e?e.intensity:1}}export{LUTPass};

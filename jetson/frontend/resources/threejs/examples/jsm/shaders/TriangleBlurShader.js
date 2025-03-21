@@ -1,29 +1,4 @@
-import {
-	Vector2
-} from 'three';
-
-/**
- * Triangle blur shader
- * based on glfx.js triangle blur shader
- * https://github.com/evanw/glfx.js
- *
- * A basic blur filter, which convolves the image with a
- * pyramid filter. The pyramid filter is separable and is applied as two
- * perpendicular triangle filters.
- */
-
-const TriangleBlurShader = {
-
-	name: 'TriangleBlurShader',
-
-	uniforms: {
-
-		'texture': { value: null },
-		'delta': { value: new Vector2( 1, 1 ) }
-
-	},
-
-	vertexShader: /* glsl */`
+import{Vector2 as e}from"three";let TriangleBlurShader={name:"TriangleBlurShader",uniforms:{texture:{value:null},delta:{value:new e(1,1)}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -32,9 +7,7 @@ const TriangleBlurShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		#include <common>
 
@@ -67,8 +40,4 @@ const TriangleBlurShader = {
 
 			gl_FragColor = color / total;
 
-		}`
-
-};
-
-export { TriangleBlurShader };
+		}`};export{TriangleBlurShader};

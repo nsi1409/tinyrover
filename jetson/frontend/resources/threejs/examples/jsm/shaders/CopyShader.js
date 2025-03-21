@@ -1,19 +1,4 @@
-/**
- * Full-screen textured quad shader
- */
-
-const CopyShader = {
-
-	name: 'CopyShader',
-
-	uniforms: {
-
-		'tDiffuse': { value: null },
-		'opacity': { value: 1.0 }
-
-	},
-
-	vertexShader: /* glsl */`
+let CopyShader={name:"CopyShader",uniforms:{tDiffuse:{value:null},opacity:{value:1}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -22,9 +7,7 @@ const CopyShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		uniform float opacity;
 
@@ -38,8 +21,4 @@ const CopyShader = {
 			gl_FragColor = opacity * texel;
 
 
-		}`
-
-};
-
-export { CopyShader };
+		}`};export{CopyShader};

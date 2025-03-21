@@ -1,340 +1,56 @@
-import { MathNode, GLSLNodeParser, NodeBuilder, NodeMaterial } from '../../../nodes/Nodes.js';
-
-const glslMethods = {
-	[ MathNode.ATAN2 ]: 'atan'
-};
-
-const precisionLib = {
-	low: 'lowp',
-	medium: 'mediump',
-	high: 'highp'
-};
-
-class GLSL1NodeBuilder extends NodeBuilder {
-
-	constructor( object, renderer, scene = null ) {
-
-		super( object, renderer, new GLSLNodeParser(), scene );
-
-	}
-
-	getMethod( method ) {
-
-		return glslMethods[ method ] || method;
-
-	}
-
-	getTexture( texture, textureProperty, uvSnippet ) {
-
-		if ( texture.isTextureCube ) {
-
-			return `textureCube( ${textureProperty}, ${uvSnippet} )`;
-
-		} else {
-
-			return `texture2D( ${textureProperty}, ${uvSnippet} )`;
-
-		}
-
-	}
-
-	getTextureBias( texture, textureProperty, uvSnippet, biasSnippet ) {
-
-		if ( this.material.extensions !== undefined ) this.material.extensions.shaderTextureLOD = true;
-
-		return `textureLod( ${textureProperty}, ${uvSnippet}, ${biasSnippet} )`;
-
-	}
-
-	getVars( shaderStage ) {
-
-		const snippets = [];
-
-		const vars = this.vars[ shaderStage ];
-
-		for ( const variable of vars ) {
-
-			snippets.push( `${ this.getVar( variable.type, variable.name ) };` );
-
-		}
-
-		return snippets.join( '\n\t' );
-
-	}
-
-	getUniforms( shaderStage ) {
-
-		const uniforms = this.uniforms[ shaderStage ];
-
-		let output = '';
-
-		for ( const uniform of uniforms ) {
-
-			let snippet = null;
-
-			if ( uniform.type === 'texture' ) {
-
-				snippet = `sampler2D ${uniform.name};\n`;
-
-			} else if ( uniform.type === 'cubeTexture' ) {
-
-				snippet = `samplerCube ${uniform.name};\n`;
-
-			} else {
-
-				const vectorType = this.getVectorType( uniform.type );
-
-				snippet = `${vectorType} ${uniform.name};\n`;
-
-			}
-
-			const precision = uniform.node.precision;
-
-			if ( precision !== null ) {
-
-				snippet = 'uniform ' + precisionLib[ precision ] + ' ' + snippet;
-
-			} else {
-
-				snippet = 'uniform ' + snippet;
-
-			}
-
-			output += snippet;
-
-		}
-
-		return output;
-
-	}
-
-	getAttributes( shaderStage ) {
-
-		let snippet = '';
-
-		if ( shaderStage === 'vertex' ) {
-
-			const attributes = this.attributes;
-
-			for ( const attribute of attributes ) {
-
-				snippet += `attribute ${attribute.type} ${attribute.name};\n`;
-
-			}
-
-		}
-
-		return snippet;
-
-	}
-
-	getVaryings( shaderStage ) {
-
-		let snippet = '';
-
-		const varyings = this.varyings;
-
-		if ( shaderStage === 'vertex' ) {
-
-			for ( const varying of varyings ) {
-
-				snippet += `${varying.needsInterpolation ? 'varying' : '/*varying*/'} ${varying.type} ${varying.name};\n`;
-
-			}
-
-		} else if ( shaderStage === 'fragment' ) {
-
-			for ( const varying of varyings ) {
-
-				if ( varying.needsInterpolation ) {
-
-					snippet += `varying ${varying.type} ${varying.name};\n`;
-
-				}
-
-			}
-
-		}
-
-		return snippet;
-
-	}
-
-	getVertexIndex() {
-
-		return 'gl_VertexID';
-
-	}
-
-	getFrontFacing() {
-
-		return 'gl_FrontFacing';
-
-	}
-
-	getFragCoord() {
-
-		return 'gl_FragCoord';
-
-	}
-
-	isFlipY() {
-
-		return true;
-
-	}
-
-	_getGLSLVertexCode( shaderData ) {
-
-		return `${ this.getSignature() }
+import{MathNode as e,GLSLNodeParser as t,NodeBuilder as r,NodeMaterial as i}from"../../../nodes/Nodes.js";let glslMethods={[e.ATAN2]:"atan"},precisionLib={low:"lowp",medium:"mediump",high:"highp"};class GLSL1NodeBuilder extends r{constructor(e,r,i=null){super(e,r,new t,i)}getMethod(e){return glslMethods[e]||e}getTexture(e,t,r){return e.isTextureCube?`textureCube( ${t}, ${r} )`:`texture2D( ${t}, ${r} )`}getTextureBias(e,t,r,i){return void 0!==this.material.extensions&&(this.material.extensions.shaderTextureLOD=!0),`textureLod( ${t}, ${r}, ${i} )`}getVars(e){let t=[],r=this.vars[e];for(let i of r)t.push(`${this.getVar(i.type,i.name)};`);return t.join("\n	")}getUniforms(e){let t=this.uniforms[e],r="";for(let i of t){let s=null;s="texture"===i.type?`sampler2D ${i.name};
+`:"cubeTexture"===i.type?`samplerCube ${i.name};
+`:`${this.getVectorType(i.type)} ${i.name};
+`;let o=i.node.precision;r+=s=null!==o?"uniform "+precisionLib[o]+" "+s:"uniform "+s}return r}getAttributes(e){let t="";if("vertex"===e){let r=this.attributes;for(let i of r)t+=`attribute ${i.type} ${i.name};
+`}return t}getVaryings(e){let t="",r=this.varyings;if("vertex"===e)for(let i of r)t+=`${i.needsInterpolation?"varying":"/*varying*/"} ${i.type} ${i.name};
+`;else if("fragment"===e)for(let s of r)s.needsInterpolation&&(t+=`varying ${s.type} ${s.name};
+`);return t}getVertexIndex(){return"gl_VertexID"}getFrontFacing(){return"gl_FrontFacing"}getFragCoord(){return"gl_FragCoord"}isFlipY(){return!0}_getGLSLVertexCode(e){return`${this.getSignature()}
 
 // uniforms
-${shaderData.uniforms}
+${e.uniforms}
 
 // varyings
-${shaderData.varyings}
+${e.varyings}
 
 // attributes
-${shaderData.attributes}
+${e.attributes}
 
 // codes
-${shaderData.codes}
+${e.codes}
 
 void main() {
 
 	// vars
-	${shaderData.vars}
+	${e.vars}
 
 	// flow
-	${shaderData.flow}
+	${e.flow}
 
 }
-`;
-
-	}
-
-	_getGLSLFragmentCode( shaderData ) {
-
-		return `${ this.getSignature() }
+`}_getGLSLFragmentCode(e){return`${this.getSignature()}
 
 // precision
 precision highp float;
 precision highp int;
 
 // uniforms
-${shaderData.uniforms}
+${e.uniforms}
 
 // varyings
-${shaderData.varyings}
+${e.varyings}
 
 // codes
-${shaderData.codes}
+${e.codes}
 
 void main() {
 
 	// vars
-	${shaderData.vars}
+	${e.vars}
 
 	// flow
-	${shaderData.flow}
+	${e.flow}
 
 }
-`;
-
-	}
-
-	buildCode() {
-
-		const shadersData = this.material !== null ? { fragment: {}, vertex: {} } : { compute: {} };
-
-		for ( const shaderStage in shadersData ) {
-
-			let flow = '// code\n\n';
-			flow += this.flowCode[ shaderStage ];
-
-			const flowNodes = this.flowNodes[ shaderStage ];
-			const mainNode = flowNodes[ flowNodes.length - 1 ];
-
-			for ( const node of flowNodes ) {
-
-				const flowSlotData = this.getFlowData( node/*, shaderStage*/ );
-				const slotName = node.name;
-
-				if ( slotName ) {
-
-					if ( flow.length > 0 ) flow += '\n';
-
-					flow += `\t// flow -> ${ slotName }\n\t`;
-
-				}
-
-				flow += `${ flowSlotData.code }\n\t`;
-
-				if ( node === mainNode && shaderStage !== 'compute' ) {
-
-					flow += '// result\n\t';
-
-					if ( shaderStage === 'vertex' ) {
-
-						flow += 'gl_Position = ';
-
-					} else if ( shaderStage === 'fragment' ) {
-
-						flow += 'gl_FragColor = ';
-
-					}
-
-					flow += `${ flowSlotData.result };`;
-
-				}
-
-			}
-
-			const stageData = shadersData[ shaderStage ];
-
-			stageData.uniforms = this.getUniforms( shaderStage );
-			stageData.attributes = this.getAttributes( shaderStage );
-			stageData.varyings = this.getVaryings( shaderStage );
-			stageData.vars = this.getVars( shaderStage );
-			stageData.codes = this.getCodes( shaderStage );
-			stageData.flow = flow;
-
-		}
-
-		if ( this.material !== null ) {
-
-			this.vertexShader = this._getGLSLVertexCode( shadersData.vertex );
-			this.fragmentShader = this._getGLSLFragmentCode( shadersData.fragment );
-
-		} else {
-
-			console.warn( 'GLSLNodeBuilder: compute shaders are not supported.' );
-			//this.computeShader = this._getGLSLComputeCode( shadersData.compute );
-
-		}
-
-	}
-
-	build() {
-
-		// @TODO: Move this code to super.build()
-
-		const { object, material } = this;
-
-		if ( material !== null ) {
-
-			NodeMaterial.fromMaterial( material ).build( this );
-
-		} else {
-
-			this.addFlow( 'compute', object );
-
-		}
-
-		return super.build();
-
-	}
-
-}
-
-export default GLSL1NodeBuilder;
+`}buildCode(){let e=null!==this.material?{fragment:{},vertex:{}}:{compute:{}};for(let t in e){let r="// code\n\n";r+=this.flowCode[t];let i=this.flowNodes[t],s=i[i.length-1];for(let o of i){let n=this.getFlowData(o),a=o.name;a&&(r.length>0&&(r+="\n"),r+=`	// flow -> ${a}
+	`),r+=`${n.code}
+	`,o===s&&"compute"!==t&&(r+="// result\n	","vertex"===t?r+="gl_Position = ":"fragment"===t&&(r+="gl_FragColor = "),r+=`${n.result};`)}let l=e[t];l.uniforms=this.getUniforms(t),l.attributes=this.getAttributes(t),l.varyings=this.getVaryings(t),l.vars=this.getVars(t),l.codes=this.getCodes(t),l.flow=r}null!==this.material?(this.vertexShader=this._getGLSLVertexCode(e.vertex),this.fragmentShader=this._getGLSLFragmentCode(e.fragment)):console.warn("GLSLNodeBuilder: compute shaders are not supported.")}build(){let{object:e,material:t}=this;return null!==t?i.fromMaterial(t).build(this):this.addFlow("compute",e),super.build()}}export default GLSL1NodeBuilder;

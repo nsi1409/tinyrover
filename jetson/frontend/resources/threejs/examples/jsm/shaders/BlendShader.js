@@ -1,21 +1,4 @@
-/**
- * Blend two textures
- */
-
-const BlendShader = {
-
-	name: 'BlendShader',
-
-	uniforms: {
-
-		'tDiffuse1': { value: null },
-		'tDiffuse2': { value: null },
-		'mixRatio': { value: 0.5 },
-		'opacity': { value: 1.0 }
-
-	},
-
-	vertexShader: /* glsl */`
+let BlendShader={name:"BlendShader",uniforms:{tDiffuse1:{value:null},tDiffuse2:{value:null},mixRatio:{value:.5},opacity:{value:1}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -24,9 +7,7 @@ const BlendShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		uniform float opacity;
 		uniform float mixRatio;
@@ -42,8 +23,4 @@ const BlendShader = {
 			vec4 texel2 = texture2D( tDiffuse2, vUv );
 			gl_FragColor = opacity * mix( texel1, texel2, mixRatio );
 
-		}`
-
-};
-
-export { BlendShader };
+		}`};export{BlendShader};

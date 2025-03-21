@@ -1,26 +1,4 @@
-/**
- * Kaleidoscope Shader
- * Radial reflection around center point
- * Ported from: http://pixelshaders.com/editor/
- * by Toby Schachman / http://tobyschachman.com/
- *
- * sides: number of reflections
- * angle: initial angle in radians
- */
-
-const KaleidoShader = {
-
-	name: 'KaleidoShader',
-
-	uniforms: {
-
-		'tDiffuse': { value: null },
-		'sides': { value: 6.0 },
-		'angle': { value: 0.0 }
-
-	},
-
-	vertexShader: /* glsl */`
+let KaleidoShader={name:"KaleidoShader",uniforms:{tDiffuse:{value:null},sides:{value:6},angle:{value:0}},vertexShader:`
 
 		varying vec2 vUv;
 
@@ -29,9 +7,7 @@ const KaleidoShader = {
 			vUv = uv;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-		}`,
-
-	fragmentShader: /* glsl */`
+		}`,fragmentShader:`
 
 		uniform sampler2D tDiffuse;
 		uniform float sides;
@@ -51,8 +27,4 @@ const KaleidoShader = {
 			vec4 color = texture2D(tDiffuse, p + 0.5);
 			gl_FragColor = color;
 
-		}`
-
-};
-
-export { KaleidoShader };
+		}`};export{KaleidoShader};

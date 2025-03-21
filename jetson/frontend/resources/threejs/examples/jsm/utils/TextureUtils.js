@@ -1,32 +1,9 @@
-import {
-	PlaneGeometry,
-	ShaderMaterial,
-	Uniform,
-	Mesh,
-	PerspectiveCamera,
-	Scene,
-	WebGLRenderer,
-	CanvasTexture,
-	SRGBColorSpace
-} from 'three';
-
-let _renderer;
-let fullscreenQuadGeometry;
-let fullscreenQuadMaterial;
-let fullscreenQuad;
-
-export function decompress( texture, maxTextureSize = Infinity, renderer = null ) {
-
-	if ( ! fullscreenQuadGeometry ) fullscreenQuadGeometry = new PlaneGeometry( 2, 2, 1, 1 );
-	if ( ! fullscreenQuadMaterial ) fullscreenQuadMaterial = new ShaderMaterial( {
-		uniforms: { blitTexture: new Uniform( texture ) },
-		vertexShader: `
+import{PlaneGeometry as e,ShaderMaterial as r,Uniform as a,Mesh as l,PerspectiveCamera as n,Scene as t,WebGLRenderer as i,CanvasTexture as u,SRGBColorSpace as s}from"three";let _renderer,fullscreenQuadGeometry,fullscreenQuadMaterial,fullscreenQuad;export function decompress(d,o=1/0,m=null){fullscreenQuadGeometry||(fullscreenQuadGeometry=new e(2,2,1,1)),fullscreenQuadMaterial||(fullscreenQuadMaterial=new r({uniforms:{blitTexture:new a(d)},vertexShader:`
 			varying vec2 vUv;
 			void main(){
 				vUv = uv;
 				gl_Position = vec4(position.xy * 1.0,0.,.999999);
-			}`,
-		fragmentShader: `
+			}`,fragmentShader:`
 			uniform sampler2D blitTexture; 
 			varying vec2 vUv;
 
@@ -38,61 +15,4 @@ export function decompress( texture, maxTextureSize = Infinity, renderer = null 
 				#else
 				gl_FragColor = texture2D( blitTexture, vUv);
 				#endif
-			}`
-	} );
-
-	fullscreenQuadMaterial.uniforms.blitTexture.value = texture;
-	fullscreenQuadMaterial.defines.IS_SRGB = texture.colorSpace == SRGBColorSpace;
-	fullscreenQuadMaterial.needsUpdate = true;
-
-	if ( ! fullscreenQuad ) {
-
-		fullscreenQuad = new Mesh( fullscreenQuadGeometry, fullscreenQuadMaterial );
-		fullscreenQuad.frustrumCulled = false;
-
-	}
-
-	const _camera = new PerspectiveCamera();
-	const _scene = new Scene();
-	_scene.add( fullscreenQuad );
-
-	if ( renderer === null ) {
-
-		renderer = _renderer = new WebGLRenderer( { antialias: false } );
-
-	}
-
-	const width = Math.min( texture.image.width, maxTextureSize );
-	const height = Math.min( texture.image.height, maxTextureSize );
-
-	renderer.setSize( width, height );
-	renderer.clear();
-	renderer.render( _scene, _camera );
-
-	const canvas = document.createElement( 'canvas' );
-	const context = canvas.getContext( '2d' );
-
-	canvas.width = width;
-	canvas.height = height;
-
-	context.drawImage( renderer.domElement, 0, 0, width, height );
-
-	const readableTexture = new CanvasTexture( canvas );
-
-	readableTexture.minFilter = texture.minFilter;
-	readableTexture.magFilter = texture.magFilter;
-	readableTexture.wrapS = texture.wrapS;
-	readableTexture.wrapT = texture.wrapT;
-	readableTexture.name = texture.name;
-
-	if ( _renderer ) {
-
-		_renderer.forceContextLoss();
-		_renderer.dispose();
-		_renderer = null;
-
-	}
-
-	return readableTexture;
-
-}
+			}`})),fullscreenQuadMaterial.uniforms.blitTexture.value=d,fullscreenQuadMaterial.defines.IS_SRGB=d.colorSpace==s,fullscreenQuadMaterial.needsUpdate=!0,fullscreenQuad||((fullscreenQuad=new l(fullscreenQuadGeometry,fullscreenQuadMaterial)).frustrumCulled=!1);let c=new n,f=new t;f.add(fullscreenQuad),null===m&&(m=_renderer=new i({antialias:!1}));let v=Math.min(d.image.width,o),g=Math.min(d.image.height,o);m.setSize(v,g),m.clear(),m.render(f,c);let w=document.createElement("canvas"),Q=w.getContext("2d");w.width=v,w.height=g,Q.drawImage(m.domElement,0,0,v,g);let p=new u(w);return p.minFilter=d.minFilter,p.magFilter=d.magFilter,p.wrapS=d.wrapS,p.wrapT=d.wrapT,p.name=d.name,_renderer&&(_renderer.forceContextLoss(),_renderer.dispose(),_renderer=null),p}
