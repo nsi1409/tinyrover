@@ -2,6 +2,7 @@ import pickle
 import socket
 import struct
 import cv2
+import numpy as np
 
 while True:
 	try:
@@ -26,6 +27,7 @@ while True:
 		data += s.recv(4096)
 	frame_data = data[:msg_size]
 	data = data[msg_size:]
-	frame = pickle.loads(frame_data)
+	image = np.asarray(bytearray(frame_data), dtype="uint8") 
+	frame = cv2.imdecode(image, cv2.IMREAD_COLOR) 
 	cv2.imshow('frame', frame)
 	cv2.waitKey(1)

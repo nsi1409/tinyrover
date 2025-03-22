@@ -7,7 +7,7 @@ import struct
 
 HOST = ""
 PORT = 8089
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 while True:
     try:
@@ -22,7 +22,9 @@ while True:
         print("failed to connect")
 
 while True:
-    ret, frame = cap.read()
-    data = pickle.dumps(frame)
-    message_size = struct.pack("L", len(data))
-    conn.sendall(message_size + data)
+	ret, frame = cap.read()
+	result, encoded_img = cv2.imencode('.jpg', frame)
+	#print(len(encoded_img))
+	data = encoded_img.tostring()
+	message_size = struct.pack("L", len(data))
+	conn.sendall(message_size + data)
