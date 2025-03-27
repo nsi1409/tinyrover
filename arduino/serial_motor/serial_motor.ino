@@ -2,10 +2,8 @@
 #include <TimerOne.h>
 //https://hobbymania.com.ua/file/FlyColor_boat_ESC.pdf
 
-// hi
-
-#define MAX_PULSE 2000
-#define MIN_PULSE 1000
+#define MAX_PULSE 2000 // max speed forward
+#define MIN_PULSE 1000 // max speed backward
 #define OFF_PULSE 1500
 
 String command;
@@ -29,40 +27,34 @@ Servo rightMiddleServo;
 size_t wheelCommandBufferSize = 1;
 size_t opCodeSize = 1;
 
-//Unit cicle orientation starting at front right
-// int ipn[6] = {9, 6, 5, 4, 7, 3}; // Old mega pin setup
-// int ipn[6] = {3,20,21,22,1,2}; //Teensy
 int ipn[6] = {6,11,10,9,3,5}; //new mega
-//Front right, Front left, Middle Left, Back Left, Back Right, Middle Right
-// pin 20 front left
-// pin 3 front right
-// pin 21 middle left
-// pin 2 middle right
-// pin 22 back left
-// pin 1 back right
+int left_front = ipn[1];
+int right_front = ipn[0];
+int left_mid = ipn[2];
+int right_mid = ipn[5];
+int left_back = ipn[3];
+int right_back = ipn[4];
 
 void setup() {
 	for (int pin :ipn) {
 		pinMode(pin, OUTPUT);
 	}
 
-  
 	leftTargetSpeed = OFF_PULSE;
 	leftCurrentSpeed = OFF_PULSE;
 	rightTargetSpeed = OFF_PULSE;
 	rightCurrentSpeed = OFF_PULSE;
 
-
 	updateSpeedTimer = 0;
 
 	Serial.begin(9600);
 	Serial.setTimeout(100); // in milliseconds
-	leftFrontServo.attach(ipn[1], MIN_PULSE, MAX_PULSE);
-  rightFrontServo.attach(ipn[0], MIN_PULSE, MAX_PULSE);
-	leftMiddleServo.attach(ipn[2], MIN_PULSE, MAX_PULSE);
-	rightMiddleServo.attach(ipn[5], MIN_PULSE, MAX_PULSE);
-	leftBackServo.attach(ipn[3], MIN_PULSE, MAX_PULSE);
-	rightBackServo.attach(ipn[4], MIN_PULSE, MAX_PULSE);
+	leftFrontServo.attach(left_front, MIN_PULSE, MAX_PULSE);
+  rightFrontServo.attach(right_front, MIN_PULSE, MAX_PULSE);
+	leftMiddleServo.attach(left_mid, MIN_PULSE, MAX_PULSE);
+	rightMiddleServo.attach(right_mid, MIN_PULSE, MAX_PULSE);
+	leftBackServo.attach(left_back, MIN_PULSE, MAX_PULSE);
+	rightBackServo.attach(right_back, MIN_PULSE, MAX_PULSE);
 
   //ONLY UNCOMMENT ONE OF THESE SETUP FUNCTIONS AT A TIME
 
@@ -74,8 +66,6 @@ void setup() {
 
   //Already setup, normal working mode
   normalWorkingMode();
-
-
 
   Timer1.initialize(3000); //Start timer to have 3000 MICROseconds period
   Timer1.attachInterrupt(updateMotors); //Attach function to run every time period completion
@@ -160,8 +150,7 @@ void moveLeftWheel(int speed) {
   int difference_from_middle = speed - OFF_PULSE;
   int corrected_speed = speed - (2*difference_from_middle);
   // int corrected_speed=speed;
-
-
+  
 	leftFrontServo.writeMicroseconds(corrected_speed);
 	leftBackServo.writeMicroseconds(corrected_speed);
   leftMiddleServo.writeMicroseconds(corrected_speed);
