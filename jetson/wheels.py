@@ -21,7 +21,8 @@ try:
     j2a = jetson2arduino.Messenger()
     print("successful connect to arduino")
 except Exception as e:
-    print("failed to connect to arduino")
+    print("failed to connect to arduino:")
+    print(e)
 
 
 @app.route("/ping", methods=["GET", "POST", "PUT"])
