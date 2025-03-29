@@ -16,6 +16,8 @@ if (document.URL == "http://192.168.0.12:5001/") {
     $("#location").value = "local";
 }
 
+let newLocation;
+
 $("#location").addEventListener('change', function () {
     newLocation = $("#location").value;
     if (newLocation == "remote") {
@@ -24,6 +26,8 @@ $("#location").addEventListener('change', function () {
         endpoint = localEndpoint;
     }
 });
+
+let leftMag, rightMag;
 
 $("#send_wheels_left_right").onclick = (event) => {
     leftMag = $("#left").value;
@@ -37,6 +41,8 @@ $("#send_wheels_left_right").onclick = (event) => {
         body: JSON.stringify({ 'left': leftMag, 'right': rightMag })
     });
 };
+
+let mag, trim;
 
 $("#send_wheels_mag_trim").onclick = (event) => {
     mag = $("#magnitude_slider").value;
@@ -72,6 +78,8 @@ function send_wheel_stop() {
     })
 }
 
+let heading;
+
 $("#send_smart_turn").onclick = (event) => {
     heading = $("#smart_turn_heading").value;
 
@@ -84,6 +92,8 @@ $("#send_smart_turn").onclick = (event) => {
         body: JSON.stringify({ 'target': heading })
     });
 }
+
+let duration, velocity;
 
 $("#send_smart_straight").onclick = (event) => {
     duration = $("#smart_straight_duration").value;
@@ -99,6 +109,8 @@ $("#send_smart_straight").onclick = (event) => {
     });
 }
 
+let lat, long;
+
 $("#send_smart_direct").onclick = (event) => {
     lat = $("#smart_direct_latitude").value;
     long = $("#smart_direct_longitude").value;
@@ -113,12 +125,13 @@ $("#send_smart_direct").onclick = (event) => {
     });
 }
 
+
 $("#send_path").onclick = (event) => {
     if (currentLineString == null) {
         console.log("cannot send path: none was drawn");
     } else {
-        lineStringCoords = currentLineString.getGeometry().getCoordinates();
-        convertedCoordinates = [];
+        let lineStringCoords = currentLineString.getGeometry().getCoordinates();
+        let convertedCoordinates = [];
         for (i = 0; i < lineStringCoords.length; i++) {
             coord = lineStringCoords[i];
             coordLonLat = ol.proj.toLonLat(coord, ol.proj.Projection(WEB_MERCATOR_PROJ));
