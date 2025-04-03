@@ -1,109 +1,225 @@
+from enum import Enum
 import sys
-import pygame
 import os
+import pygame
 import wheelcommand as wc
-import argparse
-os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1" #This allows the window to be unselected but still get controller input
-
 import threading
-
-default_antenna_ip = "192.168.1.10" # This may change over time
-default_rovernet_ip = "192.168.0.12" # This may change over time
-
-# def printit():
-#   threading.Timer(5.0, printit).start()
-#   print "Hello, World!"
-
-# printit()
-
 from pygame.locals import *
+
 pygame.init()
-pygame.display.set_caption('game base')
-screen = pygame.display.set_mode((1, 1), pygame.NOFRAME)
-clock = pygame.time.Clock()
-
 pygame.joystick.init()
-joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
-for joystick in joysticks:
-	print(joystick.get_name())
+controllers = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 
-motion = [0, 0, 0, 0]
+leftStickMotion = [0.0, 0.0]
+rightStickMotion = [0.0, 0.0]
+rightTrigger = 0.0
+leftTrigger = 0.0
+btnA = False
+btnB = False
+btnX = False
+btnY = False
+btnLB = False
+btnRB = False
 
-speedMultiplier = 1
+newLT = False
+newRT = False
 
 leftSpeed = 90
 rightSpeed = 90
 
+
+class PyGameBtn(Enum):
+    A = 0
+    B = 1
+    X = 2
+    Y = 3
+    LB = 4
+    RB = 5
+    BACK = 6
+    START = 7
+    LEFTTHUMB = 8
+    RIGHTTHUMB = 9
+    XBOX = 10
+    SHARE = 11
+
+
+def printConnectedControllers():
+    print("Connected controllers:")
+    for controller in controllers:
+        print("- " + str(controller.get_name()))
+
+
+def ignoreInputsSmallerThan(magnitude):
+    global rightTrigger, leftTrigger
+
+    for i in range(len(leftStickMotion)):
+        if abs(leftStickMotion[i]) < magnitude:
+            leftStickMotion[i] = 0.0
+
+    for i in range(len(rightStickMotion)):
+        if abs(rightStickMotion[i]) < magnitude:
+            rightStickMotion[i] = 0.0
+
+    if abs(rightTrigger) < magnitude:
+        rightTrigger = 0.0
+
+    if abs(leftTrigger) < magnitude:
+        leftTrigger = 0.0
+
+
+def handleButtonRelease(event):
+    global btnA, btnB, btnX, btnY, btnLB, btnRB
+    match event.button:
+        case PyGameBtn.A.value:
+            btnA = False
+        case PyGameBtn.B.value:
+            btnB = False
+        case PyGameBtn.X.value:
+            btnX = False
+        case PyGameBtn.Y.value:
+            btnY = False
+        case PyGameBtn.LB.value:
+            btnLB = False
+        case PyGameBtn.RB.value:
+            btnRB = False
+        case (
+            PyGameBtn.BACK.value,
+            PyGameBtn.START.value,
+            PyGameBtn.XBOX.value,
+            PyGameBtn.LEFTTHUMB.value,
+            PyGameBtn.RIGHTTHUMB.value,
+        ):
+            print(str(event.button) + "released (not mapped to a function)")
+
+
+def handleButtonPress(event):
+    global btnA, btnB, btnX, btnY, btnLB, btnRB
+    match event.button:
+        case PyGameBtn.A.value:
+            btnA = True
+        case PyGameBtn.B.value:
+            btnB = True
+        case PyGameBtn.X.value:
+            btnX = True
+        case PyGameBtn.Y.value:
+            btnY = True
+        case PyGameBtn.LB.value:
+            btnLB = True
+        case PyGameBtn.RB.value:
+            btnRB = True
+        case PyGameBtn.XBOX.value:
+            handleQuit()
+        case (
+            PyGameBtn.BACK.value,
+            PyGameBtn.START.value,
+            PyGameBtn.LEFTTHUMB.value,
+            PyGameBtn.RIGHTTHUMB.value,
+        ):
+            print(str(event.button) + "pressed (not mapped to a function)")
+
+
+def normalizeTriggerValues():
+    global rightTrigger, leftTrigger, newLT, newRT
+
+    if newLT:
+        leftTrigger = (leftTrigger + 1) / 2
+
+    if newRT:
+        rightTrigger = (rightTrigger + 1) / 2
+
+
+def handleJoyAxisMotion(event):
+    global rightTrigger, leftTrigger, newLT, newRT
+
+    match event.axis:
+        case 0:
+            leftStickMotion[0] = event.value
+        case 1:
+            leftStickMotion[1] = event.value
+        case 2:
+            rightStickMotion[0] = event.value
+        case 3:
+            rightStickMotion[1] = event.value
+        case 4:
+            leftTrigger = event.value
+            newLT = True
+        case 5:
+            newRT = True
+            rightTrigger = event.value
+
+
+def updateJoysticks(event):
+    global controllers
+    controllers = [
+        pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())
+    ]
+    printConnectedControllers()
+
+
+def handleQuit(event):
+    pygame.quit()
+    sys.exit()
+
+
+def getControllerInput():
+    for event in pygame.event.get():
+        match event.type:
+            case pygame.JOYBUTTONDOWN:
+                handleButtonPress(event)
+            case pygame.JOYBUTTONUP:
+                handleButtonRelease(event)
+            case pygame.JOYAXISMOTION:
+                handleJoyAxisMotion(event)
+            case pygame.JOYDEVICEADDED, pygame.JOYDEVICEREMOVED:
+                updateJoysticks(event)
+            case pygame.QUIT:
+                handleQuit(event)
+
+
+def resetInputState():
+    global newLT, newRT
+    newLT = False
+    newRT = False
+
+
+def setWheelSpeedsBasedOnControllerInput():
+    global leftSpeed, rightSpeed
+
+    if rightTrigger > 0:
+        baseSpeed = 90 + (rightTrigger * 90)
+        leftSpeed = baseSpeed + (leftStickMotion[0] * 45)
+        rightSpeed = baseSpeed - (leftStickMotion[0] * 45)
+        if leftStickMotion[0] < 0:
+            leftSpeed += 1
+    elif leftTrigger > 0:
+        baseSpeed = 90 - (leftTrigger * 90)
+        leftSpeed = baseSpeed - (leftStickMotion[0] * 45)
+        rightSpeed = baseSpeed + (leftStickMotion[0] * 45)
+    else:
+        leftSpeed = 90 + (leftStickMotion[0] * 60)
+        rightSpeed = 90 - (leftStickMotion[0] * 60)
+        if leftStickMotion[0] < 0:
+            leftSpeed += 1
+
+    leftSpeed = int(leftSpeed)
+    rightSpeed = int(rightSpeed)
+
+    # print(str(leftSpeed) + ", " + str(rightSpeed))
+
+
 def updateWheels():
-	global leftSpeed
-	global rightSpeed
-	wc.send2wheels_both(leftSpeed, rightSpeed)
-	threading.Timer(0.1, updateWheels).start()
+    global leftSpeed
+    global rightSpeed
+    wc.send2wheels_both(leftSpeed, rightSpeed)
+    threading.Timer(0.1, updateWheels).start()
+
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser(description='Process some integers.')
-	parser.add_argument("--indoor",action='store_true')
-	args = parser.parse_args()
-	if args.indoor:
-		wc.set_active_ip(default_rovernet_ip)
-		print("Indoor mode")
-	else:
-		wc.set_active_ip(default_antenna_ip)
-		print("Outdoor mode")
-
-	updateWheels()
-
-	while True:
-    	#This prevents minimal/unintended input from moving the rover
-		if abs(motion[0]) < 0.1:
-			motion[0] = 0
-		if abs(motion[1]) < 0.1:
-			motion[1] = 0
-		if abs(motion[2]) < 0.1:
-			motion[2] = 0
-		if abs(motion[3]) < 0.1:
-			motion[3] = 0
-
-		# Check for controller input
-		for event in pygame.event.get():
-			if event.type == JOYBUTTONDOWN:
-				print(str(event) + " " + str(speedMultiplier))
-				#Increase or decrease speed multiplier if a shoulder button is hit
-				if event.button == 4:
-					if speedMultiplier > 1:
-						speedMultiplier -= 2 # Was originally -3 but Andrew changed to -2 cuz motors zooming
-				if event.button == 5:
-					if speedMultiplier < 10:
-						speedMultiplier += 2 # Was originally 3 but Andrew changed to 2 cuz motors zooming
-			if event.type == JOYBUTTONUP:
-				print(event)
-			if event.type == JOYAXISMOTION:
-				print(event)
-				if event.axis < 2:
-					motion[event.axis] = event.value
-				if event.axis == 3:
-					motion[3] = event.value
-				elif event.axis > 3 and event.axis < 5:
-					motion[event.axis-1] = event.value
-				# print(speedMultiplier)
-				# print(motion)
-				leftSpeed = int((-motion[1]*speedMultiplier*9)+90)
-				rightSpeed = int((-motion[3]*speedMultiplier*9)+90)
-				print(leftSpeed)
-				print(rightSpeed)
-
-			if event.type == JOYDEVICEADDED:
-				joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
-				for joystick in joysticks:
-					print(joystick.get_name())
-			if event.type == JOYDEVICEREMOVED:
-				joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
-			if event.type == QUIT:
-				pygame.quit()
-				sys.exit()
-			if event.type == KEYDOWN:
-				if event.key == K_ESCAPE:
-					pygame.quit()
-					sys.exit()
-
-		# clock.tick(10)
+    printConnectedControllers()
+    updateWheels()
+    while True:
+        resetInputState()
+        getControllerInput()
+        ignoreInputsSmallerThan(0.05)
+        normalizeTriggerValues()
+        setWheelSpeedsBasedOnControllerInput()
