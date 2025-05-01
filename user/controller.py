@@ -2,9 +2,11 @@ from enum import Enum
 import sys
 import os
 import pygame
-import wheelcommand as wc
+
+# import wheelcommand as wc
 import threading
 from pygame.locals import *
+import requests
 
 pygame.init()
 pygame.joystick.init()
@@ -20,9 +22,6 @@ btnX = False
 btnY = False
 btnLB = False
 btnRB = False
-
-newLT = False
-newRT = False
 
 leftSpeed = 90
 rightSpeed = 90
@@ -119,17 +118,13 @@ def handleButtonPress(event):
 
 
 def normalizeTriggerValues():
-    global rightTrigger, leftTrigger, newLT, newRT
-
-    if newLT:
-        leftTrigger = (leftTrigger + 1) / 2
-
-    if newRT:
-        rightTrigger = (rightTrigger + 1) / 2
+    global rightTrigger, leftTrigger
+    leftTrigger = (leftTrigger + 1) / 2
+    rightTrigger = (rightTrigger + 1) / 2
 
 
 def handleJoyAxisMotion(event):
-    global rightTrigger, leftTrigger, newLT, newRT
+    global rightTrigger, leftTrigger
 
     match event.axis:
         case 0:
@@ -140,12 +135,10 @@ def handleJoyAxisMotion(event):
             rightStickMotion[0] = event.value
         case 3:
             rightStickMotion[1] = event.value
-        case 4:
-            leftTrigger = event.value
-            newLT = True
-        case 5:
-            newRT = True
-            rightTrigger = event.value
+        # case 4:
+        #     leftTrigger = event.value
+        # case 5:
+        #     rightTrigger = event.value
 
 
 def updateJoysticks(event):
@@ -162,24 +155,22 @@ def handleQuit(event):
 
 
 def getControllerInput():
+    global leftTrigger, rightTrigger
     for event in pygame.event.get():
         match event.type:
             case pygame.JOYBUTTONDOWN:
                 handleButtonPress(event)
             case pygame.JOYBUTTONUP:
                 handleButtonRelease(event)
-            case pygame.JOYAXISMOTION:
-                handleJoyAxisMotion(event)
+            # case pygame.JOYAXISMOTION:
+            #     handleJoyAxisMotion(event)
             case pygame.JOYDEVICEADDED, pygame.JOYDEVICEREMOVED:
                 updateJoysticks(event)
             case pygame.QUIT:
                 handleQuit(event)
 
-
-def resetInputState():
-    global newLT, newRT
-    newLT = False
-    newRT = False
+    leftTrigger = pygame.joystick.Joystick(0).get_axis(4)
+    rightTrigger = pygame.joystick.Joystick(0).get_axis(5)
 
 
 def setWheelSpeedsBasedOnControllerInput():
@@ -210,16 +201,29 @@ def setWheelSpeedsBasedOnControllerInput():
 def updateWheels():
     global leftSpeed
     global rightSpeed
-    wc.send2wheels_both(leftSpeed, rightSpeed)
-    threading.Timer(0.1, updateWheels).start()
+
+    l = leftSpeed
+    r = rightSpeed
+    print("sending " + str(l) + ", " + str(r) + "...")
+    try:
+        req = requests.get(
+            url="http://192.168.0.12:8080/wheel_command_both",
+            timeout=4,
+            json={"left": l, "right": r},
+            headers={"Connection": "close"},
+        )
+        print("sent " + str(l) + ", " + str(r))
+    except Exception as e:
+        print("failed to send " + str(l) + ", " + str(r))
+        print(e)
 
 
 if __name__ == "__main__":
     printConnectedControllers()
-    updateWheels()
     while True:
-        resetInputState()
         getControllerInput()
         ignoreInputsSmallerThan(0.05)
         normalizeTriggerValues()
         setWheelSpeedsBasedOnControllerInput()
+        updateWheels()
+        pygame.time.wait(400)
