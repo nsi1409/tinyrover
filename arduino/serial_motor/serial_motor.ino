@@ -5,6 +5,7 @@
 #define MAX_PULSE 2000
 #define MIN_PULSE 1000
 #define OFF_PULSE 1500
+#define TIME_TO_LIVE_MS 500
  
 String command;
  
@@ -36,6 +37,9 @@ const int ipn[6] = {6,11,10,9,3,5}; //new mega
 // pin 3 back left
 // pin 5 back right
 const int configPin = 12;
+unsigned long received_time;
+unsigned long current_time;
+bool received_time_defined = false;
  
 void setup() {
   for (int pin : ipn) {
@@ -77,7 +81,7 @@ void initializeMotors() {
   // setMotorsToForwardsAndBackwards();
  
   //Already setup, normal working mode
-  // normalWorkingMode();
+  normalWorkingMode();
  
   if (digitalRead(configPin) == HIGH) {
     resetThrottleRangeForMotors();
@@ -194,7 +198,18 @@ void updateMotors(){
 }
  
 void loop() {
+  current_time = millis();
+  if(received_time_defined) { // this stops the rover if no wheel signal received for half a second
+    if(current_time - received_time >= TIME_TO_LIVE_MS) {
+      //stop
+      received_time_defined = false;
+      leftTargetSpeed = convertSpeedToProperRange(90);
+      rightTargetSpeed = convertSpeedToProperRange(90);
+    }
+  }
   if (Serial.available() > 0) {
+    received_time_defined = true;
+    received_time = millis();
     uint8_t opBuffer[opCodeSize];
     Serial.readBytes(
       opBuffer,
