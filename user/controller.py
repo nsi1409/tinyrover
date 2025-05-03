@@ -1,16 +1,14 @@
 from enum import Enum
 import sys
-import os
 import pygame
 
-# import wheelcommand as wc
-import threading
 from pygame.locals import *
 import requests
 
 pygame.init()
 pygame.joystick.init()
-controllers = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+controllers = None
+activeController = None
 
 leftStickMotion = [0.0, 0.0]
 rightStickMotion = [0.0, 0.0]
@@ -43,9 +41,12 @@ class PyGameBtn(Enum):
 
 
 def printConnectedControllers():
-    print("Connected controllers:")
-    for controller in controllers:
-        print("- " + str(controller.get_name()))
+    if len(controllers) > 0:
+        print("Connected controllers:")
+        for controller in controllers:
+            print("- " + str(controller.get_name()))
+    else:
+        print("No controller connected")
 
 
 def ignoreInputsSmallerThan(magnitude):
@@ -123,29 +124,16 @@ def normalizeTriggerValues():
     rightTrigger = (rightTrigger + 1) / 2
 
 
-def handleJoyAxisMotion(event):
-    global rightTrigger, leftTrigger
-
-    match event.axis:
-        case 0:
-            leftStickMotion[0] = event.value
-        case 1:
-            leftStickMotion[1] = event.value
-        case 2:
-            rightStickMotion[0] = event.value
-        case 3:
-            rightStickMotion[1] = event.value
-        # case 4:
-        #     leftTrigger = event.value
-        # case 5:
-        #     rightTrigger = event.value
-
-
 def updateJoysticks(event):
     global controllers
+    global activeController
     controllers = [
         pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())
     ]
+    if len(controllers) > 0:
+        activeController = controllers[0]
+    else:
+        activeController = None
     printConnectedControllers()
 
 
@@ -154,23 +142,34 @@ def handleQuit(event):
     sys.exit()
 
 
-def getControllerInput():
-    global leftTrigger, rightTrigger
+def getPygameEventInputs():
     for event in pygame.event.get():
         match event.type:
             case pygame.JOYBUTTONDOWN:
                 handleButtonPress(event)
             case pygame.JOYBUTTONUP:
                 handleButtonRelease(event)
-            # case pygame.JOYAXISMOTION:
-            #     handleJoyAxisMotion(event)
             case pygame.JOYDEVICEADDED, pygame.JOYDEVICEREMOVED:
                 updateJoysticks(event)
             case pygame.QUIT:
                 handleQuit(event)
 
-    leftTrigger = pygame.joystick.Joystick(0).get_axis(4)
-    rightTrigger = pygame.joystick.Joystick(0).get_axis(5)
+
+def getAnalogInputs():
+    global leftTrigger, rightTrigger
+    leftStickMotion[0] = activeController.get_axis(0)
+    leftStickMotion[1] = activeController.get_axis(1)
+
+    rightStickMotion[0] = activeController.get_axis(2)
+    rightStickMotion[1] = activeController.get_axis(3)
+
+    leftTrigger = activeController.get_axis(4)
+    rightTrigger = activeController.get_axis(5)
+
+
+def getControllerInput():
+    getPygameEventInputs()
+    getAnalogInputs()
 
 
 def setWheelSpeedsBasedOnControllerInput():
@@ -195,35 +194,30 @@ def setWheelSpeedsBasedOnControllerInput():
     leftSpeed = int(leftSpeed)
     rightSpeed = int(rightSpeed)
 
-    # print(str(leftSpeed) + ", " + str(rightSpeed))
 
-
-def updateWheels():
-    global leftSpeed
-    global rightSpeed
-
-    l = leftSpeed
-    r = rightSpeed
-    print("sending " + str(l) + ", " + str(r) + "...")
+def sendCommandToWheels():
+    print("sending " + str(leftSpeed) + ", " + str(rightSpeed) + "...")
     try:
-        req = requests.get(
+        requests.get(
             url="http://192.168.0.12:8080/wheel_command_both",
             timeout=4,
-            json={"left": l, "right": r},
+            json={"left": leftSpeed, "right": rightSpeed},
             headers={"Connection": "close"},
         )
-        print("sent " + str(l) + ", " + str(r))
+        print("sent " + str(leftSpeed) + ", " + str(rightSpeed))
     except Exception as e:
-        print("failed to send " + str(l) + ", " + str(r))
+        print("failed to send " + str(leftSpeed) + ", " + str(rightSpeed))
         print(e)
 
 
 if __name__ == "__main__":
-    printConnectedControllers()
     while True:
-        getControllerInput()
-        ignoreInputsSmallerThan(0.05)
-        normalizeTriggerValues()
-        setWheelSpeedsBasedOnControllerInput()
-        updateWheels()
-        pygame.time.wait(400)
+        if activeController is not None:
+            getControllerInput()
+            ignoreInputsSmallerThan(0.05)
+            normalizeTriggerValues()
+            setWheelSpeedsBasedOnControllerInput()
+            sendCommandToWheels()
+        else:
+            updateJoysticks()
+        pygame.time.wait(250)
