@@ -1,128 +1,106 @@
 import * as THREE from 'three';
 
+const Endpoints = { LOCAL: "localhost", REMOTE: "192.168.0.12" };
+
+let endpoint;
+let route = "wheel_command_stop";
+let body = {};
+let sendingRegularCommands = false;
+
+setInterval(sendCurrentWheelControl, 100);
 setInterval(fetchLoop, 400);
 // setInterval(fetchFor3dVisualizerLoop, 400);
 
-const localEndpoint = "localhost";
-const remoteEndpoint = "192.168.0.12";
-
-let endpoint;
-
-if (document.URL == "http://192.168.0.12:5001/") {
-    endpoint = remoteEndpoint;
+if (document.URL == `http://${Endpoints.REMOTE}:5001/`) {
+    endpoint = Endpoints.REMOTE;
     $("#location").value = "remote";
 } else {
-    endpoint = localEndpoint;
+    endpoint = Endpoints.LOCAL;
     $("#location").value = "local";
 }
 
-let newLocation;
-
 $("#location").addEventListener('change', function () {
-    newLocation = $("#location").value;
+    let newLocation = $("#location").value;
     if (newLocation == "remote") {
-        endpoint = remoteEndpoint;
+        endpoint = Endpoints.REMOTE;
     } else {
-        endpoint = localEndpoint;
+        endpoint = Endpoints.LOCAL;
     }
 });
 
-let leftMag, rightMag;
+function sendCurrentWheelControl() {
+    if (sendingRegularCommands) {
+        fetch(`http://${endpoint}:8080/${route}`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        if (route == "wheel_command_stop") {
+            sendingRegularCommands = false;
+        }
+    }
+}
+
+function sendSmartCommand(route, body) {
+    sendingRegularCommands = false;
+    fetch(`http://${endpoint}:8081/${route}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+}
 
 $("#send_wheels_left_right").onclick = (event) => {
     leftMag = $("#left").value;
     rightMag = $("#right").value;
-    fetch(`http://${endpoint}:8080/wheel_command_both`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 'left': leftMag, 'right': rightMag })
-    });
+    route = "wheel_command_both";
+    body = { 'left': leftMag, 'right': rightMag };
+    sendingRegularCommands = true;
 };
-
-let mag, trim;
 
 $("#send_wheels_mag_trim").onclick = (event) => {
     mag = $("#magnitude_slider").value;
     trim = -$("#trim_slider").value;
-    fetch(`http://${endpoint}:8080/wheel_command_trim`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 'magnitude': mag, 'trim': trim })
-    });
+    route = "wheel_command_trim";
+    body = { 'magnitude': mag, 'trim': trim };
+    sendingRegularCommands = true;
 }
 
 $("#send_wheels_stop").onclick = (event) => {
-    send_wheel_stop();
+    route = "wheel_command_stop";
+    body = {};
+    sendingRegularCommands = true;
 }
 
 document.addEventListener("keydown", (event) => {
     if (event.code == "KeyS" || event.code == "KeyX") {
-        send_wheel_stop();
+        route = "wheel_command_stop";
+        body = {};
+        sendingRegularCommands = true;
     }
 });
 
-function send_wheel_stop() {
-    fetch(`http://${endpoint}:8080/wheel_command_stop`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({})
-    })
-}
-
-let heading;
-
 $("#send_smart_turn").onclick = (event) => {
-    heading = $("#smart_turn_heading").value;
-
-    fetch(`http://${endpoint}:8081/turn`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 'target': heading })
-    });
+    let heading = $("#smart_turn_heading").value;
+    sendSmartCommand("turn", { 'target': heading });
 }
-
-let duration, velocity;
 
 $("#send_smart_straight").onclick = (event) => {
-    duration = $("#smart_straight_duration").value;
-    velocity = $("#smart_straight_velocity").value;
-
-    fetch(`http://${endpoint}:8081/drivestraight`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 'duration': duration, 'velocity': velocity })
-    });
+    let duration = $("#smart_straight_duration").value;
+    let velocity = $("#smart_straight_velocity").value;
+    sendSmartCommand("drivestraight", { 'duration': duration, 'velocity': velocity });
 }
 
-let lat, long;
-
 $("#send_smart_direct").onclick = (event) => {
-    lat = $("#smart_direct_latitude").value;
-    long = $("#smart_direct_longitude").value;
-
-    fetch(`http://${endpoint}:8081/directpath`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 'lat': lat, 'long': long })
-    });
+    let lat = $("#smart_direct_latitude").value;
+    let long = $("#smart_direct_longitude").value;
+    sendSmartCommand("directpath", { 'lat': lat, 'long': long });
 }
 
 
@@ -137,15 +115,7 @@ $("#send_path").onclick = (event) => {
             coordLonLat = ol.proj.toLonLat(coord, ol.proj.Projection(WEB_MERCATOR_PROJ));
             convertedCoordinates[i] = coordLonLat;
         }
-
-        fetch(`http://${endpoint}:8081/path`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 'path': convertedCoordinates })
-        })
+        sendSmartCommand("path", { 'path': convertedCoordinates });
     };
 };
 
