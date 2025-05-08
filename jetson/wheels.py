@@ -4,7 +4,6 @@ import argparse
 import time
 from flask_cors import CORS, cross_origin
 import requests
-import threading
 import atexit
 
 parser = argparse.ArgumentParser()
@@ -40,7 +39,9 @@ def wheel_both():
     right = json["right"]
     msg = f"left: {left}, right: {right}"
     print(msg)
-    j2a.send_both(min(180, max(0, int(left))), min(180, max(0, int(right))))
+    clampedLeft = min(180, max(0, int(left)))
+    clampedRight = min(180, max(0, int(right)))
+    j2a.send_both(clampedLeft, clampedRight)
     return "ok", 200
 
 
@@ -52,7 +53,6 @@ def wheel_stop():
     msg = f"left: {left}, right: {right}"
     print(msg)
     j2a.send_both(left, right)
-    # exit()
     return "ok", 200
 
 
@@ -98,27 +98,15 @@ def wheel_right():
     return "ok", 200
 
 
-def arm_joint_move():
-    content_type = request.headers.get("Content-Type")
-    if content_type == "application/json":
-        json = request.json
-        joint = json["joint"]
-        direction = json["direction"]
-        j2a.move_joint(joint, direction)
-        return str(json)
-    else:
-        return "Content-Type not supported!"
-
-
 def stop_on_start():
     while True:
         try:
-            r = requests.get(
+            req = requests.get(
                 "http://localhost:8080/wheel_command",
                 timeout=10,
                 json={"left": 90, "right": 90},
             )
-            if r.ok:
+            if req.ok:
                 break
         except:
             print("timeout")
@@ -133,8 +121,5 @@ def exit_handler():
 
 atexit.register(exit_handler)
 
-
 if __name__ == "__main__":
-    # threading.Thread(target = lambda: app.run(host = '0.0.0.0', port = 8080, debug = True, threaded = False, use_reloader = False)).start()
-    # threading.Thread(target = stop_on_start).start()
     app.run(host="0.0.0.0", port=8080, debug=True, threaded=False, use_reloader=False)
