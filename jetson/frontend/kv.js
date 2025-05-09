@@ -65,8 +65,8 @@ $("#send_wheels_left_right").onclick = (event) => {
 };
 
 $("#send_wheels_mag_trim").onclick = (event) => {
-    mag = $("#magnitude_slider").value;
-    trim = -$("#trim_slider").value;
+    let mag = $("#magnitude_slider").value;
+    let trim = -$("#trim_slider").value;
     route = "wheel_command_trim";
     body = { 'magnitude': mag, 'trim': trim };
     sendingRegularCommands = true;
@@ -111,8 +111,8 @@ $("#send_path").onclick = (event) => {
         let lineStringCoords = currentLineString.getGeometry().getCoordinates();
         let convertedCoordinates = [];
         for (i = 0; i < lineStringCoords.length; i++) {
-            coord = lineStringCoords[i];
-            coordLonLat = ol.proj.toLonLat(coord, ol.proj.Projection(WEB_MERCATOR_PROJ));
+            let coord = lineStringCoords[i];
+            let coordLonLat = ol.proj.toLonLat(coord, ol.proj.Projection(WEB_MERCATOR_PROJ));
             convertedCoordinates[i] = coordLonLat;
         }
         sendSmartCommand("path", { 'path': convertedCoordinates });
