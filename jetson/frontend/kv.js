@@ -57,8 +57,8 @@ function sendSmartCommand(route, body) {
 }
 
 $("#send_wheels_left_right").onclick = (event) => {
-    leftMag = $("#left").value;
-    rightMag = $("#right").value;
+    let leftMag = $("#left").value;
+    let rightMag = $("#right").value;
     route = "wheel_command_both";
     body = { 'left': leftMag, 'right': rightMag };
     sendingRegularCommands = true;
