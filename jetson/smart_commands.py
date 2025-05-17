@@ -50,8 +50,8 @@ def wheel_turn_both():
     Let Ki be 0, increase Kp until just slightly overshooting,
     increase Kd until perfect
     """
-    pid = PID(10, 0.00000001, 0, setpoint=target)
-    pid.output_limits = (0, 180)
+    pid = PID(0.011, 0.0001, 0.00001, setpoint=target)
+    pid.output_limits = (-1, 1)
     step = 0
 
     while True:
@@ -67,7 +67,7 @@ def wheel_turn_both():
         else:
             distance = -1 * distance_right
 
-        if abs(distance) < 5:
+        if abs(distance) < 10:
             print("flag")
             r = requests.get("http://127.0.0.1:8080/wheel_command_stop", timeout=3)
             return str((yaw, target, distance, step))
@@ -75,15 +75,19 @@ def wheel_turn_both():
         control = pid(distance)
 
         if distance >= 0:
-            left = 90 - (0.25 * control)
-            right = 90 + (0.25 * control)
+            left = 90 - 90 * control
+            right = 90 + 90 * control
         else:
-            left = 90 + (0.25 * control)
-            right = 90 - (0.25 * control)
+            left = 90 + 90 * control
+            right = 90 - 90 * control
+        print("Distance: " + str(distance))
+        print("Control: " + str(control))
+        print("Direction: " + str(yaw))
+        print("Left: " + str(left) + " Right: " + str(right))
 
         # These lines are redundant but included just to be safe
-        left = min(100.0, max(80.0, left))
-        right = min(100.0, max(80.0, right))
+        left = min(160.0, max(20.0, left))
+        right = min(160.0, max(20.0, right))
         r = requests.get(
             "http://127.0.0.1:8080/wheel_command_both",
             timeout=3,
