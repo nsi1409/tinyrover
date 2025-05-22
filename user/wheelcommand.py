@@ -4,39 +4,71 @@ import atexit
 import argparse
 
 
-def handleCommand(route, json, remote=True, smart=False, message=None, sleepTime=0):
-    if message is not None:
-        print(message)
-
-    if remote:
-        endpoint = "192.168.0.12"
-    else:
-        endpoint = "localhost"
-
-    if smart:
-        port = "8081"
-    else:
-        port = "8080"
-
+def send2wheels_both(l, r):
     req = requests.get(
-        f"http://{endpoint}:{port}/{route}",
+        "http://192.168.0.12:8080/wheel_command_both",
         timeout=3,
-        json=json,
-    )
-
-    if sleepTime > 0:
-        time.sleep(sleepTime)
-
-
-def stopWheelsOnExit():
-    handleCommand(
-        "wheel_command_both",
-        {"left": 90, "right": 90},
-        message="program exited, stopping wheels",
+        json={"left": l, "right": r},
     )
 
 
-atexit.register(stopWheelsOnExit)
+def send2wheels_left(l):
+    req = requests.get(
+        "http://192.168.0.12:8080/wheel_command_left", timeout=3, json={"left": l}
+    )
+
+
+def send2wheels_right(r):
+    req = requests.get(
+        "http://192.168.0.12:8080/wheel_command_right", timeout=3, json={"right": r}
+    )
+
+
+def forward():
+    print("going forward")
+    while True:
+        send2wheels_both(110, 110)
+        time.sleep(0.4)
+
+
+def left():
+    print("going left")
+    while True:
+        send2wheels_both(90 - 20, 90 + 20)
+        time.sleep(0.4)
+
+
+def right():
+    print("going right")
+    while True:
+        send2wheels_both(90 + 20, 90 - 20)
+        time.sleep(0.4)
+
+
+def backward():
+    print("going backwards")
+    while True:
+        send2wheels_both(70, 70)
+        time.sleep(0.4)
+
+
+def trim(magnitude, trim, remote=True):
+    print("trimming")
+    if remote:
+        uri = "http://192.168.0.12:8080/wheel_command_trim"
+    else:
+        uri = "http://localhost:8080/wheel_command_trim"
+    while True:
+        req = requests.get(uri, timeout=3, json={"magnitude": magnitude, "trim": trim})
+        time.sleep(0.4)
+
+
+def stop_wheels():
+    print("program exited, stopping wheels")
+    send2wheels_both(90, 90)
+
+
+atexit.register(stop_wheels)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -62,76 +94,52 @@ if __name__ == "__main__":
 
     parser.add_argument("-smart_path", action="store_true")
 
+    # data coming in is in options
     options = parser.parse_args()
 
     if options.left:
-        handleCommand(
-            "wheel_command_both",
-            {"left": 70, "right": 110},
-            message="going left",
-            sleepTime=60,
-        )
+        left()
     elif options.right:
-        handleCommand(
-            "wheel_command_both",
-            {"left": 110, "right": 70},
-            message="going right",
-            sleepTime=60,
-        )
+        right()
     elif options.forward:
-        handleCommand(
-            "wheel_command_both",
-            {"left": 110, "right": 110},
-            message="going forward",
-            sleepTime=60,
-        )
+        forward()
     elif options.backward:
-        handleCommand(
-            "wheel_command_both",
-            {"left": 70, "right": 70},
-            message="going backwards",
-            sleepTime=60,
-        )
+        backward()
     elif options.left_trim:
-        handleCommand(
-            "wheel_command_trim",
-            {"magnitude": 0.2, "trim": 0.8},
-            message="trimming",
-            sleepTime=60,
-        )
+        trim(0.2, 0.8, remote=True)
     elif options.right_trim:
-        handleCommand(
-            "wheel_command_trim",
-            {"magnitude": 0.2, "trim": -0.8},
-            message="trimming",
-            sleepTime=60,
-        )
+        trim(0.2, -0.8, remote=True)
     elif options.stop:
-        handleCommand("wheel_command_stop", {})
+        req = requests.get("http://192.168.0.12:8080/wheel_command_stop", timeout=3)
     elif options.smart_turn:
-        handleCommand("turn", {"target": options.heading}, smart=True, sleepTime=10)
+        req = requests.get(
+            "http://192.168.0.12:8081/turn", timeout=3, json={"target": options.heading}
+        )
+        time.sleep(10)
     elif options.smart_straight:
-        handleCommand(
-            "drivestraight",
-            {"duration": options.duration, "velocity": options.speed},
-            smart=True,
-            sleepTime=10,
+        req = requests.get(
+            "http://192.168.0.12:8081/drivestraight",
+            timeout=3,
+            json={"duration": options.duration, "velocity": options.speed},
         )
+        time.sleep(10)
     elif options.smart_direct:
-        handleCommand(
-            "directpath", {"target": options.position[0:2]}, smart=True, sleepTime=10
+        req = requests.get(
+            "http://192.168.0.12:8081/directpath",
+            timeout=3,
+            json={"target": options.position[0:2]},
         )
+        time.sleep(10)
     elif options.smart_path:
-        handleCommand(
-            "path",
-            {
+        req = requests.get(
+            "http://192.168.0.12:8081/path",
+            timeout=3,
+            json={
                 "path": [
                     [
-                        options.position[i : i + 2]
-                        for i in range(0, len(options.position), 2)
+                        options.position[i : i + 2] for i in range(0, len(options.position), 2)
                     ]
                 ]
             },
-            smart=True,
-            sleepTime=10,
         )
+        time.sleep(10)
