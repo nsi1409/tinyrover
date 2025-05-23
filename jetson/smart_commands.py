@@ -164,21 +164,19 @@ def wheel_direct_both():
 
     distance = sqrt((target[0] - location[0]) ** 2 + (target[1] - location[1]) ** 2)
 
-    while distance > 1:
+    while distance > 10:
         r = requests.get("http://127.0.0.1:5001/data", timeout=3, json={"k": "gps"})
         location = r.json()["v"]
         distance = sqrt((target[0] - location[0]) ** 2 + (target[1] - location[1]) ** 2)
-        angle = atan2(target[0] - location[0], target[1] - location[1])
+        angle = atan2(target[0] - location[0], target[1] - location[1]) #Add something depending on which way north is on the IMU
         r = requests.get(
-            "http://192.168.0.12:8081/turn", timeout=3, json={"target": angle}
+            "http://192.168.0.12:8081/turn", json={"target": angle}
         )
         r = requests.get(
             "http://127.0.0.1:8080/wheel_command_both",
             timeout=3,
             json={"left": 135, "right": 135},
         )
-        time.sleep(distance / 200)  # scale this better
-        r = requests.get("http://127.0.0.1:8080/wheel_command_stop", timeout=3)
 
     return "ok"
 
@@ -194,7 +192,6 @@ def wheel_path_both():
     for pos in path:
         r = requests.get(
             "http://192.168.0.12:8081/directpath",
-            timeout=3,
             json={"lat": pos[0], "long": pos[1]},
         )
 
