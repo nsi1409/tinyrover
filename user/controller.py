@@ -10,6 +10,10 @@ pygame.joystick.init()
 controllers = None
 activeController = None
 
+# TODO: change values to adjust how controls feel after more field testing
+driveStrength = 30
+turnStrength = 20
+
 leftStickMotion = [0.0, 0.0]
 rightStickMotion = [0.0, 0.0]
 rightTrigger = 0.0
@@ -108,7 +112,7 @@ def handleButtonPress(event):
         case PyGameBtn.RB.value:
             btnRB = True
         case PyGameBtn.XBOX.value:
-            handleQuit()
+            handleQuit(event)
         case (
             PyGameBtn.BACK.value,
             PyGameBtn.START.value,
@@ -124,7 +128,7 @@ def normalizeTriggerValues():
     rightTrigger = (rightTrigger + 1) / 2
 
 
-def updateJoysticks(event):
+def updateJoysticks():
     global controllers
     global activeController
     controllers = [
@@ -138,6 +142,13 @@ def updateJoysticks(event):
 
 
 def handleQuit(event):
+    global leftSpeed, rightSpeed
+
+    leftSpeed = 90
+    rightSpeed = 90
+
+    sendCommandToWheels()
+
     pygame.quit()
     sys.exit()
 
@@ -176,18 +187,18 @@ def setWheelSpeedsBasedOnControllerInput():
     global leftSpeed, rightSpeed
 
     if rightTrigger > 0:
-        baseSpeed = 90 + (rightTrigger * 90)
-        leftSpeed = baseSpeed + (leftStickMotion[0] * 45)
-        rightSpeed = baseSpeed - (leftStickMotion[0] * 45)
+        baseSpeed = 90 + (rightTrigger * driveStrength)
+        leftSpeed = baseSpeed + (leftStickMotion[0] * turnStrength)
+        rightSpeed = baseSpeed - (leftStickMotion[0] * turnStrength)
         if leftStickMotion[0] < 0:
             leftSpeed += 1
     elif leftTrigger > 0:
-        baseSpeed = 90 - (leftTrigger * 90)
-        leftSpeed = baseSpeed - (leftStickMotion[0] * 45)
-        rightSpeed = baseSpeed + (leftStickMotion[0] * 45)
+        baseSpeed = 90 - (leftTrigger * driveStrength)
+        leftSpeed = baseSpeed - (leftStickMotion[0] * turnStrength)
+        rightSpeed = baseSpeed + (leftStickMotion[0] * turnStrength)
     else:
-        leftSpeed = 90 + (leftStickMotion[0] * 60)
-        rightSpeed = 90 - (leftStickMotion[0] * 60)
+        leftSpeed = 90 + (leftStickMotion[0] * turnStrength * 1.2)
+        rightSpeed = 90 - (leftStickMotion[0] * turnStrength * 1.2)
         if leftStickMotion[0] < 0:
             leftSpeed += 1
 
@@ -214,7 +225,7 @@ if __name__ == "__main__":
     while True:
         if activeController is not None:
             getControllerInput()
-            ignoreInputsSmallerThan(0.05)
+            ignoreInputsSmallerThan(0.01)
             normalizeTriggerValues()
             setWheelSpeedsBasedOnControllerInput()
             sendCommandToWheels()
